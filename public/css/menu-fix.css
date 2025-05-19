@@ -1,0 +1,35 @@
+/* Menu submenu fix */
+.menu-sub {
+    display: none;
+}
+
+.menu-item.open > .menu-sub {
+    display: block;
+}
+
+.menu-item.active > .menu-sub {
+    display: block;
+}
+
+.menu-item.open > .menu-toggle::after {
+    transform: rotate(90deg);
+}
+
+/* Touch device improvements */
+@media (hover: none) {
+    .menu-item .menu-toggle:hover {
+        cursor: pointer;
+    }
+}
+
+/* Fix submenu visibility on click */
+.menu-vertical .menu-item .menu-toggle, 
+.menu-vertical .menu-item .menu-link {
+    cursor: pointer;
+}
+
+/* Fix menu item active state */
+.menu-vertical .menu-item.active > .menu-link {
+    color: var(--bs-primary);
+    font-weight: 500;
+}

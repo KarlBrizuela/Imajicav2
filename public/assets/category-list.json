@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "categories": "Electronics",
+    "category_detail": "Smartphones, Laptops, and Accessories",
+    "cat_image": "electronics.jpg",
+    "total_products": 150,
+    "total_earnings": "$500,000"
+  },
+  {
+    "id": 2,
+    "categories": "Fashion",
+    "category_detail": "Clothing, Shoes, and Accessories",
+    "cat_image": "1.png",
+    "total_products": 300,
+    "total_earnings": "$750,000"
+  },
+  {
+    "id": 3,
+    "categories": "Home Appliances",
+    "category_detail": "Kitchenware, Furniture, and Decor",
+    "cat_image": "2.png",
+    "total_products": 120,
+    "total_earnings": "$400,000"
+  },
+  {
+    "id": 4,
+    "categories": "Books",
+    "category_detail": "Fiction, Non-fiction, and Educational",
+    "cat_image": "books.jpg",
+    "total_products": 200,
+    "total_earnings": "$150,000"
+  },
+  {
+    "id": 5,
+    "categories": "Art & Decor",
+    "category_detail": "Wall Art, Sculptures, and Home Decor",
+    "cat_image": "art.jpg",
+    "total_products": 80,
+    "total_earnings": "$120,000"
+  },
+  {
+    "id": 6,
+    "categories": "Beauty & Skincare",
+    "category_detail": "Makeup, Skincare, and Fragrances",
+    "cat_image": "beauty.jpg",
+    "total_products": 220,
+    "total_earnings": "$300,000"
+  },
+  {
+    "id": 7,
+    "categories": "Furniture",
+    "category_detail": "Living Room, Bedroom, and Office Furniture",
+    "cat_image": "furniture.jpg",
+    "total_products": 140,
+    "total_earnings": "$600,000"
+  },
+  {
+    "id": 8,
+    "categories": "Jewelry",
+    "category_detail": "Necklaces, Rings, and Bracelets",
+    "cat_image": "jewelry.jpg",
+    "total_products": 90,
+    "total_earnings": "$450,000"
+  },
+  {
+    "id": 9,
+    "categories": "Watches",
+    "category_detail": "Luxury, Casual, and Sports Watches",
+    "cat_image": "watches.jpg",
+    "total_products": 60,
+    "total_earnings": "$550,000"
+  },
+  {
+    "id": 10,
+    "categories": "Plants & Garden",
+    "category_detail": "Indoor Plants, Outdoor Decor, and Gardening Tools",
+    "cat_image": "plants.jpg",
+    "total_products": 110,
+    "total_earnings": "$180,000"
+  }
+]

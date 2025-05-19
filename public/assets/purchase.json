@@ -1,0 +1,123 @@
+[
+  {
+    "trans_no": "TRX001",
+    "vendor_name": "ABC Supplies",
+    "product_ordered": "Office Chairs",
+    "date_recieved": "2025-03-10",
+    "received_by": "John Doe",
+    "qty": 10,
+    "amount": "₱1,500.00",
+    "payment_terms": "Net 30"
+  },
+  {
+    "trans_no": "TRX002",
+    "vendor_name": "XYZ Distributors",
+    "product_ordered": "Laptops",
+    "date_recieved": "2025-03-12",
+    "received_by": "Jane Smith",
+    "qty": 5,
+    "amount": "₱5,000.00",
+    "payment_terms": "Net 60"
+  },
+  {
+    "trans_no": "TRX003",
+    "vendor_name": "Global Tech",
+    "product_ordered": "Monitors",
+    "date_recieved": "2025-03-15",
+    "received_by": "Michael Lee",
+    "qty": 8,
+    "amount": "₱2,400.00",
+    "payment_terms": "Net 45"
+  },
+  {
+    "trans_no": "TRX004",
+    "vendor_name": "Delta Electronics",
+    "product_ordered": "Keyboards",
+    "date_recieved": "2025-03-16",
+    "received_by": "Emily Davis",
+    "qty": 15,
+    "amount": "₱3,000.00",
+    "payment_terms": "Net 30"
+  },
+  {
+    "trans_no": "TRX005",
+    "vendor_name": "NextGen Solutions",
+    "product_ordered": "Printers",
+    "date_recieved": "2025-03-18",
+    "received_by": "David Johnson",
+    "qty": 6,
+    "amount": "₱4,200.00",
+    "payment_terms": "Net 45"
+  },
+  {
+    "trans_no": "TRX006",
+    "vendor_name": "Office Depot",
+    "product_ordered": "Paper Reams",
+    "date_recieved": "2025-03-20",
+    "received_by": "Sarah Miller",
+    "qty": 20,
+    "amount": "₱2,500.00",
+    "payment_terms": "Net 30"
+  },
+  {
+    "trans_no": "TRX007",
+    "vendor_name": "Tech Innovators",
+    "product_ordered": "Webcams",
+    "date_recieved": "2025-03-22",
+    "received_by": "Daniel Wilson",
+    "qty": 12,
+    "amount": "₱3,600.00",
+    "payment_terms": "Net 60"
+  },
+  {
+    "trans_no": "TRX008",
+    "vendor_name": "Smart Solutions",
+    "product_ordered": "Desk Lamps",
+    "date_recieved": "2025-03-23",
+    "received_by": "Laura Martinez",
+    "qty": 10,
+    "amount": "₱2,000.00",
+    "payment_terms": "Net 30"
+  },
+  {
+    "trans_no": "TRX009",
+    "vendor_name": "Future Tech",
+    "product_ordered": "External Hard Drives",
+    "date_recieved": "2025-03-24",
+    "received_by": "Ethan Carter",
+    "qty": 14,
+    "amount": "₱5,600.00",
+    "payment_terms": "Net 45"
+  },
+  {
+    "trans_no": "TRX010",
+    "vendor_name": "Elite Supplies",
+    "product_ordered": "Whiteboards",
+    "date_recieved": "2025-03-25",
+    "received_by": "Olivia Brown",
+    "qty": 7,
+    "amount": "₱2,800.00",
+    "payment_terms": "Net 30"
+  },
+  {
+    "trans_no": "TRX011",
+    "vendor_name": "Nova Electronics",
+    "product_ordered": "Projectors",
+    "date_recieved": "2025-03-26",
+    "received_by": "Mason Clark",
+    "qty": 3,
+    "amount": "₱9,000.00",
+    "payment_terms": "Net 60"
+  },
+  {
+    "trans_no": "TRX012",
+    "vendor_name": "Global Imports",
+    "product_ordered": "Office Desks",
+    "date_recieved": "2025-03-27",
+    "received_by": "Sophia Harris",
+    "qty": 10,
+    "amount": "₱7,500.00",
+    "payment_terms": "Net 45"
+  }
+]
+

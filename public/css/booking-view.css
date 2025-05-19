@@ -1,0 +1,130 @@
+/* Booking View Sidebar Styles */
+.booking-details-sidebar {
+    max-width: 400px;
+    width: 100%;
+}
+
+.booking-view-header {
+    position: relative;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 1.5rem;
+}
+
+.booking-date-time {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.booking-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.booking-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.booking-section-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.info-item {
+    display: flex;
+    margin-bottom: 0.5rem;
+    align-items: flex-start;
+}
+
+.info-label {
+    min-width: 120px;
+    font-weight: 500;
+    color: #566a7f;
+}
+
+.info-value {
+    flex: 1;
+    color: #697a8d;
+}
+
+.service-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.note-item {
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.quick-note-form {
+    position: sticky;
+    bottom: 0;
+    padding: 1rem;
+    background: #fff;
+    border-top: 1px solid #eee;
+    margin: 0 -1rem;
+}
+
+.quick-note-textarea {
+    resize: none;
+    min-height: 80px;
+}
+
+.booking-card-actions {
+    margin-top: 1rem;
+}
+
+.booking-action-btn {
+    padding: 0.5rem 0.75rem;
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 576px) {
+    .booking-details-sidebar {
+        max-width: 100%;
+    }
+    
+    .info-item {
+        flex-direction: column;
+    }
+    
+    .info-label {
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Status Badge Colors */
+.badge.bg-label-success {
+    background-color: rgba(113, 221, 55, 0.16);
+    color: #71DD37;
+}
+
+.badge.bg-label-warning {
+    background-color: rgba(255, 171, 0, 0.16);
+    color: #FFAB00;
+}
+
+.badge.bg-label-info {
+    background-color: rgba(3, 195, 236, 0.16);
+    color: #03C3EC;
+}
+
+.badge.bg-label-danger {
+    background-color: rgba(255, 62, 29, 0.16);
+    color: #FF3E1D;
+}
+
+.badge.bg-label-secondary {
+    background-color: rgba(133, 146, 163, 0.16);
+    color: #8592A3;
+}

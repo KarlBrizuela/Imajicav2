@@ -1,0 +1,17 @@
+{
+  "menu": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "common": {
+    "welcome": "Welcome",
+    "search": "Search",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View"
+  }
+}

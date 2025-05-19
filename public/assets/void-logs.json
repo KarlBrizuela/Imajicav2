@@ -1,0 +1,155 @@
+[
+  {
+    "id": 1,
+    "receipt_no": "PH-20240318001",
+    "item": "Smartphone",
+    "customer": "Juan Dela Cruz",
+    "cashier": "Maria Santos",
+    "amount_voided": "₱5,999.50",
+    "voided_by": "Supervisor - Jose Reyes",
+    "date_voided": "2025-03-18 14:30:00"
+  },
+  {
+    "id": 2,
+    "receipt_no": "PH-20240318002",
+    "item": "Laptop",
+    "customer": "Ana Villanueva",
+    "cashier": "Mark Fernandez",
+    "amount_voided": "₱34,999.75",
+    "voided_by": "Supervisor - Carla Domingo",
+    "date_voided": "2025-03-18 15:15:00"
+  },
+  {
+    "id": 3,
+    "receipt_no": "PH-20240318003",
+    "item": "Wireless Earbuds",
+    "customer": "Pedro Magtanggol",
+    "cashier": "Angela Cruz",
+    "amount_voided": "₱2,999.00",
+    "voided_by": "Manager - Lito Ramos",
+    "date_voided": "2025-03-18 16:00:00"
+  },
+  {
+    "id": 4,
+    "receipt_no": "PH-20240318004",
+    "item": "LED TV 55-inch",
+    "customer": "Carlos Mendoza",
+    "cashier": "Joanna Lim",
+    "amount_voided": "₱24,999.99",
+    "voided_by": "Supervisor - Noel Bautista",
+    "date_voided": "2025-03-18 16:45:00"
+  },
+  {
+    "id": 5,
+    "receipt_no": "PH-20240318005",
+    "item": "Gaming Chair",
+    "customer": "Rafael Suarez",
+    "cashier": "Kevin Tan",
+    "amount_voided": "₱7,999.50",
+    "voided_by": "Manager - Miguel Sy",
+    "date_voided": "2025-03-18 17:30:00"
+  },
+    {
+      "id": 6,
+      "receipt_no": "PH-20240320001",
+      "item": "Rice Cooker",
+      "customer": "Maria Clara Santos",
+      "cashier": "John Paul Reyes",
+      "amount_voided": "₱4,295.00",
+      "voided_by": "Supervisor - Rebecca Lim",
+      "date_voided": "2025-03-20 09:15:00"
+    },
+    {
+      "id": 7,
+      "receipt_no": "PH-20240320002",
+      "item": "Electric Fan",
+      "customer": "Antonio Bonifacio",
+      "cashier": "Christine Tan",
+      "amount_voided": "₱2,499.99",
+      "voided_by": "Manager - Ricardo Santos",
+      "date_voided": "2025-03-20 10:30:00"
+    },
+    {
+      "id": 8,
+      "receipt_no": "PH-20240320003",
+      "item": "Microwave Oven",
+      "customer": "Lourdes Mangubat",
+      "cashier": "Michael Dela Rosa",
+      "amount_voided": "₱6,995.00",
+      "voided_by": "Supervisor - Alice Gonzales",
+      "date_voided": "2025-03-20 11:45:00"
+    },
+    {
+      "id": 9,
+      "receipt_no": "PH-20240320004",
+      "item": "Blender Set",
+      "customer": "Ferdinand Macaraeg",
+      "cashier": "Patricia Ocampo",
+      "amount_voided": "₱3,299.75",
+      "voided_by": "Supervisor - Manuel Pascual",
+      "date_voided": "2025-03-20 13:20:00"
+    },
+    {
+      "id": 10,
+      "receipt_no": "PH-20240320005",
+      "item": "Water Dispenser",
+      "customer": "Rosario Enriquez",
+      "cashier": "Bryan Villanueva",
+      "amount_voided": "₱8,750.50",
+      "voided_by": "Manager - Teresa Lopez",
+      "date_voided": "2025-03-20 14:45:00"
+    },
+
+      {
+        "id": 11,
+        "receipt_no": "PH-20240319001",
+        "item": "Coffee Maker",
+        "customer": "Isabella Santos",
+        "cashier": "Rico Martinez",
+        "amount_voided": "₱3,499.00",
+        "voided_by": "Supervisor - Grace Lee",
+        "date_voided": "2025-03-19 09:15:00"
+      },
+      {
+        "id": 12,
+        "receipt_no": "PH-20240319002",
+        "item": "Digital Camera",
+        "customer": "Marco Rodriguez",
+        "cashier": "Jenny Wong",
+        "amount_voided": "₱15,999.99",
+        "voided_by": "Manager - Benjamin Co",
+        "date_voided": "2025-03-19 10:30:00"
+      },
+      {
+        "id": 13,
+        "receipt_no": "PH-20240319003",
+        "item": "Air Purifier",
+        "customer": "Diana Reyes",
+        "cashier": "Paulo Garcia",
+        "amount_voided": "₱8,500.00",
+        "voided_by": "Supervisor - Elena Cruz",
+        "date_voided": "2025-03-19 11:45:00"
+      },
+      {
+        "id": 14,
+        "receipt_no": "PH-20240319004",
+        "item": "Gaming Console",
+        "customer": "Adrian Lim",
+        "cashier": "Sofia Mendoza",
+        "amount_voided": "₱18,995.75",
+        "voided_by": "Supervisor - Robert Tan",
+        "date_voided": "2025-03-19 13:20:00"
+      },
+      {
+        "id": 15,
+        "receipt_no": "PH-20240319005",
+        "item": "Smart Watch",
+        "customer": "Carmen Aquino",
+        "cashier": "Daniel Santos",
+        "amount_voided": "₱12,499.50",
+        "voided_by": "Manager - Linda Go",
+        "date_voided": "2025-03-19 14:45:00"
+      }
+  ]
+
+

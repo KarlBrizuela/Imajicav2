@@ -1,0 +1,42 @@
+{
+  "suggestions": {
+    "Pages": [
+      {
+        "name": "Dashboard",
+        "url": "/dashboard",
+        "icon": "ti-dashboard"
+      },
+      {
+        "name": "User Management",
+        "url": "/users",
+        "icon": "ti-users"
+      }
+    ],
+    "Functions": [
+      {
+        "name": "Settings",
+        "url": "/settings",
+        "icon": "ti-settings"
+      },
+      {
+        "name": "Help",
+        "url": "/help",
+        "icon": "ti-help"
+      }
+    ]
+  },
+  "navigation": {
+    "pages": [
+      {
+        "name": "Dashboard",
+        "url": "/dashboard",
+        "icon": "ti-dashboard"
+      },
+      {
+        "name": "User Management",
+        "url": "/users",
+        "icon": "ti-users"
+      }
+    ]
+  }
+}

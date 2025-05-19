@@ -1,0 +1,142 @@
+/* Sidebar Fix CSS */
+
+/* Fix for menu sub-items not being clickable */
+.layout-menu .menu-item.open > .menu-sub {
+    display: block !important;
+    max-height: 2000px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: none !important;
+}
+
+/* Fix for submenu visibility issues */
+.layout-menu .menu-item .menu-sub {
+    display: none;
+    transition: none !important;
+}
+
+/* Ensure menu toggle cursor style */
+.layout-menu .menu-item .menu-toggle {
+    cursor: pointer !important;
+}
+
+/* Fix the perfect-scrollbar in dashboard */
+.layout-menu-fixed .layout-menu-container {
+    height: 100vh;
+    overflow: hidden;
+    overflow-y: auto;
+    -ms-scroll-chaining: none;
+    overscroll-behavior: none;
+}
+
+/* Ensure menu items have proper pointer cursor */
+.menu-link, .menu-toggle {
+    cursor: pointer !important;
+}
+
+/* Fix menu-item active status */
+.menu-vertical .menu-item.active > .menu-link,
+.menu-vertical .menu-item.active > .menu-toggle {
+    color: var(--bs-primary) !important;
+    font-weight: 500 !important;
+}
+
+/* Ensure scrolling works on the entire sidebar */
+#layout-menu {
+    height: 100vh;
+    overflow-y: auto !important;
+}
+
+/* Fix for menu toggle arrow */
+.menu-toggle::after {
+    transition: transform 0.2s ease-out !important;
+}
+
+.menu-item.open > .menu-toggle::after {
+    transform: rotate(90deg) !important;
+}
+
+/* Fix for submenu items indentation */
+.menu-vertical .menu-sub .menu-item .menu-link {
+    padding-left: 1.5rem !important;
+}
+
+/* Fix positioning of menu icons and prevent overlapping with text */
+.menu-icon {
+    position: relative !important;
+    margin-right: 0.75rem !important;
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 1.25rem !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.menu-link {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0.625rem 1rem !important;
+}
+
+.menu-link div[data-i18n] {
+    margin-left: 0.25rem !important;
+    font-size: 0.9375rem !important;
+    flex: 1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    position: static !important;
+}
+
+.menu-inner .menu-item .menu-toggle .menu-icon, 
+.menu-inner .menu-item .menu-link .menu-icon {
+    flex-shrink: 0 !important;
+}
+
+/* Adjust submenu spacing */
+.menu-sub .menu-item .menu-link {
+    display: flex !important;
+    align-items: center !important;
+    padding-left: 3.25rem !important;
+    position: relative !important;
+}
+
+/* Remove circle icon from sub-menu items */
+.menu-sub .menu-item .menu-link::before {
+    content: "" !important;
+    display: none !important;
+}
+
+/* Add proper indentation for sub-menu text */
+.menu-sub .menu-item .menu-link div[data-i18n] {
+    position: static !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+/* Fix nested sub-menus */
+.menu-sub .menu-sub .menu-item .menu-link {
+    padding-left: 4.5rem !important;
+}
+
+/* Ensure all menu text is visible */
+.menu-vertical .menu-item .menu-link div[data-i18n],
+.menu-vertical .menu-item.open .menu-link div[data-i18n],
+.menu-vertical .menu-item:hover .menu-link div[data-i18n],
+.menu-vertical .menu-item.active .menu-link div[data-i18n] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: static !important;
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+/* Adjust menu item with sub-items */
+.menu-vertical .menu-item .menu-toggle {
+    padding-right: 1.25rem !important;
+}

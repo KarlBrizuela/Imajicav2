@@ -1,0 +1,149 @@
+{
+    "data": [
+      {
+        "id": 1,
+        "product_name": "Premium Wireless Headphones",
+        "product_brand": "SoundWave",
+        "image": "1.png",
+        "category": 2,
+        "stock": 1,
+        "sku": "SW-HD-001",
+        "price": "$249.99",
+        "qty": 45,
+        "status": 2
+      },
+      {
+        "id": 2,
+        "product_name": "Ergonomic Office Chair",
+        "product_brand": "ComfortPro",
+        "image": "2.png",
+        "category": 1,
+        "stock": 1,
+        "sku": "CP-CH-102",
+        "price": "$189.99",
+        "qty": 32,
+        "status": 2
+      },
+      {
+        "id": 3,
+        "product_name": "Smart Home Hub",
+        "product_brand": "TechConnect",
+        "image": "amazon-echo.png",
+        "category": 2,
+        "stock": 1,
+        "sku": "TC-SH-305",
+        "price": "$129.99",
+        "qty": 18,
+        "status": 2
+      },
+      {
+        "id": 4,
+        "product_name": "Leather Dress Shoes",
+        "product_brand": "StepStyle",
+        "image": "leather-shoes.png",
+        "category": 3,
+        "stock": 0,
+        "sku": "SS-DS-421",
+        "price": "$89.99",
+        "qty": 0,
+        "status": 3
+      },
+      {
+        "id": 5,
+        "product_name": "Stainless Steel Water Bottle",
+        "product_brand": "EcoHydrate",
+        "image": "product-5.png",
+        "category": 0,
+        "stock": 1,
+        "sku": "EH-WB-512",
+        "price": "$24.99",
+        "qty": 76,
+        "status": 2
+      },
+      {
+        "id": 6,
+        "product_name": "Wireless Gaming Mouse",
+        "product_brand": "GameTech",
+        "image": "play-station.png",
+        "category": 5,
+        "stock": 1,
+        "sku": "GT-GM-633",
+        "price": "$59.99",
+        "qty": 28,
+        "status": 2
+      },
+      {
+        "id": 7,
+        "product_name": "Luxury Watch",
+        "product_brand": "TimeMaster",
+        "image": "apple-watch.png",
+        "category": 4,
+        "stock": 1,
+        "sku": "TM-LW-744",
+        "price": "$399.99",
+        "qty": 12,
+        "status": 2
+      },
+      {
+        "id": 8,
+        "product_name": "4K Smart TV",
+        "product_brand": "VisionPlus",
+        "image": "product-8.png",
+        "category": 2,
+        "stock": 0,
+        "sku": "VP-TV-855",
+        "price": "$699.99",
+        "qty": 0,
+        "status": 3
+      },
+      {
+        "id": 9,
+        "product_name": "Kitchen Blender",
+        "product_brand": "BlendMaster",
+        "image": "kitchen-blender.png",
+        "category": 0,
+        "stock": 1,
+        "sku": "BM-KB-966",
+        "price": "$79.99",
+        "qty": 23,
+        "status": 2
+      },
+      {
+        "id": 10,
+        "product_name": "Wireless Earbuds",
+        "product_brand": "AudioPro",
+        "image": "product-10.png",
+        "category": 2,
+        "stock": 1,
+        "sku": "AP-WE-077",
+        "price": "$129.99",
+        "qty": 41,
+        "status": 2
+      },
+      {
+        "id": 11,
+        "product_name": "Standing Desk",
+        "product_brand": "WorkWell",
+        "image": "product-11.png",
+        "category": 1,
+        "stock": 1,
+        "sku": "WW-SD-188",
+        "price": "$299.99",
+        "qty": 15,
+        "status": 1
+      },
+      {
+        "id": 12,
+        "product_name": "Running Shoes",
+        "product_brand": "SpeedFit",
+        "image": "nike-air-jordan.png",
+        "category": 3,
+        "stock": 1,
+        "sku": "SF-RS-299",
+        "price": "$119.99",
+        "qty": 38,
+        "status": 2
+      }
+    ]
+  }
+  

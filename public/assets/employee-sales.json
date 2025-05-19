@@ -1,0 +1,56 @@
+[
+  {
+      "employee_name": "Juan Dela Cruz",
+      "sales_service_no": 5,
+      "product_sales_no": 3,
+      "client_no": 10,
+      "total_service_sale": "₱500",
+      "total_product_sale": "₱1000",
+      "total_sales": "₱1500"
+    },
+    {
+      "employee_name": "Maria Clara",
+      "sales_service_no": 8,
+      "product_sales_no": 5,
+      "client_no": 15,
+      "total_service_sale": "₱1000",
+      "total_product_sale": "₱2000",
+      "total_sales": "₱3000"
+    },
+    {
+      "employee_name": "Ramil Gonzales",
+      "sales_service_no": 7,
+      "product_sales_no": 6,
+      "client_no": 12,
+      "total_service_sale": "₱1200",
+      "total_product_sale": "₱2000",
+      "total_sales": "₱3200"
+    },
+    {
+      "employee_name": "Liza Soberano",
+      "sales_service_no": 6,
+      "product_sales_no": 4,
+      "client_no": 9,
+      "total_service_sale": "₱700",
+      "total_product_sale": "₱1500",
+      "total_sales": "₱2200"
+    },
+    {
+      "employee_name": "Coco Martin",
+      "sales_service_no": 10,
+      "product_sales_no": 8,
+      "client_no": 20,
+      "total_service_sale": "₱1500",
+      "total_product_sale": "₱3000",
+      "total_sales": "₱4500"
+    },
+    {
+      "employee_name": "Manny Pacquiao",
+      "sales_service_no": 15,
+      "product_sales_no": 10,
+      "client_no": 25,
+      "total_service_sale": "₱3000",
+      "total_product_sale": "₱5000",
+      "total_sales": "₱8000"
+    }
+  ]

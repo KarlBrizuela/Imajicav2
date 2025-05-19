@@ -1,0 +1,147 @@
+[
+    {
+        "employee_name": "Juan Dela Cruz",
+        "sales_service_no": 5,
+        "product_sales_no": 3,
+        "client_no": 10,
+        "total_service_sale": "₱1000",
+        "total_product_sale": "₱500",
+        "total_service_commission": "₱100",
+        "total_session_commission": "₱50",
+        "total_product_commission": "₱50",
+        "total_commision": "₱200"
+    },
+    {
+        "employee_name": "Maria Clara",
+        "sales_service_no": 8,
+        "product_sales_no": 5,
+        "client_no": 15,
+        "total_service_sale": "₱2000",
+        "total_product_sale": "₱1000",
+        "total_service_commission": "₱300",
+        "total_session_commission": "₱100",
+        "total_product_commission": "₱100",
+        "total_commision": "₱500"
+    },
+    {
+        "employee_name": "Ramil Gonzales",
+        "sales_service_no": 7,
+        "product_sales_no": 6,
+        "client_no": 12,
+        "total_service_sale": "₱2000",
+        "total_product_sale": "₱1200",
+        "total_service_commission": "₱300",
+        "total_session_commission": "₱120",
+        "total_product_commission": "₱120",
+        "total_commision": "₱540"
+    },
+    {
+        "employee_name": "Liza Soberano",
+        "sales_service_no": 6,
+        "product_sales_no": 4,
+        "client_no": 9,
+        "total_service_sale": "₱1500",
+        "total_product_sale": "₱700",
+        "total_service_commission": "₱180",
+        "total_session_commission": "₱90",
+        "total_product_commission": "₱90",
+        "total_commision": "₱360"
+    },
+    {
+        "employee_name": "Coco Martin",
+        "sales_service_no": 10,
+        "product_sales_no": 8,
+        "client_no": 20,
+        "total_service_sale": "₱3000",
+        "total_product_sale": "₱1500",
+        "total_service_commission": "₱600",
+        "total_session_commission": "₱200",
+        "total_product_commission": "₱200",
+        "total_commision": "₱1000"
+    },
+    {
+        "employee_name": "Manny Pacquiao",
+        "sales_service_no": 15,
+        "product_sales_no": 10,
+        "client_no": 25,
+        "total_service_sale": "₱5000",
+        "total_product_sale": "₱3000",
+        "total_service_commission": "₱1250",
+        "total_session_commission": "₱500",
+        "total_product_commission": "₱500",
+        "total_commision": "₱2250"
+    },
+        {
+            "employee_name": "Sarah Geronimo",
+            "sales_service_no": 12,
+            "product_sales_no": 8,
+            "client_no": 18,
+            "total_service_sale": "₱4000",
+            "total_product_sale": "₱2500",
+            "total_service_commission": "₱800",
+            "total_session_commission": "₱300",
+            "total_product_commission": "₱300",
+            "total_commision": "₱1400"
+        },
+        {
+            "employee_name": "Kathryn Bernardo",
+            "sales_service_no": 9,
+            "product_sales_no": 7,
+            "client_no": 16,
+            "total_service_sale": "₱3500",
+            "total_product_sale": "₱2000",
+            "total_service_commission": "₱700",
+            "total_session_commission": "₱250",
+            "total_product_commission": "₱250",
+            "total_commision": "₱1200"
+        },
+        {
+            "employee_name": "Daniel Padilla",
+            "sales_service_no": 11,
+            "product_sales_no": 9,
+            "client_no": 22,
+            "total_service_sale": "₱4500",
+            "total_product_sale": "₱2800",
+            "total_service_commission": "₱900",
+            "total_session_commission": "₱350",
+            "total_product_commission": "₱350",
+            "total_commision": "₱1600"
+        },
+        {
+            "employee_name": "Anne Curtis",
+            "sales_service_no": 14,
+            "product_sales_no": 11,
+            "client_no": 24,
+            "total_service_sale": "₱5500",
+            "total_product_sale": "₱3500",
+            "total_service_commission": "₱1100",
+            "total_session_commission": "₱450",
+            "total_product_commission": "₱450",
+            "total_commision": "₱2000"
+        },
+        {
+            "employee_name": "Vice Ganda",
+            "sales_service_no": 13,
+            "product_sales_no": 12,
+            "client_no": 28,
+            "total_service_sale": "₱6000",
+            "total_product_sale": "₱4000",
+            "total_service_commission": "₱1200",
+            "total_session_commission": "₱550",
+            "total_product_commission": "₱550",
+            "total_commision": "₱2300"
+        },
+        {
+            "employee_name": "Angel Locsin",
+            "sales_service_no": 16,
+            "product_sales_no": 13,
+            "client_no": 30,
+            "total_service_sale": "₱7000",
+            "total_product_sale": "₱4500",
+            "total_service_commission": "₱1400",
+            "total_session_commission": "₱600",
+            "total_product_commission": "₱600",
+            "total_commision": "₱2600"
+        }
+    
+]
