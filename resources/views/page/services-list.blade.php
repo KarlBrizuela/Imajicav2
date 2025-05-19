@@ -33,41 +33,40 @@
     href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;ampdisplay=swap"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="../../assets/vendor/fonts/iconify-icons.css" />
+   <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
 
   <!-- Core CSS -->
   <!-- build:css assets/vendor/css/theme.css  -->
 
-  <link rel="stylesheet" href="../../assets/vendor/libs/node-waves/node-waves.css" />
-
-  <link rel="stylesheet" href="../../assets/vendor/libs/pickr/pickr-themes.css" />
-
-  <link rel="stylesheet" href="../../assets/vendor/css/core.css" />
-  <link rel="stylesheet" href="../../assets/css/demo.css" />
+ <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.js') }}" />
+   <link rel="stylesheet" href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
+  <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}">
+<link rel="stylesheet" href="{{ asset('/css/demo.css') }}" />
 
   <!-- Vendors CSS -->
 
-  <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+<link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
 
   <!-- endbuild -->
 
-  <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css" />
+  <link rel="stylesheet" href="{{ asset('vendor/libs/select2/select2.css') }}" />
 
   <!-- Page CSS -->
 
   <!-- endbuild -->
 
-  <link rel="stylesheet" href="../../assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
-  <link rel="stylesheet" href="../../assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css" />
-  <link rel="stylesheet" href="../../assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css" />
-  <link rel="stylesheet" href="../../assets/vendor/libs/flatpickr/flatpickr.css" />
+   <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+   <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
+   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css">
+ <link rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}" />
   <!-- Row Group CSS -->
-  <link rel="stylesheet" href="../../assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css" />
+  <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}">
+
   <!-- Form Validation -->
-  <link rel="stylesheet" href="../../assets/vendor/libs/%40form-validation/form-validation.css" />
+   <link rel="stylesheet" href="{{ asset('vendor/libs/@form-validation/form-validation.css') }}" />
 
   <!-- Helpers -->
-  <script src="../../assets/vendor/js/helpers.js"></script>
+    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
 
   <script src="../../assets/js/config.js"></script>
 
@@ -378,29 +377,26 @@
   <!-- Core JS -->
   <!-- build:js assets/vendor/js/theme.js -->
 
-  <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
+ <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
 
-  <script src="../../assets/vendor/libs/popper/popper.js"></script>
-  <script src="../../assets/vendor/js/bootstrap.js"></script>
-  <script src="../../assets/vendor/libs/node-waves/node-waves.js"></script>
+   <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+  <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+  <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
 
-  <script src="../../assets/vendor/libs/%40algolia/autocomplete-js.js"></script>
+  <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
 
-  <script src="../../assets/vendor/libs/pickr/pickr.js"></script>
+ <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
 
-  <script src="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-
-  <script src="../../assets/vendor/libs/hammer/hammer.js"></script>
-
-  <script src="../../assets/vendor/libs/i18n/i18n.js"></script>
-
-  <script src="../../assets/vendor/js/menu.js"></script>
+  <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
+<script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
+  <script src="{{ asset('vendor/js/menu.js') }}"></script>
 
   <!-- endbuild -->
 
   <!-- Vendors JS -->
-  <script src="../../assets/vendor/libs/cleave-zen/cleave-zen.js"></script>
-  <script src="../../assets/vendor/libs/select2/select2.js"></script>
+<script src="{{ asset('vendor/libs/cleave-zen/cleave-zen.js') }}"></script>
+ <script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
 
   <!-- Main JS -->
 
@@ -410,14 +406,14 @@
   <script src="../../assets/js/form-layouts.js"></script>
 
   <!-- Vendors JS -->
-  <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+  <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
   <!-- Flat Picker -->
-  <script src="../../assets/vendor/libs/moment/moment.js"></script>
-  <script src="../../assets/vendor/libs/flatpickr/flatpickr.js"></script>
+  <script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
+<script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
   <!-- Form Validation -->
-  <script src="../../assets/vendor/libs/%40form-validation/popular.js"></script>
-  <script src="../../assets/vendor/libs/%40form-validation/bootstrap5.js"></script>
-  <script src="../../assets/vendor/libs/%40form-validation/auto-focus.js"></script>
+   <script src="{{ asset('vendor/libs/@form-validation/popular.js') }}"></script>
+   <script src="{{ asset('vendor/libs/@form-validation/bootstrap5.js') }}"></script>
+  <script src="{{ asset('vendor/libs/@form-validation/auto-focus.js') }}"></script>
 
 
   <script src="../../assets/js/service-management.js"></script>
@@ -461,7 +457,8 @@
       if (this.dataset.serviceImage && this.dataset.serviceImage.trim() !== '') {
         modalImage.src = this.dataset.serviceImage;
       } else {
-        modalImage.src = '../../assets/img/services/default-service.png'; // fallback image
+        modalImage.src = "{{ asset('assets/img/services/default-service.png') }}";
+// fallback image
       }
          
 
