@@ -660,25 +660,35 @@
                           </div>
                           @endif
                           <!-- Patient selection fields in add booking form -->
-                          <div class="mb-4">
-                            <label for="patient_id" class="form-label">Select Patient</label>
-                            <select id="patient_id" name="patient_id" class="form-select select2">
-                              <option value="">Select a patient</option>
-                              @foreach($patients as $patient)
-                                <option value="{{ $patient->patient_id }}">{{ $patient->firstname }} {{ $patient->lastname }}</option>
-                              @endforeach
-                            </select>
-                            <!-- Patient information display -->
-                            <div id="patient_info" class="mt-2 card bg-lighter p-2" style="display: none;">
-                              <div class="d-flex justify-content-between">
-                                <span><i class="bx bx-star me-1"></i> Points:</span>
-                                <div>
-                                  <span id="patient_points_display" class="fw-semibold text-success"></span>
-                                  <span id="welcome_badge" class="welcome-badge ms-2" style="display: none;">Welcome Bonus!</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+<div class="mb-4">
+    <label for="patient_id" class="form-label">Select Patient</label>
+    <select id="patient_id" name="patient_id" class="form-select select2">
+        <option value="">Select a patient</option>
+        @foreach($patients as $patient)
+        <option value="{{ $patient->patient_id }}">{{ $patient->firstname }} {{ $patient->lastname }}</option>
+        @endforeach
+    </select>
+    <!-- Patient information display -->
+    <div id="patient_info" class="mt-2 card bg-lighter p-2" style="display: none;">
+        <!-- Points (original untouched) -->
+        <div class="d-flex justify-content-between">
+            <span><i class="bx bx-star me-1"></i> Points:</span>
+            <div>
+                <span id="patient_points_display" class="fw-semibold text-success"></span>
+                <span id="welcome_badge" class="welcome-badge ms-2" style="display: none;">Welcome Bonus!</span>
+            </div>
+        </div>
+        
+
+        <!-- Balance (added below with identical structure) -->
+        <div class="d-flex justify-content-between mt-2">
+            <span><i class="bx bx-star me-1"></i> Balance:</span>
+            <div>
+                <span id="patient_balance_display" class="fw-semibold text-success"></span>
+            </div>
+        </div>
+    </div>
+</div>
                           <div class="col-xl-12">
                             <label class="form-label">Use Reward Points</label>
                             <div class="row">
@@ -888,7 +898,16 @@
                                 </div>
                               </div>
                             </div>
+
+                            <!-- Balance (added below with identical structure) --> 
+                            <div class="d-flex justify-content-between mt-2"> 
+                              <span><i class="bx bx-star me-1"></i> Patient Balance:</span>
+                              <div> 
+                                <span id="update_patient_balance_display" class="fw-semibold text-success"></span>
+                            </div> 
                           </div>
+                          </div>
+                          
                           <div class="col-xl-12">
                             <label class="form-label">Use Reward Points</label>
                             <div class="row">
@@ -2750,6 +2769,7 @@ $(document).ready(function() {
             
             // Update the points display
             $('#patient_points_display').text(response.points);
+            $('#patient_balance_display').text(response.points);
           }
         },
         error: function(xhr) {
@@ -2788,6 +2808,7 @@ $(document).ready(function() {
             
             // Update the points display
             $('#update_patient_points_display').text(response.points);
+            $('#update_patient_balance_display').text(response.points);
           }
         },
         error: function(xhr) {
