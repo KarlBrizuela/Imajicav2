@@ -238,6 +238,10 @@
         color: var(--warning-color);
       }
 
+      .metric-icon.trend {
+        color: var(--success-color);
+      } 
+
       .metric-label {
         font-size: 0.95rem;
         color: var(--text-light);
@@ -463,13 +467,10 @@
         to { opacity: 1; transform: translateY(0); }
       }
 
-      .stats-card .metric-card:nth-child(1) {
-        animation: fadeIn 0.5s 0.1s both;
-      }
-      
-      .stats-card .metric-card:nth-child(2) {
-        animation: fadeIn 0.5s 0.2s both;
-      }
+      .stats-card .metric-card:nth-child(2),
+      .stats-card .metric-card:nth-child(3) {
+        animation: none;
+}
 
       .content-card {
         animation: fadeIn 0.5s 0.3s both;
@@ -658,8 +659,6 @@
           <div class="metric-trend">
             <small class="d-flex align-items-center mt-2">
               <i class="ti ti-trending-up me-1 text-success"></i> 
-              <span class="text-success">12.8%</span>
-              <span class="text-muted ms-2">vs last year</span>
             </small>
           </div>
         </div>
@@ -676,8 +675,6 @@
           <div class="metric-trend">
             <small class="d-flex align-items-center mt-2">
               <i class="ti ti-chart-bar me-1 text-primary"></i>
-              <span class="text-primary">35%</span>
-              <span class="text-muted ms-2">of total expenses</span>
             </small>
           </div>
         </div>
@@ -757,7 +754,7 @@
                 <td>{{ $expense->invoice_number ?? 'N/A' }}</td>
                 <td>{{ $expense->expense_name }}</td>
                 <td>{{ $expense->category_expense->name ?? 'N/A' }}</td>
-                <td>₱{{ number_format($expense->expense_cost, 2) }}</td>
+                <td class="amount-cell">₱{{ number_format($expense->expense_cost, 2) }}</td>
                 <td>
                   @if($expense->payment_status == 'Paid')
                     <span class="badge badge-success">Paid</span>
@@ -778,7 +775,7 @@
             <tfoot>
               <tr class="bg-light">
                 <td colspan="4" class="text-end fw-bold">Total</td>
-                <td class="fw-bold text-dark">₱{{ number_format($totalExpenses, 2) }}</td>
+                <td class="fw-bold text-dark" id="filteredTotal">₱{{ number_format($totalExpenses, 2) }}</td>
                 <td colspan="2"></td>
               </tr>
             </tfoot>
@@ -787,199 +784,6 @@
       </div>
       
       <!-- Category Breakdown Section -->
-      <div class="row">
-        <div class="col-lg-6">
-          <div class="content-card">
-            <div class="card-header">
-              <h5 class="card-title">Category Breakdown</h5>
-            </div>
-            <div class="card-body p-4">
-              <div class="row">
-                <div class="col-md-7">
-                  <div class="chart-container" style="position: relative; height: 240px;">
-                    <canvas id="categoryChart"></canvas>
-                  </div>
-                </div>
-                <div class="col-md-5">
-                  <div class="category-legend mt-4 mt-md-0">
-                    <h6 class="mb-3 text-muted fw-semibold">Top Categories</h6>
-                    @if(isset($categoryBreakdown) && count($categoryBreakdown['labels']) > 0)
-                      @foreach($categoryBreakdown['labels'] as $index => $category)
-                        <div class="legend-item d-flex align-items-center mb-3">
-                          <div class="legend-color" style="width: 14px; height: 14px; border-radius: 50%; background-color: {{ $categoryBreakdown['colors'][$index] ?? '#ccc' }}; margin-right: 10px;"></div>
-                          <div class="legend-text flex-grow-1">{{ $category }}</div>
-                          <div class="legend-value fw-semibold">₱{{ number_format($categoryBreakdown['values'][$index] ?? 0, 0) }}</div>
-                        </div>
-                      @endforeach
-                    @else
-                      <div class="text-muted">No category data available</div>
-                    @endif
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-lg-6">
-          <div class="content-card">
-            <div class="card-header">
-              <h5 class="card-title">Monthly Trend</h5>
-            </div>
-            <div class="card-body p-4">
-              <div class="chart-container" style="position: relative; height: 240px;">
-                <canvas id="trendChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>      
-</div>
-
-<!-- Expense Details Modal -->
-<div class="modal fade" id="expenseModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Expense Details</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row g-4">
-          <!-- Expense Info Card -->
-          <div class="col-md-6 col-lg-4">
-            <div class="card h-100">
-              <div class="card-header d-flex align-items-center justify-content-between">
-                <h6 class="card-title mb-0">Basic Information</h6>
-                <span class="badge badge-primary">Invoice: #INV-2024-001</span>
-              </div>
-              <div class="card-body p-0">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span class="text-muted">Expense Name:</span>
-                    <span class="fw-medium">Electricity Bill Payment</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span class="text-muted">Category:</span>
-                    <span class="fw-medium">Utilities</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span class="text-muted">Amount:</span>
-                    <span class="fw-semibold text-success">₱12,450.00</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span class="text-muted">Date:</span>
-                    <span class="fw-medium">January 15, 2024</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span class="text-muted">Status:</span>
-                    <span class="badge badge-success">Paid</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <!-- Payment Details -->
-          <div class="col-md-6 col-lg-8">
-            <div class="card h-100">
-              <div class="card-header">
-                <h6 class="card-title mb-0">Payment Details</h6>
-              </div>
-              <div class="card-body p-0">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span class="text-muted">Payment Method:</span>
-                    <span class="fw-medium">Bank Transfer</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span class="text-muted">Transaction ID:</span>
-                    <span class="fw-medium">TXN-987654321</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span class="text-muted">Payment Date:</span>
-                    <span class="fw-medium">January 15, 2024</span>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between">
-                    <span class="text-muted">Processed By:</span>
-                    <span class="fw-medium">John Smith</span>
-                  </li>
-                  <li class="list-group-item">
-                    <div class="mb-2 text-muted">Notes:</div>
-                    <p class="mb-0">Monthly electricity consumption for main office building. The payment covers usage from December 1-31, 2023.</p>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <!-- Monthly Comparison -->
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-header">
-                <h6 class="card-title mb-0">Monthly Comparison</h6>
-              </div>
-              <div class="card-body">
-                <canvas id="expenseChart" height="300"></canvas>
-              </div>
-            </div>
-          </div>
-
-          <!-- Attached Documents -->
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-header">
-                <h6 class="card-title mb-0">Attached Documents</h6>
-              </div>
-              <div class="card-body">
-                <div class="doc-item">
-                  <div class="doc-icon text-primary">
-                    <i class="ti ti-file-invoice"></i>
-                  </div>
-                  <div class="doc-info">
-                    <h6 class="doc-title">Invoice_2024001.pdf</h6>
-                    <div class="doc-meta">PDF Document • 2.3 MB • Uploaded Jan 15, 2024</div>
-                  </div>
-                  <div class="doc-action">
-                    <a href="{{ asset('storage/documents/Invoice_2024001.pdf') }}" 
-                      class="btn btn-sm btn-primary"
-                      download="Invoice_2024001.pdf">
-                      <i class="ti ti-download"></i>
-                    </a>
-                  </div>
-                </div>
-                
-                <div class="doc-item">
-                  <div class="doc-icon text-success">
-                    <i class="ti ti-file-text"></i>
-                  </div>
-                  <div class="doc-info">
-                    <h6 class="doc-title">Receipt_2024001.pdf</h6>
-                    <div class="doc-meta">PDF Document • 1.1 MB • Uploaded Jan 15, 2024</div>
-                  </div>
-                  <div class="doc-action">
-                    <a href="{{ asset('storage/documents/Receipt_2024001.pdf') }}" 
-                      class="btn btn-sm btn-primary"
-                      download="Receipt_2024001.pdf">
-                      <i class="ti ti-download"></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">
-          <i class="ti ti-printer me-1"></i> Print Details
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -1020,41 +824,48 @@ function initializeTable() {
     filterTable(searchTerm, dateFilter.value);
   });
 
-  // Sort functionality
-  sortBy.addEventListener('change', function() {
-    const rows = Array.from(table.querySelectorAll('tbody tr'));
-    const sortValue = this.value;
+// Sort functionality
+sortBy.addEventListener('change', function() {
+  const rows = Array.from(table.querySelectorAll('tbody tr'));
+  const sortValue = this.value;
 
-    rows.sort((a, b) => {
-      let aVal, bVal;
-      
-      switch(sortValue) {
-        case 'date':
-          aVal = new Date(a.cells[0].textContent);
-          bVal = new Date(b.cells[0].textContent);
-          return bVal - aVal;
-        case 'amount':
-          aVal = parseFloat(a.cells[4].textContent.replace('₱', '').replace(/,/g, ''));
-          bVal = parseFloat(b.cells[4].textContent.replace('₱', '').replace(/,/g, ''));
-          return bVal - aVal;
-        case 'category':
-          aVal = a.cells[3].textContent;
-          bVal = b.cells[3].textContent;
-          return aVal.localeCompare(bVal);
-        case 'status':
-          aVal = a.cells[5].textContent.trim();
-          bVal = b.cells[5].textContent.trim();
-          return aVal.localeCompare(bVal);
-        default:
-          return 0;
-      }
-    });
+  rows.sort((a, b) => {
+    let aVal, bVal;
 
-    // Clear and re-append sorted rows
-    const tbody = table.querySelector('tbody');
-    tbody.innerHTML = '';
-    rows.forEach(row => tbody.appendChild(row));
+    switch(sortValue) {
+      case 'date':
+        aVal = new Date(a.cells[0].textContent);
+        bVal = new Date(b.cells[0].textContent);
+        return bVal - aVal; // Descending (latest first)
+        
+      case 'amount':
+        aVal = parseFloat(a.cells[4].textContent.replace('₱', '').replace(/,/g, ''));
+        bVal = parseFloat(b.cells[4].textContent.replace('₱', '').replace(/,/g, ''));
+        return bVal - aVal; // Descending (highest first)
+        
+      case 'category':
+        aVal = a.cells[3].textContent.toLowerCase();
+        bVal = b.cells[3].textContent.toLowerCase();
+        return aVal.localeCompare(bVal); // Ascending A–Z
+       
+      case 'status':
+        aVal = a.cells[5].textContent.trim().toLowerCase();
+        bVal = b.cells[5].textContent.trim().toLowerCase();
+        return aVal.localeCompare(bVal); // Ascending A–Z
+
+      default:
+        return 0;
+    }
   });
+
+  // Append sorted rows to tbody
+  const tbody = table.querySelector('tbody');
+  rows.forEach(row => tbody.appendChild(row));
+  
+  // Update total after sorting
+  updateFilteredTotal();
+});
+
 
   // Date filter functionality
   dateFilter.addEventListener('change', function() {
@@ -1118,6 +929,29 @@ function filterTable(searchTerm, dateFilterValue) {
     // Show/hide row based on both conditions
     row.style.display = textMatch && dateMatch ? '' : 'none';
   });
+  
+  // Update the total amount after filtering
+  updateFilteredTotal();
+}
+
+function updateFilteredTotal() {
+  const table = document.getElementById('expenseReport');
+  if (!table) return;
+  
+  const visibleRows = table.querySelectorAll('tbody tr:not([style*="display: none"])');
+  let total = 0;
+  
+  visibleRows.forEach(row => {
+    const amountText = row.querySelector('.amount-cell').textContent;
+    const amount = parseFloat(amountText.replace('₱', '').replace(/,/g, ''));
+    total += amount;
+  });
+  
+  // Update the total in the footer
+  const totalElement = document.getElementById('filteredTotal');
+  if (totalElement) {
+    totalElement.textContent = '₱' + total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }
 }
 
 function initializeChart() {
@@ -1509,6 +1343,4 @@ function saveAsCSV(data) {
   <script src="../../assets/js/charts-chartjs.js"></script>
   
 </body>
-
-
 </html>
