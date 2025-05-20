@@ -14,12 +14,17 @@ use Illuminate\Http\Request;
 use App\Models\service;
 use App\Models\order;
 
+use App\Models\ServiceProduct;
+
 use App\Models\positionModel;
 
 use App\Models\category_expense;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Department;
+namespace App\Http\Controllers;
+
+use App\Models\product;
 
 class DashboardController extends Controller
 {
@@ -29,29 +34,29 @@ class DashboardController extends Controller
         // Simply call the index method to avoid duplicating code
         return $this->index();
     }
-    
+
     public function index()
     {
         // Get all patients for count try mos
         $patients = Patient::all();
         $bookings = booking::all();
         $services = service::all();
-        
+
         // Calculate patient growth (example calculation - modify as needed)
         $patientGrowth = $this->calculatePatientGrowth();
-        
+
         // Calculate booking growth
         $bookingGrowth = $this->calculateBookingGrowth();
-        
+
         // Get today's birthdays
         $todayBirthdays = $this->getTodayBirthdays();
-        
+
         // Get upcoming birthdays (next 30 days)
         $upcomingBirthdays = $this->getUpcomingBirthdays();
-        
+
         // Get all birthdays for the modal
         $allBirthdays = $this->getAllBirthdays();
-        
+
         // Updated branch data fetching
         $branchData = Branch::with(['bookings', 'bookings.service'])
             ->get()
@@ -60,7 +65,7 @@ class DashboardController extends Controller
                 $totalRevenue = $branch->bookings->sum(function ($booking) {
                     return $booking->service ? $booking->service->service_cost : 0;
                 });
-                
+
                 return [
                     'name' => $branch->branch_name,
                     'bookings' => $totalBookings,
@@ -69,38 +74,38 @@ class DashboardController extends Controller
             });
 
         return view('page.dashboard', compact(
-            'patients', 
-            'bookings', 
+            'patients',
+            'bookings',
             'services',
-            'patientGrowth', 
-            'bookingGrowth', 
-            'todayBirthdays', 
-            'upcomingBirthdays', 
+            'patientGrowth',
+            'bookingGrowth',
+            'todayBirthdays',
+            'upcomingBirthdays',
             'allBirthdays',
             'branchData'
         ));
     }
-    
+
     private function calculatePatientGrowth()
     {
         // Get current month's new patients
         $thisMonth = Patient::whereMonth('created_at', Carbon::now()->month)
                           ->whereYear('created_at', Carbon::now()->year)
                           ->count();
-        
+
         // Get last month's new patients
         $lastMonth = Patient::whereMonth('created_at', Carbon::now()->subMonth()->month)
                           ->whereYear('created_at', Carbon::now()->subMonth()->year)
                           ->count();
-        
+
         // Calculate growth percentage
         if ($lastMonth > 0) {
             return (($thisMonth - $lastMonth) / $lastMonth) * 100;
         }
-        
+
         return $thisMonth > 0 ? 100 : 0; // If last month was 0, return 100% growth or 0 if no new patients
     }
-    
+
     private function calculateBookingGrowth()
     {
         // Get the start of the current month and previous month
@@ -121,11 +126,11 @@ class DashboardController extends Controller
 
         return round($growth, 1);
     }
-    
+
     private function getTodayBirthdays()
     {
         $today = Carbon::today();
-        
+
         return Patient::whereMonth('birthdate', $today->month)
                     ->whereDay('birthdate', $today->day)
                     ->get()
@@ -137,17 +142,17 @@ class DashboardController extends Controller
                         return $patient;
                     });
     }
-    
+
     private function getUpcomingBirthdays($days = 30)
     {
         $today = Carbon::today();
         $endDate = Carbon::today()->addDays($days);
-        
+
         // This query gets birthdays in the upcoming days, excluding today
         return Patient::whereRaw("
-            (MONTH(birthdate) > ? OR 
+            (MONTH(birthdate) > ? OR
             (MONTH(birthdate) = ? AND DAY(birthdate) > ?)) AND
-            (MONTH(birthdate) < ? OR 
+            (MONTH(birthdate) < ? OR
             (MONTH(birthdate) = ? AND DAY(birthdate) <= ?))
             ", [
                 $today->month,
@@ -156,7 +161,7 @@ class DashboardController extends Controller
                 $endDate->month, $endDate->day
             ])
             ->orWhereRaw("
-                MONTH(birthdate) = ? AND 
+                MONTH(birthdate) = ? AND
                 DAY(birthdate) > ? AND
                 DAY(birthdate) <= ?
             ", [
@@ -166,37 +171,37 @@ class DashboardController extends Controller
             ->get()
             ->map(function($patient) use ($today) {
                 $patient->age = Carbon::parse($patient->birthdate)->age;
-                
+
                 // Calculate how many days until birthday
                 $nextBirthday = Carbon::parse($patient->birthdate)->setYear($today->year);
                 if ($nextBirthday->isPast()) {
                     $nextBirthday->addYear();
                 }
                 $daysUntil = $today->diffInDays($nextBirthday, false);
-                
+
                 $patient->daysUntil = $daysUntil;
                 $patient->birthdayLabel = "In {$daysUntil} days";
-                
+
                 // Generate initials from first and last name
                 $patient->initials = mb_substr($patient->firstname, 0, 1) . mb_substr($patient->lastname, 0, 1);
-                
+
                 return $patient;
             });
     }
-    
+
     private function getAllBirthdays()
     {
         // Group patients by birth month for the birthday modal
         $patients = Patient::all();
         $birthdays = [];
-        
+
         foreach ($patients as $patient) {
             $birthMonth = Carbon::parse($patient->birthdate)->format('F');
             $birthDay = Carbon::parse($patient->birthdate)->format('j');
             $patient->birthDay = $birthDay;
             $patient->age = Carbon::parse($patient->birthdate)->age;
             $patient->initials = mb_substr($patient->firstname, 0, 1) . mb_substr($patient->lastname, 0, 1);
-            
+
             // Calculate days until birthday
             $today = Carbon::today();
             $nextBirthday = Carbon::parse($patient->birthdate)->setYear($today->year);
@@ -204,14 +209,14 @@ class DashboardController extends Controller
                 $nextBirthday->addYear();
             }
             $patient->daysUntil = $today->diffInDays($nextBirthday, false);
-            
+
             if (!isset($birthdays[$birthMonth])) {
                 $birthdays[$birthMonth] = [];
             }
-            
+
             $birthdays[$birthMonth][] = $patient;
         }
-        
+
         // Sort months chronologically starting from current month
         $currentMonth = Carbon::now()->format('F');
         $months = array_keys($birthdays);
@@ -219,24 +224,24 @@ class DashboardController extends Controller
             $aMonth = Carbon::parse("1 $a")->month;
             $bMonth = Carbon::parse("1 $b")->month;
             $currentMonthNum = Carbon::parse("1 $currentMonth")->month;
-            
+
             // Adjust month values relative to current month
             $aAdjusted = $aMonth < $currentMonthNum ? $aMonth + 12 : $aMonth;
             $bAdjusted = $bMonth < $currentMonthNum ? $bMonth + 12 : $bMonth;
-            
+
             return $aAdjusted - $bAdjusted;
         });
-        
+
         $sortedBirthdays = [];
         foreach ($months as $month) {
             $sortedBirthdays[$month] = $birthdays[$month];
-            
+
             // Sort patients within each month by day of month
             usort($sortedBirthdays[$month], function($a, $b) {
                 return $a->birthDay - $b->birthDay;
             });
         }
-        
+
         return $sortedBirthdays;
     }
 
@@ -244,7 +249,7 @@ class DashboardController extends Controller
     {
         $branches = Branch::all();
         $services = service::all();
-        return view('page.new-coupon', compact('branches', 'services')); 
+        return view('page.new-coupon', compact('branches', 'services'));
 
     }
 
@@ -271,7 +276,7 @@ class DashboardController extends Controller
     {
         // Get all patient tiers for the dropdown
         $tiers = tier::all();
-        
+
         // Pass the tiers to the view
         return view('page.new-patient', compact('tiers'));
     }
@@ -288,7 +293,7 @@ class DashboardController extends Controller
     public function supplier_list()
     {
 
-        $suppliers = supplier::all();   
+        $suppliers = supplier::all();
         return view('page.supplier-list',compact('suppliers'));
 
     }
@@ -303,7 +308,7 @@ class DashboardController extends Controller
         $branches = Branch::all();
         $positions = positionModel::with('department')->get();
         $categories = category_expense::all();
-    
+
         return view('page.new-expenses', compact('branches', 'categories'));
     }
     public function position_list(){
@@ -318,7 +323,7 @@ class DashboardController extends Controller
 
     public function newcategory_expenses()
     {
-    
+
         return view('page.newcategory-expenses');
     }
 
@@ -337,14 +342,14 @@ class DashboardController extends Controller
         $branches = Branch::all();
         return view('page.new-staff', compact('branches', 'positions', 'departments'));
     }
-    
+
 
     public function staff_list()
     {
         $staffs = staff::all();
         $branches = Branch::all();
         return view('page.staff-list', compact('branches', 'staffs'));
-    } 
+    }
     public function new_department()
     {
         $staff = staff::all();
@@ -399,24 +404,24 @@ class DashboardController extends Controller
                         'description' => 'Provides legal counsel and ensures compliance'
                     ]
                 ];
-                
+
                 foreach ($mockDepartments as $department) {
                     Department::create($department);
                 }
             }
         }
-        
+
         $departments = Department::with('head')->get();
         return view('page.department-list', compact('departments'));
     }
     public function new_branch()
     {
         return view('page.new-branch');
-    }  
+    }
     public function branch_list()
     {
         $branchs = Branch::all();
-        
+
         return view('page.branch-list', ['branchs'=> $branchs]);
     }
 
@@ -430,7 +435,7 @@ class DashboardController extends Controller
     {
         // Fetch branch details by branch_code
         $branch = \App\Models\Branch::where('branch_code', $branch_code)->firstOrFail();
-        
+
         return view('page.edit-branch', compact('branch'));
     }
 
@@ -438,10 +443,13 @@ class DashboardController extends Controller
     {
         return view('page.customer-report');
     }
-    public function service_product()
+
+    public function serviceproducts()
     {
-        return view('page.service-product');
+        $products = product::all();
+        return view('service-product', compact('products'));
     }
+
     public function employee_report()
     {
         return view('page.employee-report');
@@ -458,7 +466,7 @@ class DashboardController extends Controller
     }
     public function employee_sales()
     {
-       
+
         $employees = staff::all();
         return view('page.employee-sales', compact('employees'));
     }
@@ -525,8 +533,8 @@ class DashboardController extends Controller
         // Get all branches to display in the form
         $branches = Branch::all();
         $services = service::all();
-        
-        return view('page.new-services', compact('branches')); 
+
+        return view('page.new-services', compact('branches'));
     }
     public function services_list()
     {
@@ -550,7 +558,7 @@ class DashboardController extends Controller
         $patients = patient::all();
         $staffs =   staff::all();
         return view('page.booking', compact('services', 'staffs', 'branches', 'patients'));
-        
+
     }
 
 
