@@ -90,7 +90,7 @@
     position: static !important;
 }
 
-.menu-inner .menu-item .menu-toggle .menu-icon, 
+.menu-inner .menu-item .menu-toggle .menu-icon,
 .menu-inner .menu-item .menu-link .menu-icon {
     flex-shrink: 0 !important;
 }

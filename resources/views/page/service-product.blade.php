@@ -9,7 +9,7 @@
   data-assets-path="../../assets/"
   data-template="vertical-menu-template"
   data-bs-theme="light"
->
+
   <head>
 
     <title>Service/Product Report - Imajica</title>
@@ -201,18 +201,24 @@
   text-align: center;
   padding: 15px;
   border-radius: 10px;
-  border: 1px solid #2b2c2d; /* Changed 'border-color' to 'border' for better clarity */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Corrected property name and increased shadow values */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   background: rgba(254, 255, 255, 0.9);
   min-width: 200px;
   max-width: 300px;
   flex: 1;
 }
 
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+
+}
+
       .metric-card i {
         font-size: 24px;
         margin-bottom: 1rem;
-  
+
       }
 
       .metric-card h5 {
@@ -385,33 +391,30 @@
 
       </div>
 
-
         <div class="metrics">
-          <div class="metric-card">
-            <i class="ti tabler-chart-bar mb-2" style="font-size: 24px; color: #28a745;"></i>
-            <h5>Overall Sales</h5>
-            <h4>₱385,750.00</h4>
-            <p class="text-success">+15.2% from last month</p>
-          </div>
-          <div class="metric-card">
-            <i class="ti tabler-tool mb-2" style="font-size: 24px; color: #007bff;"></i>
-            <h5>Top Service</h5>
-            <h4>Hair Color Treatment</h4>
-            <p class="text-success">₱147,000 total sales</p>
-          </div>
-          <div class="metric-card">
-            <i class="ti tabler-box mb-2" style="font-size: 24px; color: #dc3545;"></i>
-            <h5>Top Product</h5>
-            <h4>Shampoo Premium</h4>
-            <p class="text-success">₱42,500 total sales</p>
-          </div>
-        </div>
+  <div class="metric-card">
+    <i class="ti tabler-cash mb-2" style="font-size: 24px; color: #28a745;"></i>
+    <h5>Daily Sales</h5>
+    <h4>₱385,750.00</h4>
+  </div>
+  <div class="metric-card">
+    <i class="ti tabler-calendar-month mb-2" style="font-size: 24px; color: #007bff;"></i>
+    <h5>Monthly Sales</h5>
+    <h3>Hair Color Treatment</h3>
+  </div>
+  <div class="metric-card">
+    <i class="ti tabler-chart-pie mb-2" style="font-size: 24px; color: #dc3545;"></i>
+    <h5>Overall Sales</h5>
+    <h3>Shampoo Premium</h3>
+  </div>
+</div>
+
 
         <div class="card mt-4">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h3 class="mb-0">All Sales</h3>
-              
+
               <!-- Search and Filters -->
               <div class="d-flex gap-2 align-items-end">
                 <!-- Search Bar -->
@@ -420,10 +423,10 @@
                     <span class="input-group-text">
                       <i class="ti tabler-search"></i>
                     </span>
-                    <input 
-                      type="text" 
-                      class="form-control" 
-                      id="searchInput" 
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="searchInput"
                       placeholder="Search items..."
                     >
                   </div>
@@ -436,8 +439,8 @@
                     <option value="">All</option>
                     <option value="service">Services</option>
                     <option value="product">Products</option>
-                    <option value="price_high">Price (High to Low)</option>
-                    <option value="price_low">Price (Low to High)</option>
+                    <option value="price_high">Price: (High to Low)</option>
+                    <option value="price_low">Price: (Low to High)</option>
                   </select>
                 </div>
 
@@ -632,141 +635,209 @@
 
         </div>
 
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-            // Sample data for each service/product
-            const servicesData = {
-              '1': {
-                id: 'SRV-2024-001',
-                name: 'Hair Color Treatment',
-                category: 'Beauty Services',
-                basePrice: 1500,
-                totalSales: 147000,
-                status: 'Active',
-                metrics: {
-                  totalQuantity: '98 units',
-                  totalDiscounts: '₱14,700.00',
-                  giftCardUsage: '₱5,000.00',
-                  rating: '4.8/5.0',
-                  satisfaction: '96% Positive'
-                },
-                monthlyData: [12500, 15800, 14700, 16900, 15500, 17800],
-                transactions: [
-                  { date: '2024-01-15', customer: 'Maria Santos', amount: '₱1,500', status: 'Completed' },
-                  { date: '2024-01-14', customer: 'John Cruz', amount: '₱3,000', status: 'Completed' },
-                  { date: '2024-01-13', customer: 'Ana Reyes', amount: '₱1,500', status: 'Completed' },
-                  { date: '2024-01-12', customer: 'Mark Tan', amount: '₱1,500', status: 'Completed' }
-                ]
-              },
-              '2': {
-                id: 'SRV-2024-002',
-                name: 'Hair Rebonding',
-                category: 'Beauty Services',
-                basePrice: 2500,
-                totalSales: 187500,
-                status: 'Active',
-                metrics: {
-                  totalQuantity: '75 units',
-                  totalDiscounts: '₱18,750.00',
-                  giftCardUsage: '₱3,500.00',
-                  rating: '4.7/5.0',
-                  satisfaction: '94% Positive'
-                },
-                monthlyData: [15000, 18500, 17000, 19500, 18000, 20000],
-                transactions: [
-                  { date: '2024-01-15', customer: 'Jenny Lee', amount: '₱2,500', status: 'Completed' },
-                  { date: '2024-01-14', customer: 'Mike Zhang', amount: '₱5,000', status: 'Completed' },
-                  { date: '2024-01-13', customer: 'Sarah Kim', amount: '₱2,500', status: 'Completed' },
-                  { date: '2024-01-12', customer: 'David Wang', amount: '₱2,500', status: 'Completed' }
-                ]
-              }
-              // Add more services data here...
-            };
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const filterBy = document.getElementById('filterBy');
+    const filterByDate = document.getElementById('filterByDate');
+    const reportType = document.getElementById('reportType');
+    const tableBody = document.querySelector('#servicesTable tbody');
 
-            // Initialize the modal
-            const serviceModal = new bootstrap.Modal(document.getElementById('serviceDetailsModal'));
+    [searchInput, filterBy, filterByDate, reportType].forEach(el => {
+        el.addEventListener('change', applyFilters);
+    });
+    searchInput.addEventListener('input', applyFilters);
 
-            // Handle view button clicks
-            document.querySelectorAll('.view-details').forEach(button => {
-              button.addEventListener('click', function() {
-                const serviceId = this.dataset.serviceId;
-                const data = servicesData[serviceId] || servicesData['1']; // Default to first item if not found
-                
-                // Update modal content
-                document.querySelector('#serviceDetailsModal small').textContent = `ID: #${data.id}`;
-                document.getElementById('serviceName').textContent = data.name;
-                document.getElementById('serviceType').textContent = data.category;
-                document.getElementById('servicePrice').textContent = `₱${data.basePrice.toLocaleString()}.00`;
+    function applyFilters() {
+        const searchText = searchInput.value.trim().toLowerCase();
+        const filterValue = filterBy.value;
+        const dateFilter = filterByDate.value;
+        const reportValue = reportType.value;
 
-                // Update metrics
-                Object.entries(data.metrics).forEach(([key, value]) => {
-                  const element = document.getElementById(`service${key.charAt(0).toUpperCase() + key.slice(1)}`);
-                  if (element) element.textContent = value;
-                });
+        // Get all original rows - important to ensure we're not filtering already filtered rows
+        let rows = Array.from(tableBody.querySelectorAll('tr'));
 
-                // Update sales trend chart
-                const ctx = document.getElementById('salesTrendChart').getContext('2d');
-                if (window.salesChart) window.salesChart.destroy();
-                
-                window.salesChart = new Chart(ctx, {
-                  type: 'bar',
-                  data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                      label: 'Monthly Sales',
-                      data: data.monthlyData,
-                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                      borderColor: 'rgba(75, 192, 192, 1)',
-                      borderWidth: 1,
-                      borderRadius: 4,
-                      maxBarThickness: 35
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    plugins: {
-                      legend: { display: false },
-                      tooltip: {
-                        callbacks: {
-                          label: function(context) {
-                            return '₱' + context.raw.toLocaleString();
-                          }
-                        }
-                      }
-                    },
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        ticks: {
-                          callback: function(value) {
-                            return '₱' + value.toLocaleString();
-                          }
-                        }
-                      }
-                    }
-                  }
-                });
+        // First, show all rows to reset any previous filtering
+        rows.forEach(row => {
+            row.style.display = '';
+        });
 
-                // Update transactions table
-                const transactionsList = document.getElementById('transactionsList');
-                transactionsList.innerHTML = data.transactions.map(t => `
-                  <tr>
-                    <td>${t.date}</td>
-                    <td>${t.customer}</td>
-                    <td>${t.amount}</td>
-                    <td><span class="badge bg-success">${t.status}</span></td>
-                  </tr>
-                `).join('');
-
-                serviceModal.show();
-              });
+        // === SEARCH FILTER ===
+        if (searchText) {
+            rows = rows.filter(row => {
+                const serviceName = row.cells[0].textContent.toLowerCase();
+                const description = row.cells[3].textContent.toLowerCase();
+                return serviceName.includes(searchText) || description.includes(searchText);
             });
-          });
-        </script>
+        }
 
-      
-      </div>      
-    </div>
+        // === REPORT TYPE FILTER ===
+        if (reportValue && reportValue !== 'overall') {
+            switch (reportValue) {
+                case 'services':
+                    rows = rows.filter(row => row.cells[7].textContent.toLowerCase().includes('service'));
+                    break;
+                case 'products':
+                    rows = rows.filter(row => row.cells[7].textContent.toLowerCase().includes('product'));
+                    break;
+                case 'discounts':
+                    rows = rows.filter(row => row.innerHTML.toLowerCase().includes('discount'));
+                    break;
+                case 'giftcards':
+                    rows = rows.filter(row => row.innerHTML.toLowerCase().includes('gift card'));
+                    break;
+                default:
+                    // No filtering for 'overall' or empty value
+                    break;
+            }
+        }
+
+       // === FILTER BY TYPE / PRICE ===
+        if (filterValue && filterValue !== '') {
+            switch (filterValue) {
+                case 'service':
+                    rows = rows.filter(row => row.cells[7].textContent.toLowerCase().includes('service'));
+                    break;
+                case 'product':
+                    rows = rows.filter(row => row.cells[7].textContent.toLowerCase().includes('product'));
+                    break;
+                case 'price_high':
+                case 'price_low':
+                    rows = sortRowsByPrice(rows, filterValue);
+                    break;
+                default:
+                    // 'All' selected or empty value – do nothing
+                    break;
+            }
+        }
+
+        function sortRowsByPrice(rows, sortOrder) {
+            return rows.sort((a, b) => {
+                const priceA = parseFloat(a.cells[6].textContent.replace(/[^0-9.-]/g, ''));
+                const priceB = parseFloat(b.cells[6].textContent.replace(/[^0-9.-]/g, ''));
+                return sortOrder === 'price_high' ? priceB - priceA : priceA - priceB;
+            });
+        }
+
+       if (filterValue && filterValue !== '') {
+    switch (filterValue) {
+        case 'service':
+            rows = rows.filter(row =>
+                row.cells[7].textContent.toLowerCase().includes('service')
+            );
+            break;
+        case 'product':
+            rows = rows.filter(row =>
+                row.cells[7].textContent.toLowerCase().includes('product')
+            );
+            break;
+        case 'price_low':
+            rows.sort((a, b) => {
+                const priceA = parseFloat(a.cells[6].textContent.replace(/[^\d.]/g, '')) || 0;
+                const priceB = parseFloat(b.cells[6].textContent.replace(/[^\d.]/g, '')) || 0;
+                return priceA - priceB;
+            });
+            // Re-render rows after sorting
+            const tbody = document.querySelector('#servicesTable tbody');
+            tbody.innerHTML = '';
+            rows.forEach(row => tbody.appendChild(row));
+            break;
+        case 'price_high':
+            rows.sort((a, b) => {
+                const priceA = parseFloat(a.cells[6].textContent.replace(/[^\d.]/g, '')) || 0;
+                const priceB = parseFloat(b.cells[6].textContent.replace(/[^\d.]/g, '')) || 0;
+                return priceB - priceA;
+            });
+            // Re-render rows after sorting
+            const tbodyHigh = document.querySelector('#servicesTable tbody');
+            tbodyHigh.innerHTML = '';
+            rows.forEach(row => tbodyHigh.appendChild(row));
+            break;
+        default:
+            // Do nothing for 'All'
+            break;
+    }
+}
+
+
+
+
+
+
+        // === FILTER BY DATE RANGE ===
+        if (dateFilter && dateFilter !== '') {
+            const now = new Date();
+            rows = rows.filter(row => {
+                const dateText = row.cells[1].textContent.trim();
+                const rowDate = new Date(dateText);
+                if (isNaN(rowDate)) return false;
+
+                switch (dateFilter) {
+                    case 'today':
+                        return isSameDate(rowDate, now);
+                    case 'yesterday':
+                        const yesterday = new Date(now);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        return isSameDate(rowDate, yesterday);
+                    case 'last_week':
+                        const weekAgo = new Date(now);
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        return rowDate >= weekAgo && rowDate <= now;
+                    case 'last_month':
+                        const monthAgo = new Date(now);
+                        monthAgo.setDate(monthAgo.getDate() - 30);
+                        return rowDate >= monthAgo && rowDate <= now;
+                    case 'this_month':
+                        return rowDate.getMonth() === now.getMonth() &&
+                               rowDate.getFullYear() === now.getFullYear();
+                    case 'last_3months':
+                        const threeMonthsAgo = new Date(now);
+                        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                        return rowDate >= threeMonthsAgo && rowDate <= now;
+                    default:
+                        return true; // Show all for empty value or 'all'
+                }
+            });
+        }
+
+        // === PRICE SORTING ===
+        if (filterValue === 'price_high' || filterValue === 'price_low') {
+            rows.sort((a, b) => {
+                const priceA = parsePrice(a.cells[6].textContent);
+                const priceB = parsePrice(b.cells[6].textContent);
+                return filterValue === 'price_high' ? priceB - priceA : priceA - priceB;
+            });
+        }
+
+        // === UPDATE TABLE ===
+        // First hide all rows
+        Array.from(tableBody.querySelectorAll('tr')).forEach(row => {
+            row.style.display = 'none';
+        });
+
+        // Then show only the filtered rows
+        rows.forEach(row => {
+            row.style.display = '';
+        });
+    }
+
+    function parsePrice(priceStr) {
+        if (!priceStr) return 0;
+        return parseFloat(priceStr.replace(/[₱,]/g, '')) || 0;
+    }
+
+    function isSameDate(d1, d2) {
+        return d1.getFullYear() === d2.getFullYear() &&
+               d1.getMonth() === d2.getMonth() &&
+               d1.getDate() === d2.getDate();
+    }
+
+    // Initial load
+    applyFilters();
+});
+</script>
+
+
 
     <script>
       document
@@ -779,11 +850,11 @@
       document.getElementById('searchInput').addEventListener('keyup', function() {
         let searchValue = this.value.toLowerCase();
         let tableRows = document.querySelectorAll('tbody tr');
-        
+
         tableRows.forEach(row => {
           let name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
           let email = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
-          
+
           if (name.includes(searchValue) || email.includes(searchValue)) {
             row.style.display = '';
           } else {
@@ -803,11 +874,11 @@
           document.querySelectorAll('[data-filter]').forEach(button => {
               button.addEventListener('click', function(e) {
                   if (this.getAttribute('data-filter') === 'custom') return;
-                  
+
                   const filterType = this.getAttribute('data-filter');
                   const now = new Date();
                   let startDate, endDate;
-                  
+
                   switch(filterType) {
                       case 'tomorrow':
                           startDate = endDate = new Date(now.setDate(now.getDate() + 1));
@@ -835,7 +906,7 @@
                           endDate = new Date(now.getFullYear(), now.getMonth(), 0);
                           break;
                   }
-                  
+
                   updateFilterText(startDate, endDate);
               });
           });
@@ -853,13 +924,13 @@
                   day: 'numeric',
                   year: 'numeric'
               });
-              
-              const filterText = startDate.getTime() === endDate.getTime() ? 
-                  formatDate(startDate) : 
-                  `${formatDate(startDate)} - ${formatDate(endDate)}`;
-                  
-              document.getElementById('selectedDateText').textContent = `: ${filterText}`;
-              
+
+              const filterText = startDate.getTime() === endDate.getTime() ?
+                  formatDate(startDate) :
+                  ${formatDate(startDate)} - ${formatDate(endDate)};
+
+              document.getElementById('selectedDateText').textContent = : ${filterText};
+
               // Hide dropdown after selection
               document.querySelector('.dropdown-menu').classList.remove('show');
               document.querySelector('.custom-range-inputs').classList.add('d-none');
@@ -869,7 +940,7 @@
       // Customer modal functionality
       document.addEventListener('DOMContentLoaded', function() {
         const customerModal = new bootstrap.Modal(document.getElementById('customerModal'));
-        
+
         // Sample customer data with specific details
         const customerDetails = {
           'John Smith': {
@@ -984,7 +1055,7 @@
           if (window.customerChart) {
             window.customerChart.destroy();
           }
-          
+
           window.customerChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -1004,7 +1075,7 @@
                 legend: { position: 'top' },
                 title: {
                   display: true,
-                  text: `Booking History - ${data.name}`
+                  text: Booking History - ${data.name}
                 }
               },
               scales: {
@@ -1033,7 +1104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     button.addEventListener('click', function() {
       const data = this.dataset;
       const modal = new bootstrap.Modal(document.getElementById('customerModal'));
-      
+
       if (data.name === "John Smith") {
         // Special data for John Smith
         const johnSmithData = {
@@ -1086,7 +1157,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('customerName').textContent = data.name;
         document.getElementById('customerEmail').textContent = data.email;
         document.getElementById('customerPhone').textContent = data.phone;
-        document.querySelector('.card-header small').textContent = `ID: #${johnSmithData.customerId}`;
+        document.querySelector('.card-header small').textContent = ID: #${johnSmithData.customerId};
         document.querySelector('.info-item:nth-child(4) p').textContent = johnSmithData.memberSince;
         document.querySelector('.info-item:nth-child(5) p').textContent = johnSmithData.totalBookings;
 
@@ -1102,9 +1173,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <td><span class="badge bg-success">${booking.status}</span></td>
             <td>₱${booking.amount.toLocaleString()}</td>
             <td>
-              <canvas class="booking-sparkline" 
-                      width="100" 
-                      height="30" 
+              <canvas class="booking-sparkline"
+                      width="100"
+                      height="30"
                       data-values="${generateSparklineData()}"
               ></canvas>
             </td>
@@ -1145,7 +1216,7 @@ function initializeSparklines() {
   document.querySelectorAll('.booking-sparkline').forEach(canvas => {
     const ctx = canvas.getContext('2d');
     const values = JSON.parse(canvas.dataset.values);
-    
+
     new Chart(ctx, {
       type: 'line',
       data: {
@@ -1203,7 +1274,7 @@ function initializeMiniCharts() {
   document.querySelectorAll('.booking-trend').forEach(canvas => {
     const ctx = canvas.getContext('2d');
     const values = JSON.parse(canvas.dataset.values);
-    
+
     new Chart(ctx, {
       type: 'line',
       data: {
@@ -1265,7 +1336,7 @@ document.querySelectorAll('.dropdown-item[data-export]').forEach(button => {
         const table = document.querySelector('.table');
         const rows = Array.from(table.querySelectorAll('tbody tr'));
         const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent);
-        
+
         // Get data excluding the last column (action buttons)
         const data = rows.map(row => {
             const cells = Array.from(row.querySelectorAll('td'));
@@ -1283,11 +1354,11 @@ document.querySelectorAll('.dropdown-item[data-export]').forEach(button => {
 function exportToExcel(headers, data) {
     const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
     const workbook = XLSX.utils.book_new();
-    
+
     // Adjust column widths
     const colWidths = headers.map(h => ({wch: Math.max(h.length, 15)}));
     worksheet['!cols'] = colWidths;
-    
+
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Service_Product_Report');
     XLSX.writeFile(workbook, 'service-product-report.xlsx');
 }
@@ -1299,22 +1370,22 @@ function downloadRow(element, format) {
     const cells = Array.from(row.cells);
     const headers = Array.from(row.parentElement.parentElement.querySelector('thead tr').cells)
                         .map(th => th.textContent.trim());
-    
+
     // Get data excluding the last column (action button)
     const data = cells.slice(0, -1).map(cell => cell.textContent.trim());
 
     // Create workbook
     const worksheet = XLSX.utils.aoa_to_sheet([headers.slice(0, -1), data]);
     const workbook = XLSX.utils.book_new();
-    
+
     // Set column widths
     const colWidths = headers.map(h => ({wch: Math.max(h.length, 15)}));
     worksheet['!cols'] = colWidths;
-    
+
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Service_Product_Details');
-    
+
     // Generate filename from service/product name
-    const filename = `${data[0].toLowerCase().replace(/\s+/g, '-')}-details.xlsx`;
+    const filename = ${data[0].toLowerCase().replace(/\s+/g, '-')}-details.xlsx;
     XLSX.writeFile(workbook, filename);
 }
 </script>
@@ -1355,7 +1426,7 @@ function downloadRow(element, format) {
               showRow = rowDate >= last30 && rowDate <= today;
               break;
             case 'thisMonth':
-              showRow = rowDate.getMonth() === today.getMonth() && 
+              showRow = rowDate.getMonth() === today.getMonth() &&
                        rowDate.getFullYear() === today.getFullYear();
               break;
             case 'lastMonth':
@@ -1375,7 +1446,7 @@ function downloadRow(element, format) {
 
         // Update dropdown button text
         const filterText = document.getElementById('dateFilter').options[document.getElementById('dateFilter').selectedIndex].text;
-        document.getElementById('dateFilterBtn').textContent = `Filter: ${filterText}`;
+        document.getElementById('dateFilterBtn').textContent = Filter: ${filterText};
       }
 
       // Initialize filter on page load
@@ -1402,7 +1473,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const filterDateValue = filterByDate.value;
         const filterByValue = filterBy.value;
         const reportTypeValue = reportType.value;
-        
+
         rows.forEach(row => {
             const rowData = Array.from(row.cells).map(cell => cell.textContent.toLowerCase());
             const dateStr = row.cells[1].textContent;
@@ -1410,7 +1481,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const typeCell = row.cells[7].textContent.toLowerCase(); // Loyalty Points column contains Service/Product type
             const costValue = parseFloat(row.cells[6].textContent.replace('₱', '').replace(',', '')); // Service Cost column
             const description = row.cells[3].textContent.toLowerCase(); // Description column
-            
+
             let showRow = true;
 
             // Apply search filter
@@ -1465,7 +1536,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Preset date filters
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
-                    
+
                     switch(filterDateValue) {
                         case 'today':
                             showRow = date.toDateString() === today.toDateString();
@@ -1486,7 +1557,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             showRow = date >= lastMonth;
                             break;
                         case 'this_month':
-                            showRow = date.getMonth() === today.getMonth() && 
+                            showRow = date.getMonth() === today.getMonth() &&
                                     date.getFullYear() === today.getFullYear();
                             break;
                         case 'last_3months':
