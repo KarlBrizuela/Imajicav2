@@ -384,12 +384,12 @@
         <div class="metrics">
             <div class="metric-card">
                 <i class="ti tabler-cash mb-2" style="font-size: 24px; color: #28a745;"></i>
-                <h5>Total Sales</h5>
+                <h5>Monthly Sales</h5>
                 <h4 id="totalSalesMetric">₱{{ number_format($totalSales, 0) }}</h4>
             </div>
             <div class="metric-card">
                 <i class="ti tabler-trophy mb-2" style="font-size: 24px; color: #007bff;"></i>
-                <h5>Top Employee Sales</h5>
+                <h5>Total Sales</h5>
                 <h4 id="topEmployeeSalesMetric">₱{{ number_format($topEmployeeSales, 0) }}</h4>
             </div>
             <div class="metric-card">
@@ -427,9 +427,9 @@
                     <select class="form-select form-select-sm" id="sortBy">
                         <option value="">Default</option>
                         <option value="totalSales">Total Sales (High to Low)</option>
-                        <option value="serviceSales">Service Sales (High to Low)</option>
-                        <option value="productSales">Product Sales (High to Low)</option>
-                        <option value="clients">Number of Clients (High to Low)</option>
+                        <option value="quantity">Quantity (High to Low)</option>
+                        <option value="productService">Product/Service</option>
+                        <option value="client">Client</option>
                         <option value="name">Employee Name (A to Z)</option>
                     </select>
                 </div>
@@ -454,30 +454,29 @@
             <table class="table table-striped" id="employeeReport">
                 <thead>
                     <tr class="table-light">
-                        <th>Rank</th>
+                        <th>No.</th>
                         <th>Employee Name</th>
                         <th>Date</th>
-                        <th>No. of Service Sales</th>
-                        <th>No. of Product Sales</th>
-                        <th>No. of Clients</th>
-                        <th>Total Service Sales</th>
-                        <th>Total Product Sales</th>
+                        <th>Products/Services</th>
+                        <th>Service/Product Name</th>
+                        <th>Quantity</th>
+                        <th>Client</th>
                         <th>Total Sales</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($employees as $index => $employee)
-                    <tr data-employee-id="{{ $employee->id }}">
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $employee->name }}</td>
-                        <td>{{ \Carbon\Carbon::parse($employee->last_booking)->format('Y-m-d') }}</td>
-                        <td><span class="badge bg-label-info">{{ $employee->service_count }}</span></td>
-                        <td><span class="badge bg-label-warning">{{ $employee->product_count }}</span></td>
-                        <td><span class="badge bg-label-success">{{ $employee->client_count }}</span></td>
-                        <td>₱{{ number_format($employee->service_total, 0) }}</td>
-                        <td>₱{{ number_format($employee->product_total, 0) }}</td>
-                        <td>₱{{ number_format($employee->total_sales, 0) }}</td>
+                    @php $rowNumber = 1; @endphp
+                    @foreach($employeeReports as $report)
+                    <tr data-employee-id="{{ $report->id }}">
+                        <td>{{ $rowNumber++ }}</td>
+                        <td>{{ $report->employeeName }}</td>
+                        <td>{{ \Carbon\Carbon::parse($report->date)->format('Y-m-d') }}</td>
+                        <td><span class="badge bg-label-info">{{ $report->product_service }}</span></td>
+                        <td>{{ $report->product_serviceName }}</td>
+                        <td><span class="badge bg-label-warning">{{ $report->quantity }}</span></td>
+                        <td><span class="badge bg-label-success">{{ $report->client }}</span></td>
+                        <td>₱{{ number_format($report->totalSales, 0) }}</td>
                         <td class="text-center">
                             <div class="d-flex gap-2 justify-content-center">
                                 <button class="btn btn-sm btn-primary" onclick="downloadRow(this, 'excel')">
@@ -491,8 +490,7 @@
             </table>
         </div>
     </div>
-</div>
-    </div>
+  </div>
 </div>
 
 <div class="modal fade" id="employeeViewModal" tabindex="-1" aria-hidden="true">
@@ -594,7 +592,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const employeeId = this.dataset.employeeId;
             const employeeName = this.cells[1].textContent;
-            const totalSales = this.cells[8].textContent;
+            const totalSales = this.cells[7].textContent;
             
             // Update modal with employee data
             document.getElementById('employeeId').textContent = 'ID: #EMP' + employeeId;
@@ -664,8 +662,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Existing functionality for search, sort and filter
-    
+    // Search functionality
     searchInput.addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase();
         
@@ -681,30 +678,36 @@ document.addEventListener('DOMContentLoaded', function() {
         updateRanks();
     });
     
+    // Date filter functionality
     dateFilter.addEventListener('change', function() {
         filterRows();
         updateRanks();
     });
     
+    // Sort functionality
     sortBy.addEventListener('change', function() {
         sortRows();
         updateRanks();
     });
     
     function filterRows() {
-        const selectedFilter = dateFilter.value;
-        if (!selectedFilter) {
-            // Show all rows if no filter selected
-            Array.from(rows).forEach(row => row.style.display = '');
-            return;
-        }
-        
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        Array.from(rows).forEach(row => {
-            const dateCell = row.cells[2]; // Date is in the third column
-            const rowDate = new Date(dateCell.textContent);
+    const selectedFilter = dateFilter.value;
+    if (!selectedFilter) {
+        // Show all rows if no filter selected
+        Array.from(rows).forEach(row => row.style.display = '');
+        return;
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    Array.from(rows).forEach(row => {
+        const dateCell = row.cells[2]; // Date is in the third column
+        // Ensure proper date parsing by handling the format consistently
+        const dateParts = dateCell.textContent.split('-');
+        if (dateParts.length === 3) {
+            // Ensure YYYY-MM-DD format
+            const rowDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
             rowDate.setHours(0, 0, 0, 0);
             let showRow = true;
             
@@ -741,8 +744,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             row.style.display = showRow ? '' : 'none';
-        });
-    }
+        }
+    });
+}
     
     function sortRows() {
         const selectedSort = sortBy.value;
@@ -755,21 +759,21 @@ document.addEventListener('DOMContentLoaded', function() {
             
             switch(selectedSort) {
                 case 'totalSales':
-                    aVal = parseCurrency(a.cells[8].textContent);
-                    bVal = parseCurrency(b.cells[8].textContent);
-                    return bVal - aVal;
-                case 'serviceSales':
-                    aVal = parseCurrency(a.cells[6].textContent);
-                    bVal = parseCurrency(b.cells[6].textContent);
-                    return bVal - aVal;
-                case 'productSales':
                     aVal = parseCurrency(a.cells[7].textContent);
                     bVal = parseCurrency(b.cells[7].textContent);
                     return bVal - aVal;
-                case 'clients':
+                case 'quantity':
                     aVal = parseInt(a.cells[5].querySelector('.badge').textContent);
                     bVal = parseInt(b.cells[5].querySelector('.badge').textContent);
                     return bVal - aVal;
+                case 'productService':
+                    aVal = a.cells[3].querySelector('.badge').textContent.toLowerCase();
+                    bVal = b.cells[3].querySelector('.badge').textContent.toLowerCase();
+                    return aVal.localeCompare(bVal);
+                case 'client':
+                    aVal = a.cells[6].querySelector('.badge').textContent.toLowerCase();
+                    bVal = b.cells[6].querySelector('.badge').textContent.toLowerCase();
+                    return aVal.localeCompare(bVal);
                 case 'name':
                     aVal = a.cells[1].textContent.toLowerCase();
                     bVal = b.cells[1].textContent.toLowerCase();
@@ -810,15 +814,14 @@ function downloadRow(button, format) {
     
     // Create data object from row
     const data = {
-        Rank: row.cells[0].textContent,
+        'No.': row.cells[0].textContent,
         'Employee Name': row.cells[1].textContent,
-        Date: row.cells[2].textContent,
-        'Service Sales Count': row.cells[3].textContent.trim(),
-        'Product Sales Count': row.cells[4].textContent.trim(),
-        'Client Count': row.cells[5].textContent.trim(),
-        'Total Service Sales': row.cells[6].textContent,
-        'Total Product Sales': row.cells[7].textContent,
-        'Total Sales': row.cells[8].textContent
+        'Date': row.cells[2].textContent,
+        'Product/Service': row.cells[3].textContent.trim(),
+        'Product/Service Name': row.cells[4].textContent,
+        'Quantity': row.cells[5].textContent.trim(),
+        'Client': row.cells[6].textContent.trim(),
+        'Total Sales': row.cells[7].textContent
     };
 
     // Create worksheet
@@ -953,19 +956,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function filterRows() {
-        const selectedFilter = dateFilter.value;
-        if (!selectedFilter) {
-            // Show all rows if no filter selected
-            Array.from(rows).forEach(row => row.style.display = '');
-            return;
-        }
-        
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        Array.from(rows).forEach(row => {
-            const dateCell = row.cells[2]; // Date is in the third column
-            const rowDate = new Date(dateCell.textContent);
+    const selectedFilter = dateFilter.value;
+    if (!selectedFilter) {
+        // Show all rows if no filter selected
+        Array.from(rows).forEach(row => row.style.display = '');
+        return;
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    Array.from(rows).forEach(row => {
+        const dateCell = row.cells[2]; // Date is in the third column
+        // Parse the date properly
+        const dateParts = dateCell.textContent.split('-');
+        if (dateParts.length === 3) {
+            const rowDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
             rowDate.setHours(0, 0, 0, 0);
             let showRow = true;
             
@@ -1002,8 +1008,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             row.style.display = showRow ? '' : 'none';
-        });
-    }
+        }
+    });
+}
     
     function sortRows() {
         const selectedSort = sortBy.value;
@@ -1210,8 +1217,6 @@ document.addEventListener('DOMContentLoaded', function() {
             XLSX.writeFile(wb, 'employee-report.csv');
         }
     });
-
-});
 </script>
 
 <script>
@@ -1235,57 +1240,61 @@ document.addEventListener('DOMContentLoaded', function() {
         
         rows.forEach(row => {
             const dateCell = row.cells[2]; // Get the date cell
-            const rowDate = new Date(dateCell.textContent);
-            rowDate.setHours(0, 0, 0, 0);
-            
-            let showRow = true;
-            
-            switch(selectedValue) {
-                case 'today':
-                    showRow = rowDate.getTime() === today.getTime();
-                    if (showRow) dateCell.textContent = 'Today';
-                    break;
-                case 'yesterday':
-                    const yesterday = new Date(today);
-                    yesterday.setDate(yesterday.getDate() - 1);
-                    showRow = rowDate.getTime() === yesterday.getTime();
-                    if (showRow) dateCell.textContent = 'Yesterday';
-                    break;
-                case 'last7days':
-                    const last7Days = new Date(today);
-                    last7Days.setDate(last7Days.getDate() - 7);
-                    showRow = rowDate >= last7Days;
-                    if (showRow) dateCell.textContent = 'Last 7 Days';
-                    break;
-                case 'last30days':
-                    const last30Days = new Date(today);
-                    last30Days.setDate(last30Days.getDate() - 30);
-                    showRow = rowDate >= last30Days;
-                    if (showRow) dateCell.textContent = 'Last 30 Days';
-                    break;
-                case 'thisMonth':
-                    showRow = rowDate.getMonth() === today.getMonth() && 
-                             rowDate.getFullYear() === today.getFullYear();
-                    if (showRow) dateCell.textContent = 'This Month';
-                    break;
-                case 'lastMonth':
-                    const lastMonth = new Date(today);
-                    lastMonth.setMonth(lastMonth.getMonth() - 1);
-                    showRow = rowDate.getMonth() === lastMonth.getMonth() && 
-                             rowDate.getFullYear() === lastMonth.getFullYear();
-                    if (showRow) dateCell.textContent = 'Last Month';
-                    break;
-                case 'thisYear':
-                    showRow = rowDate.getFullYear() === today.getFullYear();
-                    if (showRow) dateCell.textContent = 'This Year';
-                    break;
-                default:
-                    // Reset to original date format
-                    dateCell.textContent = rowDate.toISOString().split('T')[0];
-                    showRow = true;
+            // Fix the date parsing
+            const dateParts = dateCell.textContent.split('-');
+            if (dateParts.length === 3) {
+                const rowDate = new Date(dateParts[0], parseInt(dateParts[1]), parseInt(dateParts[2]));
+                rowDate.setHours(0, 0, 0, 0);
+                
+                let showRow = true;
+                
+                switch(selectedValue) {
+                    case 'today':
+                        showRow = rowDate.getTime() === today.getTime();
+                        if (showRow) dateCell.textContent = 'Today';
+                        break;
+                    case 'yesterday':
+                        const yesterday = new Date(today);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        showRow = rowDate.getTime() === yesterday.getTime();
+                        if (showRow) dateCell.textContent = 'Yesterday';
+                        break;
+                    case 'last7days':
+                        const last7Days = new Date(today);
+                        last7Days.setDate(last7Days.getDate() - 7);
+                        showRow = rowDate >= last7Days;
+                        if (showRow) dateCell.textContent = 'Last 7 Days';
+                        break;
+                    case 'last30days':
+                        const last30Days = new Date(today);
+                        last30Days.setDate(last30Days.getDate() - 30);
+                        showRow = rowDate >= last30Days;
+                        if (showRow) dateCell.textContent = 'Last 30 Days';
+                        break;
+                    case 'thisMonth':
+                        showRow = rowDate.getMonth() === today.getMonth() && 
+                                 rowDate.getFullYear() === today.getFullYear();
+                        if (showRow) dateCell.textContent = 'This Month';
+                        break;
+                    case 'lastMonth':
+                        const lastMonth = new Date(today);
+                        lastMonth.setMonth(lastMonth.getMonth() - 1);
+                        showRow = rowDate.getMonth() === lastMonth.getMonth() && 
+                                 rowDate.getFullYear() === lastMonth.getFullYear();
+                        if (showRow) dateCell.textContent = 'Last Month';
+                        break;
+                    case 'thisYear':
+                        showRow = rowDate.getFullYear() === today.getFullYear();
+                        if (showRow) dateCell.textContent = 'This Year';
+                        break;
+                    default:
+                        // Reset to original date format
+                        dateCell.textContent = `${rowDate.getFullYear()}-${(rowDate.getMonth() + 1).toString().padStart(2, '0')}-${rowDate.getDate().toString().padStart(2, '0')}`;
+                        showRow = true;
+                }
+                
+                row.style.display = showRow ? '' : 'none';
             }
-            
-            row.style.display = showRow ? '' : 'none';
         });
 
         // Update ranks for visible rows
