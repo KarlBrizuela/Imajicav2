@@ -374,7 +374,12 @@
                           <span class="detail-label"><i class="ti tabler-calendar text-muted me-2"></i>Birthdate:</span>
                           <span class="detail-value">{{ $patient->birthdate ?? 'N/A' }}</span>
                         </div>
+                        <div class="detail-item">
+                          <span class="detail-label"><i class="ti tabler-calendar text-muted me-2"></i>Points:</span>
+                          <span class="detail-value">{{ $patient->points ?? 'N/A' }}</span>
+                        </div>
                       </div>
+                      
 
                       <!-- Current Medications -->
                       @if($patient->current_medications)

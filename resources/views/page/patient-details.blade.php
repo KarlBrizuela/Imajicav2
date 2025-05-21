@@ -16,7 +16,8 @@
     <title>Patient Details - Imajica Booking System</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/public/logo/logo.png" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('logo/logo.png') }}" />
+
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/" />
@@ -838,7 +839,7 @@
                                                                 </tr>
                                                                 @endforeach
                                                             @else
-                                                                <tr>
+                                                                
                                                                 <tr>
                                                                     <td colspan="5" class="text-center">No attachments found</td>
                                                                 </tr>
@@ -2199,13 +2200,13 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
-<script src="../../assets/vendor/libs/datatables-buttons/datatables-buttons.js"></script>
-<script src="../../assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
 <script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
  <script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
  <script src="{{ asset('vendor/libs/%40form-validation/popular.js') }}"></script>
-    <script src="{{ asset('vendor/libs/%40form-validation/bootstrap5.js') }}"></script>
-    <script src="{{ asset('vendor/libs/%40form-validation/auto-focus.js') }}"></script>
+<script src="{{ asset('vendor/libs/%40form-validation/bootstrap5.js') }}"></script>
+<script src="{{ asset('vendor/libs/%40form-validation/auto-focus.js') }}"></script>
 
 
 
