@@ -10,7 +10,7 @@ use Carbon\Carbon;
 
 class ServiceProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Get all orders with their items ordered by date
         $orders = Order::with('orderItems')
