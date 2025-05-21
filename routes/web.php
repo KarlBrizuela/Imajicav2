@@ -27,6 +27,10 @@ use App\Http\Controllers\EmployeeReportController;
 use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\wasteController;
+
+use App\Http\Controllers\ServiceProductController;
+
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -337,3 +341,7 @@ Route::get('/package/edit/{id}', [App\Http\Controllers\PackageController::class,
 Route::put('/package/update', [App\Http\Controllers\PackageController::class, 'update'])->name('package.update');
 Route::delete('/package/delete', [App\Http\Controllers\PackageController::class, 'delete'])->name('package.delete');
 Route::get('/package/all', [App\Http\Controllers\PackageController::class, 'index'])->name('get.packages');
+
+
+Route::get('/service-product', [ServiceProductController::class, 'index'])->name('service.product.report');
+Route::get('/services/{id}/details', [ServiceProductController::class, 'getServiceDetails']);
