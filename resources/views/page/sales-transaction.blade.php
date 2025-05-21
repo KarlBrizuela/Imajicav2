@@ -5,9 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <title>Imajica Booking System</title>
     <!-- Favicon -->
+
+    <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;ampdisplay=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
+
     <link rel="icon" type="image/x-icon" href="{{ asset('logo/logo.png') }}" />
     <!-- Fonts and other CSS includes -->
     <!-- ... (keep your existing CSS includes) ... -->
+     <link rel="stylesheet"  href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
+    <link  rel="stylesheet"  href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
+
+     <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />>
+
+   <link rel="stylesheet" href="{{ asset('vendor/libs/apex-charts/apex-charts.css') }}" />
+     <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
+       <link  rel="stylesheet"  href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
+  <link rel="stylesheet" href="{{ asset('vendor/fonts/flag-icons.css') }}" />
 </head>
 
 <body>
@@ -108,7 +130,16 @@
     </div>
 
     <!-- Core JS and other scripts -->
-    <!-- ... (keep your existing JS includes) ... -->
+    <!-- ... (keep your existing JS includes) ... -->  <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('vendor/libs/%40algolia/autocomplete-js.js') }}"></script>
+    <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
+    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
+    <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
+    <script src="{{ asset('vendor/js/menu.js') }}"></script>
 
     <script>
         $(document).ready(function () {

@@ -345,3 +345,6 @@ Route::get('/package/all', [App\Http\Controllers\PackageController::class, 'inde
 
 Route::get('/service-product', [ServiceProductController::class, 'index'])->name('service.product.report');
 Route::get('/services/{id}/details', [ServiceProductController::class, 'getServiceDetails']);
+
+Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionController::class, 'index']);
+Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
