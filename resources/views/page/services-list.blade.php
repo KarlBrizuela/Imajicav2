@@ -24,7 +24,7 @@
   <link rel="canonical" href="Imajica Booking System" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
+  <link rel="icon" type="image/x-icon" href="{{ asset('logo/logo.png') }}" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com/" />
@@ -146,7 +146,7 @@
 
       <!-- Keep rest of existing content -->
       <div class="layout-page">
-   
+
         <!-- Replace the existing table section with this -->
         <div class="container-xxl flex-grow-1 container-p-y">
           <div class="card">
@@ -170,9 +170,9 @@
                     <th>Branch Name</th>
                     <th>Description</th>
                     <th class="text-center">Duration</th>
-            
-                 
-                    
+
+
+
                     <th class="text-center">Actions</th>
                   </tr>
                 </thead>
@@ -183,15 +183,15 @@
                     <td>{{ $service->branch ? $service->branch->branch_name : $service->branch_code }}</td>
                     <td>{{ $service->description }}</td>
 
-                 
+
                     <td>₱{{ number_format($service->service_cost, 2) }}</td>
-                   
+
                     <td class="text-center">
                       <div class="d-flex gap-2 justify-content-center">
                         <a href="{{ route('service.edit', $service->service_id) }}" class="btn btn-sm btn-info">
                           <i class="ti tabler-edit me-1"></i> Edit
                         </a>
-                        <button class="btn btn-sm btn-danger delete-service" 
+                        <button class="btn btn-sm btn-danger delete-service"
                           data-service-id="{{ $service->service_id }}"
                           data-service-name="{{ $service->service_name }}">
                           <i class="ti tabler-trash me-1"></i> Delete
@@ -297,7 +297,7 @@
                           <div class="avatar-edit text-center">
                             <input
                               type="file"
-                              id="edit_service_image" 
+                              id="edit_service_image"
                               name="service_image"
                               accept=".png, .jpg, .jpeg"
                               class="d-none"
@@ -437,13 +437,13 @@
             let durationText = "";
             if (hours > 0) durationText += hours + "h ";
             if (minutes > 0) durationText += minutes + "m";
-            
+
             // Format cost
             const cost = parseFloat(this.dataset.serviceCost).toLocaleString('en-PH', {
               style: 'currency',
               currency: 'PHP'
             });
-            
+
             // Update modal content
             document.getElementById("modalServiceName").textContent = this.dataset.serviceName;
             document.getElementById("modalBranch").textContent = this.dataset.serviceBranch;
@@ -460,7 +460,7 @@
         modalImage.src = "{{ asset('assets/img/services/default-service.png') }}";
 // fallback image
       }
-         
+
 
             // Show modal
             $('#serviceModal').modal('show');

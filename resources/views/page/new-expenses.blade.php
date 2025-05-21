@@ -110,14 +110,14 @@
         <!-- Menu -->
         @include('components.sidebar')
 
-        
+
         <!-- / Menu -->
 
         <!-- Layout container -->
         <div class="layout-page">
           <!-- Navbar -->
 
-          
+
           <!-- / Navbar -->
 
           <!-- Content wrapper -->
@@ -290,7 +290,7 @@
                             </div>
                           </form>
                           <!-- Form End -->
-                          
+
                           <br />
                         </div>
                       </div>
@@ -384,7 +384,7 @@
 
     <script src="../../assets/vendor/libs/dropzone/dropzone.js"></script>
     <script src="../../assets/js/forms-file-upload.js"></script>
-    
+
     <!-- Custom script for flatpickr initialization -->
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -436,7 +436,7 @@
         // Handle form submission
         $('form').on('submit', function(e) {
             e.preventDefault();
-            
+
             // Form validation
             let isValid = true;
             const requiredFields = [
@@ -526,7 +526,7 @@
             @foreach($errors->all() as $error)
                 errorMessage += "- {{ $error }}<br>";
             @endforeach
-            
+
             Swal.fire({
                 ...swalConfig,
                 icon: 'error',

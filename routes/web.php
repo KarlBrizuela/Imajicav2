@@ -190,7 +190,7 @@ Route::get('/patients/{id}/view', [PatientController::class, 'view'])->name('pat
 Route::get('/patients/{id}/view', [PatientController::class, 'show'])->name('patient.view')->middleware(['auth', 'admin']);
 Route::get('/patients', [PatientController::class, 'index'])->name('patient.list')->middleware(['auth', 'admin']);
 
-Route::get('/service-product', [DashboardController::class, 'service_product'])->name('page.service-product')->middleware(['auth', 'admin']);
+Route::get('/service-product', [DashboardController::class, 'service-product'])->name('page.service-product')->middleware(['auth', 'admin']);
 
 
 
@@ -340,4 +340,6 @@ Route::delete('/package/delete', [App\Http\Controllers\PackageController::class,
 Route::get('/package/all', [App\Http\Controllers\PackageController::class, 'index'])->name('get.packages');
 
 
-// Route::get('/service-product', [App\Http\Controllers\ServiceProductController::class, 'index']);
+Route::get('/service-product', [ServiceProductController::class, 'index'])->name('service.product.report');
+Route::get('/services/{id}/details', [ServiceProductController::class, 'getServiceDetails']);
+
