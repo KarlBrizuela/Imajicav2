@@ -75,7 +75,7 @@ Route::get('/new-loyalty', [DashboardController::class, 'new_loyalty'])->name('p
 
 Route::get('/sales-transaction', [DashboardController::class, 'sales_transaction'])->name('page.sales-transaction')->middleware(['auth', 'admin']);
 
-Route::get('/employee-sales', [DashboardController::class, 'employee_sales'])->name('page.employee-sales')->middleware(['auth', 'admin']);
+Route::get('/employee-sales', [App\Http\Controllers\EmployeeController::class, 'index'])->name('page.employee-sales')->middleware(['auth', 'admin']);
 
 
 Route::get('/commision-employee', [DashboardController::class, 'commision_employee'])->name('page.commsion-employee')->middleware(['auth', 'admin']);
