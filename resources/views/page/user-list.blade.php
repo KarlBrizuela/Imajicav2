@@ -19,7 +19,7 @@
     <link rel="canonical" href="Imajica Booking System" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset(path:'public/logo/logo.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/" />
@@ -27,22 +27,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;ampdisplay=swap" rel="stylesheet" />
 
     <!-- Update assets to use asset() helper -->
-    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/iconify-icons.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/core.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-waves.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/pickr/pickr-themes.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/select2/select2.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/flatpickr/flatpickr.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/form-validation.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/select2/select2.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/%40form-validation/form-validation.css') }}" />
 
     <!-- Helpers -->
-    <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
+    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
 </head>
 
@@ -212,26 +212,26 @@
     </div>
 
     <!-- Keep existing scripts but update paths to use asset() -->
-    <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/node-waves/node-waves.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/%40algolia/autocomplete-js.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/pickr/pickr.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/hammer/hammer.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/i18n/i18n.js') }}"></script>
-    <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/cleave-zen/cleave-zen.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
+    <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('vendor/libs/%40algolia/autocomplete-js.js') }}"></script>
+    <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
+    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
+    <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
+    <script src="{{ asset('vendor/js/menu.js') }}"></script>
+    <script src="{{ asset('vendor/libs/cleave-zen/cleave-zen.js') }}"></script>
+    <script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
     <script src="{{ asset('assets/js/form-layouts.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/moment/moment.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/%40form-validation/popular.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/%40form-validation/bootstrap5.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/%40form-validation/auto-focus.js') }}"></script>
+    <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+    <script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
+    <script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
+    <script src="{{ asset('vendor/libs/%40form-validation/popular.js') }}"></script>
+    <script src="{{ asset('vendor/libs/%40form-validation/bootstrap5.js') }}"></script>
+    <script src="{{ asset('vendor/libs/%40form-validation/auto-focus.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         @if(count($users) > 0)
