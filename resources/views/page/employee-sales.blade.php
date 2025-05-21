@@ -45,32 +45,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;ampdisplay=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
+    <link rel="stylesheet" href="../../assets/vendor/fonts/iconify-icons.css" />
 
     <!-- Core CSS -->
-    <!-- build:css assets/vendor/css/theme.css  -->
-    
-     <link rel="stylesheet"  href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
-    <link  rel="stylesheet"  href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/node-waves/node-waves.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/pickr/pickr-themes.css" />
+    <link rel="stylesheet" href="../../assets/vendor/css/core.css" />
+    <link rel="stylesheet" href="../../assets/css/demo.css" />
 
-    
     <!-- Vendors CSS -->
-    
-    <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    
-    <!-- endbuild -->
+    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
-     <link  rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}"  />
+    <link rel="stylesheet" href="../../assets/vendor/libs/flatpickr/flatpickr.css" />
 
     <!-- Page CSS -->
-    
-   <link rel="stylesheet" href="{{ asset('vendor/css/pages/app-invoice.css') }}" />
+    <link rel="stylesheet" href="../../assets/vendor/css/pages/app-invoice.css" />
 
-   
     <!-- Helpers -->
-     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
+    <script src="../../assets/vendor/js/helpers.js"></script>
    
     <!-- Config -->
     <script src="../../assets/js/config.js"></script>
@@ -239,80 +231,44 @@
     </div>
     <!-- / Layout page -->
   </div>
-    
-      
-      <!-- Overlay -->
-      <div class="layout-overlay layout-menu-toggle"></div>
-    
-    
-      <!-- Drag Target Area To SlideIn Menu On Small Screens -->
-      <div class="drag-target"></div>
-    
-  </div>
-  <!-- / Layout wrapper -->
 
-    
-      
-    
+  <!-- Overlay -->
+  <div class="layout-overlay layout-menu-toggle"></div>
 
-    <!-- Core JS -->
-    <!-- build:js assets/vendor/js/theme.js -->
-    
-    
-      <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
-    <script src="{{ asset('vendor/libs/%40algolia/autocomplete-js.js') }}"></script>
-    <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
-    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
-    <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
-    <script src="{{ asset('vendor/js/menu.js') }}"></script>
-    
-    <!-- endbuild -->
+  <!-- Drag Target Area To SlideIn Menu On Small Screens -->
+  <div class="drag-target"></div>
 
-    <!-- Vendors JS -->
-    < <script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
-  <script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
-  <script src="{{ asset('vendor/libs/cleave-zen/cleave-zen.js') }}"></script>
+  <!-- Core JS -->
+  <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="../../assets/vendor/libs/popper/popper.js"></script>
+  <script src="../../assets/vendor/js/bootstrap.js"></script>
+  <script src="../../assets/vendor/libs/node-waves/node-waves.js"></script>
+  <script src="../../assets/vendor/libs/%40algolia/autocomplete-js.js"></script>
+  <script src="../../assets/vendor/libs/pickr/pickr.js"></script>
+  <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+  <script src="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="../../assets/vendor/libs/hammer/hammer.js"></script>
+  <script src="../../assets/vendor/libs/i18n/i18n.js"></script>
+  <script src="../../assets/vendor/js/menu.js"></script>
 
-    <!-- Main JS -->
-    
-      <script src="../../assets/js/main.js"></script>
-    
+  <!-- Vendors JS -->
+  <script src="../../assets/vendor/libs/moment/moment.js"></script>
+  <script src="../../assets/vendor/libs/flatpickr/flatpickr.js"></script>
+  <script src="../../assets/vendor/libs/cleave-zen/cleave-zen.js"></script>
 
-    <!-- Page JS -->
-  <script src="../../assets/js/employee-sales.js"></script>
- 
+  <!-- Main JS -->
+  <script src="../../assets/js/main.js"></script>
 
+  <!-- DataTables Buttons JS -->
+  <script src="../../assets/vendor/libs/datatables-buttons/datatables-buttons.js"></script>
+  <script src="../../assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.js"></script>
+  <script src="../../assets/vendor/libs/jszip/jszip.js"></script>
+  <script src="../../assets/vendor/libs/pdfmake/pdfmake.js"></script>
+  <script src="../../assets/vendor/libs/datatables-buttons/buttons.html5.js"></script>
+  <script src="../../assets/vendor/libs/datatables-buttons/buttons.print.js"></script>
 
-
-
-
-
-<link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
-  <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
-  <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}" />
-     <link  rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}"  />
-    <!-- Row Group CSS -->
-    <link rel="stylesheet"  href="{{ asset('vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
-
-<!-- DataTables Buttons CSS -->
-<link rel="stylesheet" href="{{ asset('vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}" />
-
-
-<!-- DataTables Buttons JS -->
-<script src="{{ asset('vendor/libs/datatables-buttons/datatables-buttons.js') }}"></script>
-<script src="{{ asset('vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.js') }}"></script>
-<script src="{{ asset('vendor/libs/jszip/jszip.js') }}"></script>
-<script src="{{ asset('vendor/libs/pdfmake/pdfmake.js') }}"></script>
-<script src="{{ asset('vendor/libs/datatables-buttons/buttons.html5.js') }}"></script>
-<script src="{{ asset('asset/vendor/libs/datatables-buttons/buttons.print.js') }}"></script>
-
-
-<script>
-   $(document).ready(function() {
+  <script>
+    $(document).ready(function() {
       var table = $('#employeeSales').DataTable({
         dom: '<"row"<"col-md-6 d-flex align-items-center justify-content-start gap-2"lB><"col-md-6"f>><"row"<"col-sm-12"t>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
         buttons: [
@@ -352,44 +308,32 @@
         language: {
           search: "",
           searchPlaceholder: "Search..."
-      }
+        }
+      });
+
+      // Add custom styling for the export button
+      $('.dt-buttons .btn').css({
+        'background-color': '#1b392f',
+        'color': '#ffffff',
+        'border-color': '#1b392f'
+      });
+
+      // Optional: Add hover effect
+      $('.dt-buttons .btn').hover(
+        function() {
+          $(this).css({
+            'background-color': '#2a5749',
+            'border-color': '#2a5749'
+          });
+        },
+        function() {
+          $(this).css({
+            'background-color': '#1b392f',
+            'border-color': '#1b392f'
+          });
+        }
+      );
     });
-
-    // Add custom styling for the export button
-    $('.dt-buttons .btn').css({
-      'background-color': '#1b392f',
-      'color': '#ffffff',
-      'border-color': '#1b392f'
-    });
-
-    // Optional: Add hover effect
-    $('.dt-buttons .btn').hover(
-      function() {
-        $(this).css({
-          'background-color': '#2a5749',
-          'border-color': '#2a5749'
-        });
-      },
-      function() {
-        $(this).css({
-          'background-color': '#1b392f',
-          'border-color': '#1b392f'
-        });
-      }
-    );
-  });
-</script>
-
-
-  </body>
-
-
-
-
-<!-- Mirrored from demos.pixinvent.com/vuexy-html-admin-template/html/vertical-menu-template/app-invoice-preview.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 22 Feb 2025 08:26:33 GMT -->
+  </script>
+</body>
 </html>
-
-  <!-- beautify ignore:end -->
-
-
-
