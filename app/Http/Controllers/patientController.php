@@ -650,6 +650,8 @@ class patientController extends Controller
         }
     }
 
+
+    
     public function updateAttachment(Request $request, $id)
     {
         try {

@@ -27,13 +27,14 @@
      <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
 
     <!-- Core CSS -->
-     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
     <link rel="stylesheet"  href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
 
     <!-- Helpers -->
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="../../assets/js/config.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -810,6 +811,7 @@
                                                                 <th>Type</th>
                                                                 <th>Date Uploaded</th>
                                                                 <th>Size</th>
+                                                                <th>Description</th>
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
@@ -821,6 +823,7 @@
                                                                     <td>{{ $attachment->file_type }}</td>
                                                                     <td>{{ $attachment->created_at ? $attachment->created_at->format('Y-m-d H:i:s') : 'N/A' }}</td>
                                                                     <td>{{ $attachment->getFileSizeForHumans() }}</td>
+                                                                    <td>{{ $attachment->description}}</td>
                                                                     <td>
                                                                         <div class="d-inline-block">
                                                                             <a href="{{ route('patient.attachment.download', $attachment->id) }}" 
@@ -1766,70 +1769,154 @@ $(document).ready(function() {
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    
-    const attachmentsTable = document.getElementById('attachments-table');
-    if (attachmentsTable) {
-        new DataTable(attachmentsTable, {
-            responsive: true,
-            searching: true,
-            lengthChange: true,
-            info: true,
-            language: {
-                paginate: {
-                    next: '<i class="ti tabler-chevron-right"></i>',
-                    previous: '<i class="ti tabler-chevron-left"></i>'
-                }
-            }
-        });
+const attachmentsTable = document.getElementById('attachments-table');
+if (attachmentsTable) {
+    // Destroy any existing DataTable instance
+    if ($.fn.DataTable.isDataTable(attachmentsTable)) {
+        $(attachmentsTable).DataTable().destroy();
     }
+    
+    // Initialize new DataTable
+    $(attachmentsTable).DataTable({
+        responsive: true,
+        searching: true,
+        lengthChange: true,
+        info: true,
+        language: {
+            paginate: {
+                next: '<i class="ti tabler-chevron-right"></i>',
+                previous: '<i class="ti tabler-chevron-left"></i>'
+            }
+        }
+    });
+}
+
+
+   document.addEventListener('DOMContentLoaded', function() {
     const prescriptionsTable = document.getElementById('prescriptions-table');
+    
     if (prescriptionsTable) {
         new DataTable(prescriptionsTable, {
             responsive: true,
             searching: true,
             lengthChange: true,
             info: true,
+            columns: [
+                { 
+                    data: 'prescription_number',
+                    name: 'prescription_number',
+                    title: 'Prescription #'
+                },
+                { 
+                    data: 'date',
+                    name: 'date',
+                    title: 'Date'
+                },
+                { 
+                    data: 'doctor',
+                    name: 'doctor',
+                    title: 'Doctor'
+                },
+                { 
+                    data: 'status',
+                    name: 'status',
+                    title: 'Status'
+                },
+                { 
+                    data: 'actions',
+                    name: 'actions',
+                    title: 'Actions',
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row) {
+                        return `
+                            <div class="d-inline-block">
+                                <button class="btn btn-sm btn-info edit-prescription" 
+                                    data-id="${row.id}">
+                                    <i class="ti tabler-edit me-1"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-record" 
+                                    data-id="${row.id}">
+                                    <i class="ti tabler-trash me-1"></i> Delete
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            ],
             language: {
                 paginate: {
                     next: '<i class="ti tabler-chevron-right"></i>',
                     previous: '<i class="ti tabler-chevron-left"></i>'
                 }
+            },
+            initComplete: function() {
+                // Map existing HTML data to DataTables
+                this.api().rows().every(function() {
+                    const row = this.node();
+                    const cells = row.cells;
+                    
+                    this.data({
+                        prescription_number: cells[0].textContent,
+                        date: cells[1].textContent,
+                        doctor: cells[2].textContent,
+                        status: cells[3].textContent,
+                        id: $(cells[4]).find('.edit-prescription').data('id')
+                    });
+                });
             }
         });
     }
+});
 
-    const healthConcernsTable = document.getElementById('health-concerns-table');
-    if (healthConcernsTable) {
-        new DataTable(healthConcernsTable, {
-            responsive: true,
-            searching: true,
-            lengthChange: true,
-            info: true,
-            language: {
-                paginate: {
-                    next: '<i class="ti tabler-chevron-right"></i>',
-                    previous: '<i class="ti tabler-chevron-left"></i>'
-                }
+   const healthConcernsTable = document.getElementById('health-concerns-table');
+if (healthConcernsTable) {
+    new DataTable(healthConcernsTable, {
+        responsive: true,
+        searching: true,
+        lengthChange: true,
+        info: true,
+        columns: [
+            { data: 'concern' },     // Column 0: Concern
+            { data: 'date_reported' },// Column 1: Date Reported
+            { data: 'status' },       // Column 2: Status
+            { data: 'actions', orderable: false, searchable: false } // Column 3: Actions
+        ],
+        language: {
+            paginate: {
+                next: '<i class="ti tabler-chevron-right"></i>',
+                previous: '<i class="ti tabler-chevron-left"></i>'
             }
-        });
-    }
+        }
+    });
+}
     
-    const medicationsTable = document.getElementById('medications-table');
-    if (medicationsTable) {
-        new DataTable(medicationsTable, {
-            responsive: true,
-            searching: true,
-            lengthChange: true,
-            info: true,
-            language: {
-                paginate: {
-                    next: '<i class="ti tabler-chevron-right"></i>',
-                    previous: '<i class="ti tabler-chevron-left"></i>'
-                }
+   const medicationsTable = document.getElementById('medications-table');
+if (medicationsTable) {
+    new DataTable(medicationsTable, {
+        responsive: true,
+        searching: true,
+        lengthChange: true,
+        info: true,
+        columnDefs: [
+            {targets:'medication_name'},
+             {targets:'dosage'},
+              {targets:'frequency'},
+               {targets:'start_date'},
+                {targets:'end_date'},
+            { targets: 'actions', orderable: false, searchable: false } // Actions column is now the 7th column (index 6)
+            // You can add more column definitions here if needed
+            // For example, to make the new Category column not searchable:
+            // { targets: [5], searchable: false }
+        ],
+        language: {
+            paginate: {
+                next: '<i class="ti tabler-chevron-right"></i>',
+                previous: '<i class="ti tabler-chevron-left"></i>'
             }
-        });
-    }
+        }
+    });
+}
      
     const allergiesTable = document.getElementById('allergies-table');
     if (allergiesTable) {
@@ -1838,6 +1925,13 @@ document.addEventListener('DOMContentLoaded', function() {
             searching: true,
             lengthChange: true,
             info: true,
+            DataAl:[
+            {targetData:'allergen'},
+            {targetData:'reaction'},
+            {targetData:'severity'},
+            {targetData:'date-identified'},
+             { targetData: 'actions', orderable: false, searchable: false }
+            ],
             language: {
                 paginate: {
                     next: '<i class="ti tabler-chevron-right"></i>',
@@ -1854,59 +1948,60 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 
  const attachmentForm = document.getElementById('attachment-form');
-    if (attachmentForm) {
-        attachmentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const submitBtn = this.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Uploading...';
+if (attachmentForm) {
+    attachmentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Uploading...';
 
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Upload';
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Upload';
+            
+            if (data.success) {
+                // Close modal immediately 
+                bootstrap.Modal.getInstance(document.getElementById('addAttachmentModal')).hide();
                 
-                if (data.success) {
-                    // Close modal immediately 
-                    bootstrap.Modal.getInstance(document.getElementById('addAttachmentModal')).hide();
-                    
-                    // Show quick success message
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: data.message || 'File uploaded successfully',
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message || 'Failed to upload file'
-                    });
-                }
-            })
-            .catch(error => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Upload';
+                // Show quick success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: data.message || 'File uploaded successfully',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    // Force a full page reload to see the new data
+                    location.reload();
+                });
+            } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'An error occurred while uploading the file'
+                    text: data.message || 'Failed to upload file'
                 });
+            }
+        })
+        .catch(error => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Upload';
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while uploading the file'
             });
         });
-    }
+    });
+}
 </script>
 
 <script>
@@ -2199,9 +2294,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
 <script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
  <script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
  <script src="{{ asset('vendor/libs/%40form-validation/popular.js') }}"></script>
