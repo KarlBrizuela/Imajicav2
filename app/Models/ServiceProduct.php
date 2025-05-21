@@ -1,31 +1,28 @@
 <?php
 
+// app/Models/ServiceProduct.php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ServiceProduct extends Model
 {
-    use HasFactory;
-
-    protected $table = 'service_products';
-    protected $fillable = [
-        'service_name',
-        'date',
-        'branch_name',
-        'description',
-        'service_category',
-        'service_cost',
-        'type'
-        ];
-
-    // Optional: If you don't have standard Laravel timestamps (created_at, updated_at)
-    public $timestamps = false;
-
-    // Helper function to format the cost
-    public function getFormattedCostAttribute()
+    // Define relationship to Patient (Customer)
+    public function patient()
     {
-        return '₱' . number_format($this->service_cost, 2);
+        return $this->belongsTo(Patient::class, 'patient_id'); // Adjust foreign key if needed
+    }
+
+    // Define relationship to Staff
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id'); // Adjust foreign key if needed
+    }
+
+    // Define relationship to Branch
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id'); // Adjust foreign key if needed
     }
 }

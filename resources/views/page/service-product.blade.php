@@ -415,8 +415,10 @@
                   <label class="form-label text-muted small mb-1">Filter by</label>
                   <select class="form-select form-select-sm" id="filterBy">
                     <option value="">All</option>
-                    <option value="service">Services</option>
-                    <option value="product">Products</option>
+                    <option value="ordered">Ordered</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="out_for_delivery">Out for Delivery</option>
+                    <option value="ready_to_pickup">Ready to Pickup</option>
                     <option value="price_high">Price: (High to Low)</option>
                     <option value="price_low">Price: (Low to High)</option>
                   </select>
@@ -435,18 +437,6 @@
                     <option value="last_3months">Last 3 months</option>
                   </select>
                 </div>
-
-                <!-- Report Type -->
-                <div class="d-flex flex-column" style="width: 180px;">
-                  <label class="form-label text-muted small mb-1">Report Type</label>
-                  <select class="form-select form-select-sm" id="reportType">
-                    <option value="overall">Overall Sales</option>
-                    <option value="services">Services Only</option>
-                    <option value="products">Products Only</option>
-                    <option value="discounts">Discounts Report</option>
-                    <option value="giftcards">Gift Card Usage</option>
-                  </select>
-                </div>
               </div>
             </div>
 
@@ -458,8 +448,7 @@
                     <th>Services Name</th>
                     <th>Date</th>
                     <th>Branch Name</th>
-                    <th>Description</th>
-                    <th>Service Category</th>
+                    <th>Payment Category</th>
                     <th>Service Cost</th>
                     <th>Type</th>
                     <th class="text-center">Actions</th>
@@ -467,23 +456,19 @@
                 </thead>
                 <tbody>
                   @foreach($services as $service)
-<tr>
-    <td>{{ $service->service_name }}</td>
-    <td>{{ $service->date }}</td>
-    <td>{{ $service->branch_name }}</td>
-    <td>{{ $service->description }}</td>
-    <td>{{ $service->service_category }}</td>
-    <td>{{ $service->formatted_cost }}</td> <!-- Using your accessor -->
-    <td>
-        <span class="badge {{ $service->type === 'service' ? 'bg-label-warning' : 'bg-label-success' }}">
-            {{ ucfirst($service->type) }}
-        </span>
+                  <tr>
+                    <td>{{ $service->service_name }}</td>
+                    <td>{{ $service->date }}</td>
+                    <td>{{ $service->branch_name }}</td>
+                    <td>{{ $service->service_category }}</td>
+                    <td>{{ $service->formatted_cost }}</td> <!-- Using your accessor -->
+                    <td>
+                      <span class="badge {{ $service->type === 'service' ? 'bg-label-warning' : 'bg-label-success' }}">
+                        {{ ucfirst($service->type) }}
+                      </span>
                     </td>
                     <td class="text-center">
                       <div class="d-flex gap-2 justify-content-center">
-                        <button class="btn btn-sm btn-info view-details" data-service-id="{{ $service->id }}">
-                          <i class="ti tabler-eye me-1"></i> View
-                        </button>
                         <button class="btn btn-sm btn-primary" onclick="downloadRow(this, 'excel')">
                           <i class="ti tabler-download me-1"></i> Export
                         </button>
@@ -496,301 +481,182 @@
             </div>
           </div>
         </div>
-
-        <!-- Service/Product Details Modal -->
-        <div class="modal fade" id="serviceDetailsModal" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content shadow-lg rounded-3">
-              <div class="modal-header" style="background-color: #134013;">
-                <h4 class="modal-title" style="color: white;">Service/Product Details</h4>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body p-4">
-                <div class="row g-4">
-                  <!-- Service/Product Info Card -->
-                  <div class="col-md-6 col-lg-4">
-                    <div class="card border-0 shadow-sm h-100">
-                      <div class="card-header" style="background-color: #f0f0f0;">
-                        <div class="d-flex align-items-center justify-content-between">
-                          <h6 class="card-title mb-0" style="color: black;">Basic Information</h6>
-                          <small style="color: rgba(7, 5, 5, 0.8);">ID: <span id="serviceId"></span></small>
-                        </div>
-                      </div>
-                      <div class="card-body d-flex flex-column" style="gap: 0.5rem; padding-top: 0.75rem; padding-bottom: 0.75rem;">
-                        <div style="margin-bottom: 0.35rem;"><strong>Name:</strong> <span id="serviceName"></span></div>
-                        <div style="margin-bottom: 0.35rem;"><strong>Category:</strong> <span id="serviceType"></span></div>
-                        <div style="margin-bottom: 0.35rem;"><strong>Base Price:</strong> <span class="text-success" id="servicePrice"></span></div>
-                        <div style="margin-bottom: 0.35rem;"><strong>Total Sales:</strong> <span class="text-primary" id="serviceTotalSales"></span></div>
-                        <div><strong>Status:</strong> <span class="badge" id="serviceStatus"></span></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Performance Metrics -->
-                  <div class="col-md-6 col-lg-8">
-                    <div class="card border-0 shadow-sm h-100">
-                      <div class="card-header" style="background-color: #f0f0f0;">
-                        <h6 class="card-title mb-0" style="color: black;">Performance Metrics</h6>
-                      </div>
-                      <div class="card-body">
-                        <table class="table table-striped">
-                          <tbody>
-                            <tr><td><strong>Total Quantity Sold:</strong></td><td id="serviceQuantity"></td></tr>
-                            <tr><td><strong>Total Discounts Given:</strong></td><td id="serviceDiscounts"></td></tr>
-                            <tr><td><strong>Gift Card Usage:</strong></td><td id="serviceGiftCards"></td></tr>
-                            <tr><td><strong>Average Rating:</strong></td><td id="serviceRating"></td></tr>
-                            <tr><td><strong>Customer Satisfaction:</strong></td><td id="serviceSatisfaction"></td></tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Monthly Sales Trend -->
-                  <div class="col-md-6">
-                    <div class="card border-0 shadow-sm">
-                      <div class="card-header" style="background-color: #f0f0f0;">
-                        <h6 class="card-title mb-0" style="color: black;">Monthly Sales Trend</h6>
-                      </div>
-                      <div class="card-body p-3" style="position: relative;">
-                        <div style="height: 250px;">
-                          <canvas id="salesTrendChart"></canvas>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Recent Transactions -->
-                  <div class="col-md-6">
-                    <div class="card border-0 shadow-sm">
-                      <div class="card-header" style="background-color: #f0f0f0;">
-                        <h6 class="card-title mb-0" style="color: black;">Recent Transactions</h6>
-                      </div>
-                      <div class="card-body" style="height: 300px; overflow-y: auto;">
-                        <div class="table-responsive h-100">
-                          <table class="table table-sm">
-                            <thead>
-                              <tr>
-                                <th>Date</th>
-                                <th>Customer</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                              </tr>
-                            </thead>
-                            <tbody id="transactionsList">
-                              <!-- Transactions will be populated via JavaScript -->
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer bg-light" style="padding: 1rem 1.5rem;">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
+      </div>
+    </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('searchInput');
-    const filterBy = document.getElementById('filterBy');
-    const filterByDate = document.getElementById('filterByDate');
-    const reportType = document.getElementById('reportType');
-    const tableBody = document.querySelector('#servicesTable tbody');
+  document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('searchInput');
+  const filterBy = document.getElementById('filterBy');
+  const filterByDate = document.getElementById('filterByDate');
+  const tableBody = document.querySelector('#servicesTable tbody');
+  const tableRows = Array.from(tableBody.querySelectorAll('tr'));
 
-    [searchInput, filterBy, filterByDate, reportType].forEach(el => {
-        el.addEventListener('change', applyFilters);
-    });
-    searchInput.addEventListener('input', applyFilters);
+  // Apply filters on input/change
+  [searchInput, filterBy, filterByDate].forEach(el => {
+      el.addEventListener('change', applyFilters);
+  });
+  searchInput.addEventListener('input', applyFilters);
 
-    function applyFilters() {
-        const searchText = searchInput.value.trim().toLowerCase();
-        const filterValue = filterBy.value;
-        const dateFilter = filterByDate.value;
-        const reportValue = reportType.value;
+  function applyFilters() {
+      const searchText = searchInput.value.trim().toLowerCase();
+      const filterValue = filterBy.value;
+      const dateFilter = filterByDate.value;
 
-        let rows = Array.from(tableBody.querySelectorAll('tr'));
+      // First, show all rows to reset any previous filtering
+      tableRows.forEach(row => {
+          row.style.display = '';
+      });
 
-        // First, show all rows to reset any previous filtering
-        rows.forEach(row => {
-            row.style.display = '';
-        });
+      // === SEARCH FILTER ===
+      if (searchText) {
+          tableRows.forEach(row => {
+              const serviceName = row.cells[0].textContent.toLowerCase();
+              const branchName = row.cells[2].textContent.toLowerCase();
+              const paymentCategory = row.cells[3].textContent.toLowerCase();
 
-        // === SEARCH FILTER ===
-        if (searchText) {
-            rows = rows.filter(row => {
-                const serviceName = row.cells[0].textContent.toLowerCase();
-                const description = row.cells[3].textContent.toLowerCase();
-                return serviceName.includes(searchText) || description.includes(searchText);
-            });
-        }
+              if (!serviceName.includes(searchText) &&
+                  !branchName.includes(searchText) &&
+                  !paymentCategory.includes(searchText)) {
+                  row.style.display = 'none';
+              }
+          });
+      }
 
-        // === REPORT TYPE FILTER ===
-        if (reportValue && reportValue !== 'overall') {
-            switch (reportValue) {
-                case 'services':
-                    rows = rows.filter(row => row.cells[6].textContent.toLowerCase().includes('service'));
-                    break;
-                case 'products':
-                    rows = rows.filter(row => row.cells[6].textContent.toLowerCase().includes('product'));
-                    break;
-                case 'discounts':
-                    rows = rows.filter(row => row.innerHTML.toLowerCase().includes('discount'));
-                    break;
-                case 'giftcards':
-                    rows = rows.filter(row => row.innerHTML.toLowerCase().includes('gift card'));
-                    break;
-                default:
-                    break;
-            }
-        }
+      // === FILTER BY TYPE / PRICE ===
+      if (filterValue) {
+          if (['ordered', 'delivered', 'out_for_delivery', 'ready_to_pickup'].includes(filterValue)) {
+              tableRows.forEach(row => {
+                  // Check the status in the 6th column (index 5) - the 'Type' column
+                  // The status is displayed as a badge in this column
+                  const statusBadge = row.cells[5].querySelector('.badge');
+                  const status = statusBadge ? statusBadge.textContent.trim().toLowerCase() : '';
 
-        // === FILTER BY TYPE / PRICE ===
-        if (filterValue && filterValue !== '') {
-            switch (filterValue) {
-                case 'service':
-                    rows = rows.filter(row => row.cells[6].textContent.toLowerCase().includes('service'));
-                    break;
-                case 'product':
-                    rows = rows.filter(row => row.cells[6].textContent.toLowerCase().includes('product'));
-                    break;
-                case 'price_high':
-                case 'price_low':
-                    rows = sortRowsByPrice(rows, filterValue);
-                    break;
-                default:
-                    break;
-            }
-        }
+                  // Get the value we're filtering for and normalize it
+                  const filterText = filterValue.replace(/_/g, ' ').toLowerCase();
 
-        function sortRowsByPrice(rows, sortOrder) {
-            return rows.sort((a, b) => {
-                const priceA = parseFloat(a.cells[5].textContent.replace(/[^0-9.-]/g, ''));
-                const priceB = parseFloat(b.cells[5].textContent.replace(/[^0-9.-]/g, ''));
-                return sortOrder === 'price_high' ? priceB - priceA : priceA - priceB;
-            });
-        }
+                  // If the status doesn't match our filter, hide the row
+                  if (status !== filterText) {
+                      row.style.display = 'none';
+                  }
+              });
+          } else if (filterValue === 'price_high' || filterValue === 'price_low') {
+              // Get visible rows first
+              const visibleRows = tableRows.filter(row => row.style.display !== 'none');
 
-        // === FILTER BY DATE RANGE ===
-        if (dateFilter && dateFilter !== '') {
-            const now = new Date();
-            rows = rows.filter(row => {
-                const dateText = row.cells[1].textContent.trim();
-                const rowDate = new Date(dateText);
-                if (isNaN(rowDate)) return false;
+              // Convert to array of objects with row and price for easier sorting
+              const rowsWithPrices = visibleRows.map(row => {
+                  const priceText = row.cells[4].textContent;
+                  // Extract numeric value from price (removing currency symbol and commas)
+                  const price = parseFloat(priceText.replace(/[₱,]/g, ''));
+                  return { row, price };
+              });
 
-                switch (dateFilter) {
-                    case 'today':
-                        return isSameDate(rowDate, now);
-                    case 'yesterday':
-                        const yesterday = new Date(now);
-                        yesterday.setDate(yesterday.getDate() - 1);
-                        return isSameDate(rowDate, yesterday);
-                    case 'last_week':
-                        const weekAgo = new Date(now);
-                        weekAgo.setDate(weekAgo.getDate() - 7);
-                        return rowDate >= weekAgo && rowDate <= now;
-                    case 'last_month':
-                        const monthAgo = new Date(now);
-                        monthAgo.setDate(monthAgo.getDate() - 30);
-                        return rowDate >= monthAgo && rowDate <= now;
-                    case 'this_month':
-                        return rowDate.getMonth() === now.getMonth() &&
-                               rowDate.getFullYear() === now.getFullYear();
-                    case 'last_3months':
-                        const threeMonthsAgo = new Date(now);
-                        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-                        return rowDate >= threeMonthsAgo && rowDate <= now;
-                    default:
-                        return true;
-                }
-            });
-        }
+              // Sort by price
+              rowsWithPrices.sort((a, b) => {
+                  return filterValue === 'price_high' ? b.price - a.price : a.price - b.price;
+              });
 
-        // === UPDATE TABLE ===
-        // First hide all rows
-        Array.from(tableBody.querySelectorAll('tr')).forEach(row => {
-            row.style.display = 'none';
-        });
+              // Hide all visible rows first
+              visibleRows.forEach(row => {
+                  row.style.display = 'none';
+              });
 
-        // Then show only the filtered rows
-        rows.forEach(row => {
-            row.style.display = '';
-        });
-    }
+              // Then show them in the sorted order
+              rowsWithPrices.forEach(item => {
+                  // Get the parent tbody
+                  const tbody = item.row.parentNode;
+                  // Reorder in the DOM
+                  tbody.appendChild(item.row);
+                  // Make visible
+                  item.row.style.display = '';
+              });
+          }
+      }
 
-    function parsePrice(priceStr) {
-        if (!priceStr) return 0;
-        return parseFloat(priceStr.replace(/[₱,]/g, '')) || 0;
-    }
+      // === FILTER BY DATE RANGE ===
+      if (dateFilter) {
+          const now = new Date();
+          const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    function isSameDate(d1, d2) {
-        return d1.getFullYear() === d2.getFullYear() &&
-               d1.getMonth() === d2.getMonth() &&
-               d1.getDate() === d2.getDate();
-    }
+          tableRows.forEach(row => {
+              if (row.style.display === 'none') return;
 
-    // Initial load
-    applyFilters();
+              const dateText = row.cells[1].textContent.trim();
+              const rowDate = new Date(dateText);
 
-    // View details button click handler
-    document.querySelectorAll('.view-details').forEach(button => {
-        button.addEventListener('click', function() {
-            const serviceId = this.dataset.serviceId;
-            fetchServiceDetails(serviceId);
-        });
-    });
+              if (isNaN(rowDate.getTime())) {
+                  // Skip this row if date is invalid
+                  return;
+              }
 
-    function fetchServiceDetails(serviceId) {
-        // This would be replaced with an actual API call in a real application
-        console.log('Fetching details for service ID:', serviceId);
+              // Reset time part for proper date comparison
+              const rowDateOnly = new Date(rowDate.getFullYear(), rowDate.getMonth(), rowDate.getDate());
 
-        // For demo purposes, we'll just show the modal with empty data
-        const modal = new bootstrap.Modal(document.getElementById('serviceDetailsModal'));
-        modal.show();
-    }
+              switch (dateFilter) {
+                  case 'today':
+                      if (rowDateOnly.getTime() !== today.getTime()) {
+                          row.style.display = 'none';
+                      }
+                      break;
+                  case 'yesterday':
+                      const yesterday = new Date(today);
+                      yesterday.setDate(yesterday.getDate() - 1);
+                      if (rowDateOnly.getTime() !== yesterday.getTime()) {
+                          row.style.display = 'none';
+                      }
+                      break;
+                  case 'last_week':
+                      const weekAgo = new Date(today);
+                      weekAgo.setDate(weekAgo.getDate() - 7);
+                      if (rowDateOnly < weekAgo || rowDateOnly > today) {
+                          row.style.display = 'none';
+                      }
+                      break;
+                  case 'last_month':
+                      const monthAgo = new Date(today);
+                      monthAgo.setDate(monthAgo.getDate() - 30);
+                      if (rowDateOnly < monthAgo || rowDateOnly > today) {
+                          row.style.display = 'none';
+                      }
+                      break;
+                  case 'this_month':
+                      if (rowDateOnly.getMonth() !== today.getMonth() ||
+                          rowDateOnly.getFullYear() !== today.getFullYear()) {
+                          row.style.display = 'none';
+                      }
+                      break;
+                  case 'last_3months':
+                      const threeMonthsAgo = new Date(today);
+                      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                      if (rowDateOnly < threeMonthsAgo || rowDateOnly > today) {
+                          row.style.display = 'none';
+                      }
+                      break;
+              }
+          });
+      }
+
+      // Show message if no results found
+      const visibleRowsCount = tableRows.filter(row => row.style.display !== 'none').length;
+      const noResultsRow = document.getElementById('noResultsRow');
+
+      if (visibleRowsCount === 0) {
+          if (!noResultsRow) {
+              const newRow = document.createElement('tr');
+              newRow.id = 'noResultsRow';
+              const cell = document.createElement('td');
+              cell.colSpan = 7;
+              cell.textContent = 'No matching records found';
+              cell.style.textAlign = 'center';
+              newRow.appendChild(cell);
+              tableBody.appendChild(newRow);
+          }
+      } else if (noResultsRow) {
+          noResultsRow.remove();
+      }
+  }
 });
-</script>
-
-<script>
-  document
-    .querySelector(".menu-mobile-toggler")
-    .addEventListener("click", function () {
-      document.querySelector("#layout-menu").classList.toggle("show");
-    });
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.15/jspdf.plugin.autotable.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script>
-function downloadRow(element, format) {
-    const row = element.closest('tr');
-    const cells = Array.from(row.cells);
-    const headers = Array.from(row.parentElement.parentElement.querySelector('thead tr').cells)
-                        .map(th => th.textContent.trim());
-
-    // Get data excluding the last column (action button)
-    const data = cells.slice(0, -1).map(cell => cell.textContent.trim());
-
-    // Create workbook
-    const worksheet = XLSX.utils.aoa_to_sheet([headers.slice(0, -1), data]);
-    const workbook = XLSX.utils.book_new();
-
-    // Set column widths
-    const colWidths = headers.map(h => ({wch: Math.max(h.length, 15)}));
-    worksheet['!cols'] = colWidths;
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Service_Product_Details');
-
-    // Generate filename from service/product name
-    const filename = `${data[0].toLowerCase().replace(/\s+/g, '-')}-details.xlsx`;
-    XLSX.writeFile(workbook, filename);
-}
 </script>
 </body>
 </html>

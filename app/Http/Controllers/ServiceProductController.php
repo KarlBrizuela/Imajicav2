@@ -2,20 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ServiceProduct;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ServiceProductController extends Controller
 {
     public function index()
     {
-        // Get all service products ordered by date
-        $services = ServiceProduct::orderBy('date', 'desc')->get();
+        // Get all orders with their items ordered by date
+        $orders = Order::with('orderItems')
+                      ->orderBy('order_date', 'desc')
+                      ->get();
 
-        // Calculate sales metrics
-        $dailySales = ServiceProduct::whereDate('date', today())->sum('service_cost');
-        $monthlySales = ServiceProduct::whereMonth('date', now()->month)->sum('service_cost');
-        $totalSales = ServiceProduct::sum('service_cost');
+        // Calculate sales metrics from orders
+        $dailySales = Order::whereDate('order_date', today())->sum('total');
+        $monthlySales = Order::whereMonth('order_date', now()->month)->sum('total');
+        $totalSales = Order::sum('total');
+
+        // Transform orders data for the view
+        $services = $orders->map(function($order) {
+            // Ensure order_date is a Carbon instance
+            $orderDate = is_string($order->order_date)
+                ? Carbon::parse($order->order_date)
+                : $order->order_date;
+
+            return (object)[
+                'service_name' => $this->getServiceName($order),
+                'date' => $orderDate->format('Y-m-d'),
+                'branch_name' => $this->determineBranch($order),
+                'service_category' => $order->payment_method,
+                'formatted_cost' => '₱' . number_format($order->total, 2),
+                'type' => $order->order_status,
+                'description' => $this->generateOrderDescription($order)
+            ];
+        });
 
         return view('page.service-product', [
             'services' => $services,
@@ -25,35 +48,29 @@ class ServiceProductController extends Controller
         ]);
     }
 
-    public function getServiceDetails($id)
+    // Add the missing method
+    protected function getServiceName($order)
     {
-        $serviceProduct = ServiceProduct::findOrFail($id);
-
-        return response()->json([
-            'service' => [
-                'id' => $serviceProduct->id,
-                'name' => $serviceProduct->service_name,
-                'date' => $serviceProduct->date,
-                'branch' => $serviceProduct->branch_name,
-                'description' => $serviceProduct->description,
-                'category' => $serviceProduct->service_category,
-                'price' => $serviceProduct->service_cost,
-                'type' => $serviceProduct->type,
-                'formatted_cost' => $serviceProduct->formatted_cost
-            ],
-            // These would need actual relationships if you want real data
-            'totalSales' => 0,
-            'transactions' => [],
-            'monthlyTrend' => $this->getMonthlyTrend($id)
-        ]);
+        if ($order->orderItems->isNotEmpty()) {
+            return $order->orderItems->first()->item_name;
+        }
+        return 'Order #' . $order->order_number;
     }
 
-    protected function getMonthlyTrend($serviceProductId)
+    protected function determineBranch($order)
     {
-        // Sample data - replace with actual query if needed
-        return [
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            'data' => [1500, 2100, 1800, 2400, 1900, 2200]
-        ];
+        // Replace with your actual branch determination logic
+        return 'Main Branch';
+    }
+
+    protected function generateOrderDescription($order)
+    {
+        $itemCount = $order->orderItems->count();
+        $topItems = $order->orderItems->take(2)->pluck('item_name')->implode(', ');
+
+        if ($itemCount > 2) {
+            return "Contains {$topItems} and " . ($itemCount - 2) . " more item(s)";
+        }
+        return "Contains {$topItems}";
     }
 }

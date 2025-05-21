@@ -21,7 +21,7 @@ class serviceController extends Controller
 
             ]);
 
-  
+
 
             $service = service::create($data);
 
@@ -65,7 +65,7 @@ public function update(Request $request) {
         return redirect()->back()->with('error', 'Service not found');
     }
 
-  
+
 
     // Update service details
     $service->service_name = $request->service_name;
@@ -92,7 +92,7 @@ public function delete(Request $request)
     if (!$service) {
         if ($request->ajax()) {
             return response()->json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Service not found'
             ], 404);
         }
@@ -105,7 +105,7 @@ public function delete(Request $request)
     // If it's an AJAX request, return a JSON response
     if ($request->ajax()) {
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'message' => 'Service deleted successfully'
         ]);
     }
@@ -126,10 +126,10 @@ public function delete(Request $request)
 {
     // Get the service by service_id
     $service = service::findOrFail($service_id);
-    
+
     // Get all branches for the branch select dropdown
     $branches = branch::all();
-    
+
     // Return the edit view with service data
     return view('page.edit-service', compact('service', 'branches'));
 }
