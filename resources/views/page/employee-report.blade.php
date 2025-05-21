@@ -308,20 +308,9 @@
         border-radius: 6px;
       }
 
-      .bg-label-info {
-        background-color: rgba(3, 195, 236, 0.16) !important;
-        color: #03c3ec !important;
-      }
 
-      .bg-label-warning {
-        background-color: rgba(255, 171, 0, 0.16) !important;
-        color: #ffab00 !important;
-      }
 
-      .bg-label-success {
-        background-color: rgba(113, 221, 55, 0.16) !important;
-        color: #71dd37 !important;
-      }
+
 
       .btn-sm {
         padding: 0.25rem 0.5rem;
@@ -380,26 +369,29 @@
             <h1>Employee Report Summary</h1>
         </div>
 
-        <div class="card">
-        <div class="metrics">
+      <div class="metrics">
             <div class="metric-card">
-                <i class="ti tabler-cash mb-2" style="font-size: 24px; color: #28a745;"></i>
+                <i class="ti tabler-calendar mb-2" style="font-size: 24px; color: #28a745;"></i>
                 <h5>Monthly Sales</h5>
-                <h4 id="totalSalesMetric">₱{{ number_format($totalSales, 0) }}</h4>
+                <h4 id="monthlySalesMetric">₱{{ number_format($monthlySales, 0) }}</h4>
             </div>
             <div class="metric-card">
-                <i class="ti tabler-trophy mb-2" style="font-size: 24px; color: #007bff;"></i>
+                <i class="ti tabler-cash mb-2" style="font-size: 24px; color: #007bff;"></i>
                 <h5>Total Sales</h5>
-                <h4 id="topEmployeeSalesMetric">₱{{ number_format($topEmployeeSales, 0) }}</h4>
+                <h4 id="totalSalesMetric">₱{{ number_format($totalSales, 0) }}</h4>
             </div>
             <div class="metric-card">
                 <i class="ti tabler-user-star mb-2" style="font-size: 24px; color: #dc3545;"></i>
                 <h5>Top Employee</h5>
-                <h4 id="topEmployeeMetric">{{ $topEmployeeName }}</h4>
+                <h4 id="topEmployeeMetric">
+                    @if($topEmployeeName !== 'N/A')
+                        {{ $topEmployeeName }} <small>(₱{{ number_format($topEmployeeSales, 0) }})</small>
+                    @else
+                        N/A
+                    @endif
+                </h4>
             </div>
         </div>
-
-      </div>
 
         <div class="card mt-4">
     <div class="card-body">
@@ -453,29 +445,26 @@
         <div class="table-responsive text-nowrap">
             <table class="table table-striped" id="employeeReport">
                 <thead>
-                    <tr class="table-light">
-                        <th>No.</th>
-                        <th>Employee Name</th>
-                        <th>Date</th>
-                        <th>Products/Services</th>
-                        <th>Service/Product Name</th>
-                        <th>Quantity</th>
-                        <th>Client</th>
-                        <th>Total Sales</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
+                  <tr class="table-light">
+                      <th>Date & Time</th>
+                      <th>Staff</th>
+                      <th>Service/Package</th>
+                      <th>Branch</th>
+                      <th>Payment</th>
+                      <th class="text-center">Actions</th>
+                  </tr>
                 </thead>
                 <tbody>
-                    @php $rowNumber = 1; @endphp
                     @foreach($employeeReports as $report)
                     <tr data-employee-id="{{ $report->id }}">
-                        <td>{{ $rowNumber++ }}</td>
+                        <td>{{ \Carbon\Carbon::parse($report->date)->format('m/d/Y') }}<br>
+                            {{ $report->start_time }} - {{ $report->end_time }}</td>
                         <td>{{ $report->employeeName }}</td>
-                        <td>{{ \Carbon\Carbon::parse($report->date)->format('Y-m-d') }}</td>
-                        <td><span class="badge bg-label-info">{{ $report->product_service }}</span></td>
-                        <td>{{ $report->product_serviceName }}</td>
-                        <td><span class="badge bg-label-warning">{{ $report->quantity }}</span></td>
-                        <td><span class="badge bg-label-success">{{ $report->client }}</span></td>
+                        <td>
+                            <span class="badge bg-label-info">{{ $report->product_service }}</span><br>
+                            {{ $report->product_serviceName }}
+                        </td>
+                        <td>{{ $report->branchName }}</td>
                         <td>₱{{ number_format($report->totalSales, 0) }}</td>
                         <td class="text-center">
                             <div class="d-flex gap-2 justify-content-center">
