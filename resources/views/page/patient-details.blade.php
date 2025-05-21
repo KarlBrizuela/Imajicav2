@@ -16,24 +16,26 @@
     <title>Patient Details - Imajica Booking System</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="logo.png" />
+    <link rel="icon" type="image/x-icon" href="/public/logo/logo.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/" />
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;ampdisplay=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="../../assets/vendor/fonts/iconify-icons.css" />
+     <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
 
     <!-- Core CSS -->
-    <link rel="stylesheet" href="../../assets/vendor/libs/node-waves/node-waves.css" />
-    <link rel="stylesheet" href="../../assets/vendor/css/core.css" />
-    <link rel="stylesheet" href="../../assets/vendor/css/theme-default.css" />
-    <link rel="stylesheet" href="../../assets/css/demo.css" />
+     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
+    <link rel="stylesheet"  href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
 
     <!-- Helpers -->
-    <script src="../../assets/vendor/js/helpers.js"></script>
+    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="../../assets/js/config.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
     <!-- Add this before </head> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
@@ -1173,12 +1175,12 @@
     <!-- END MODALS -->
 
     <!-- Core JS -->
-    <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="../../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../../assets/vendor/js/bootstrap.js"></script>
-    <script src="../../assets/vendor/libs/node-waves/node-waves.js"></script>
-    <script src="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-    <script src="../../assets/vendor/js/menu.js"></script>
+   <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+   <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('vendor/js/menu.js') }}"></script>
 
     <!-- Main JS -->
     <script src="../../assets/js/main.js"></script>
@@ -2196,16 +2198,14 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+<script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
 <script src="../../assets/vendor/libs/datatables-buttons/datatables-buttons.js"></script>
 <script src="../../assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.js"></script>
-
-<script src="../../assets/vendor/libs/moment/moment.js"></script>
-<script src="../../assets/vendor/libs/flatpickr/flatpickr.js"></script>
-<script src="../../assets/vendor/libs/%40form-validation/popular.js"></script>
-<script src="../../assets/vendor/libs/%40form-validation/bootstrap5.js"></script>
-<script src="../../assets/vendor/libs/%40form-validation/auto-focus.js"></script>
-
+<script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
+ <script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
+ <script src="{{ asset('vendor/libs/%40form-validation/popular.js') }}"></script>
+    <script src="{{ asset('vendor/libs/%40form-validation/bootstrap5.js') }}"></script>
+    <script src="{{ asset('vendor/libs/%40form-validation/auto-focus.js') }}"></script>
 
 
 

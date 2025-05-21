@@ -25,16 +25,15 @@
     <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
     
     <!-- Include the same CSS as staff-list -->
-    <link rel="stylesheet" href="../../assets/vendor/fonts/iconify-icons.css" />
-    <link rel="stylesheet" href="../../assets/vendor/css/core.css" />
-    <link rel="stylesheet" href="../../assets/css/demo.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/flatpickr/flatpickr.css" />
-
+   <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}"  />
+    <link  rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}"  />
+    <link  rel="stylesheet" href="{{ asset('vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css') }}" />
+    <link  rel="stylesheet" href="{{ asset('vendor/libs/jquery-timepicker/jquery-timepicker.css') }}">
     <!-- Helpers -->
-    <script src="../../assets/vendor/js/helpers.js"></script>
+    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="../../assets/js/config.js"></script>
   </head>
 
@@ -254,50 +253,31 @@
 
 
     <!-- Include Scripts -->
-    <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="../../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../../assets/vendor/js/bootstrap.js"></script>
-    <script src="../../assets/vendor/js/menu.js"></script>
+   <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+    < <script src="{{ asset('vendor/js/menu.js') }}"></script>
     <script src="../../assets/js/main.js"></script>
 
     <!-- DataTables Scripts -->
-    <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
-    <script src="../../assets/vendor/libs/datatables/jquery.dataTables.js"></script>
-    <script src="../../assets/vendor/libs/datatables-bs5/datatables.bootstrap5.js"></script>
-    <script src="../../assets/vendor/libs/datatables-responsive/datatables.responsive.js"></script>
-    <script src="../../assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.js"></script>
+     <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+   <link  rel="stylesheet"  href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
     
     <!-- Add SweetAlert2 library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <link
-    rel="stylesheet"
-    href="{{ asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}"
-  />
-  <link
-    rel="stylesheet"
-    href="{{ asset('assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}"
-  />
-  <link
-    rel="stylesheet"
-    href="{{ asset('assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}"
-  />
-  <link
-    rel="stylesheet"
-    href="{{ asset('assets/vendor/libs/flatpickr/flatpickr.css') }}"
-  />
+    <link  rel="stylesheet"  href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
+    <link rel="stylesheet"  href="{{ asset('vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}" />
+    <link  rel="stylesheet"  href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}"  />
   <!-- Row Group CSS -->
-  <link
-    rel="stylesheet"
-    href="{{ asset('assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}"
-  />
+   <link rel="stylesheet"  href="{{ asset('vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
   <!-- Form Validation -->
-  <link
-    rel="stylesheet"
-    href="{{ asset('assets/vendor/libs/%40form-validation/form-validation.css') }}"
-  />
-  <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css" />
-  <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css" />
+<link rel="stylesheet" href="{{ asset('vendor/libs/%40form-validation/form-validation.css') }}"/>
+ <link  rel="stylesheet"  href="{{ asset('vendor/libs/select2/select2.css') }}" />
+
     <script>
       $(document).ready(function() {
         // SweetAlert default configuration
