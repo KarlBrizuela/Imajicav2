@@ -388,15 +388,31 @@
 
                 <!-- Filter by -->
                 <div class="d-flex flex-column" style="width: 160px;">
-                  <label class="form-label text-muted small mb-1">Filter by</label>
+                  <label class="form-label text-muted small mb-1">Filter by Status</label>
                   <select class="form-select form-select-sm" id="filterBy">
                     <option value="">All</option>
-                    <option value="ordered">Ordered</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="out_for_delivery">Out for Delivery</option>
-                    <option value="ready_to_pickup">Ready to Pickup</option>
-                    <option value="price_high">Price: (High to Low)</option>
-                    <option value="price_low">Price: (Low to High)</option>
+                    <optgroup label="Order Status">
+                      <option value="ordered">Ordered</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="out_for_delivery">Out for Delivery</option>
+                      <option value="ready_to_pickup">Ready to Pickup</option>
+                    </optgroup>
+                    <optgroup label="Price">
+                      <option value="price_high">Price: (High to Low)</option>
+                      <option value="price_low">Price: (Low to High)</option>
+                    </optgroup>
+                  </select>
+                </div>
+
+                <!-- Filter by Payment -->
+                <div class="d-flex flex-column" style="width: 160px;">
+                  <label class="form-label text-muted small mb-1">Filter by Payment</label>
+                  <select class="form-select form-select-sm" id="filterByPayment">
+                    <option value="">All</option>
+                    <option value="paid">Paid</option>
+                    <option value="pending">Pending</option>
+                    <option value="failed">Failed</option>
+                    <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
 
@@ -426,7 +442,8 @@
                     <th>Branch Name</th>
                     <th>Payment Category</th>
                     <th>Service Cost</th>
-                    <th>Type</th>
+                    <th>Payment Status</th>
+                    <th>Order Status</th>
                     <th class="text-center">Actions</th>
                   </tr>
                 </thead>
@@ -437,10 +454,15 @@
                     <td>{{ $service->date }}</td>
                     <td>{{ $service->branch_name }}</td>
                     <td>{{ $service->service_category }}</td>
-                    <td>{{ $service->formatted_cost }}</td> <!-- Using your accessor -->
+                    <td>{{ $service->formatted_cost }}</td>
                     <td>
-                      <span class="badge {{ $service->type === 'service' ? 'bg-label-warning' : 'bg-label-success' }}">
-                        {{ ucfirst($service->type) }}
+                      <span class="badge {{ $service->payment_status === 'Paid' ? 'bg-label-success' : ($service->payment_status === 'Pending' ? 'bg-label-warning' : ($service->payment_status === 'Failed' ? 'bg-label-danger' : 'bg-label-secondary')) }}">
+                        {{ $service->payment_status }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge {{ $service->order_status === 'Delivered' ? 'bg-label-success' : ($service->order_status === 'Out for Delivery' ? 'bg-label-info' : ($service->order_status === 'Ready to Pickup' ? 'bg-label-warning' : ($service->order_status === 'Ordered' ? 'bg-label-success' : 'bg-label-primary'))) }}">
+                        {{ $service->order_status }}
                       </span>
                     </td>
                     <td class="text-center">
@@ -464,12 +486,13 @@
   document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('searchInput');
   const filterBy = document.getElementById('filterBy');
+  const filterByPayment = document.getElementById('filterByPayment');
   const filterByDate = document.getElementById('filterByDate');
   const tableBody = document.querySelector('#servicesTable tbody');
   const tableRows = Array.from(tableBody.querySelectorAll('tr'));
 
   // Apply filters on input/change
-  [searchInput, filterBy, filterByDate].forEach(el => {
+  [searchInput, filterBy, filterByPayment, filterByDate].forEach(el => {
       el.addEventListener('change', applyFilters);
   });
   searchInput.addEventListener('input', applyFilters);
@@ -477,6 +500,7 @@
   function applyFilters() {
       const searchText = searchInput.value.trim().toLowerCase();
       const filterValue = filterBy.value;
+      const paymentFilter = filterByPayment.value;
       const dateFilter = filterByDate.value;
 
       // First, show all rows to reset any previous filtering
@@ -499,20 +523,31 @@
           });
       }
 
-      // === FILTER BY TYPE / PRICE ===
+      // === FILTER BY PAYMENT STATUS ===
+      if (paymentFilter) {
+          tableRows.forEach(row => {
+              if (row.style.display === 'none') return;
+
+              const paymentStatusBadge = row.cells[5].querySelector('.badge');
+              const paymentStatus = paymentStatusBadge ? paymentStatusBadge.textContent.trim().toLowerCase() : '';
+
+              if (paymentStatus !== paymentFilter.toLowerCase()) {
+                  row.style.display = 'none';
+              }
+          });
+      }
+
+      // === FILTER BY ORDER STATUS ===
       if (filterValue) {
           if (['ordered', 'delivered', 'out_for_delivery', 'ready_to_pickup'].includes(filterValue)) {
               tableRows.forEach(row => {
-                  // Check the status in the 6th column (index 5) - the 'Type' column
-                  // The status is displayed as a badge in this column
-                  const statusBadge = row.cells[5].querySelector('.badge');
-                  const status = statusBadge ? statusBadge.textContent.trim().toLowerCase() : '';
+                  if (row.style.display === 'none') return;
 
-                  // Get the value we're filtering for and normalize it
+                  const orderStatusBadge = row.cells[6].querySelector('.badge');
+                  const orderStatus = orderStatusBadge ? orderStatusBadge.textContent.trim().toLowerCase() : '';
                   const filterText = filterValue.replace(/_/g, ' ').toLowerCase();
 
-                  // If the status doesn't match our filter, hide the row
-                  if (status !== filterText) {
+                  if (orderStatus !== filterText) {
                       row.style.display = 'none';
                   }
               });
@@ -622,7 +657,7 @@
               const newRow = document.createElement('tr');
               newRow.id = 'noResultsRow';
               const cell = document.createElement('td');
-              cell.colSpan = 7;
+              cell.colSpan = 8; // Updated to match new number of columns
               cell.textContent = 'No matching records found';
               cell.style.textAlign = 'center';
               newRow.appendChild(cell);
