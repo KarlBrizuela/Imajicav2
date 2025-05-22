@@ -290,7 +290,7 @@
             <ul class="menu-sub">
                 <li class="menu-item {{ request()->is('service-product') ? 'active' : '' }}">
                     <a href="/service-product" class="menu-link">
-                        <div data-i18n="Service/Product Report">Service/Product Report</div>
+                        <div data-i18n="Service/Product Report">Product Report</div>
                     </a>
                 </li>
                 <li class="menu-item {{ request()->is('employee-report') ? 'active' : '' }}">
@@ -318,7 +318,7 @@
 
                 <li class="menu-item {{ request()->is('sales-transaction') ? 'active' : '' }}">
                     <a href="/sales-transaction" class="menu-link">
-                        <div data-i18n="Services Transaction">Services Transaction</div>
+                        <div data-i18n="Services Transaction">Sales Transaction</div>
                     </a>
                 </li>
 

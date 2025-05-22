@@ -360,4 +360,7 @@ Route::get('/services/{id}/details', [ServiceProductController::class, 'getServi
 Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionController::class, 'index']);
 Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
 
-Route::get('/void-logs', [VoidLogController::class, 'voidLogs'])->name('void.logs');
+// routes/web.php
+use App\Http\Controllers\VoidLogController;
+
+Route::get('/void-logs', [VoidLogController::class, 'voidLogs']);
