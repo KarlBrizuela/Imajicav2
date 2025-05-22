@@ -20,7 +20,6 @@ use App\Http\Controllers\orderController;
 use App\Http\Controllers\AddProductController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\ServiceProductController;
 
 use App\Http\Controllers\category_expenseController;
 use App\Http\Controllers\EmployeeController;
@@ -28,6 +27,11 @@ use App\Http\Controllers\EmployeeReportController;
 use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\wasteController;
+
+use App\Http\Controllers\ServiceProductController;
+use App\Http\Controllers\VoidLogController;
+
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -76,7 +80,7 @@ Route::get('/new-loyalty', [DashboardController::class, 'new_loyalty'])->name('p
 
 Route::get('/sales-transaction', [DashboardController::class, 'sales_transaction'])->name('page.sales-transaction')->middleware(['auth', 'admin']);
 
-Route::get('/employee-sales', [DashboardController::class, 'employee_sales'])->name('page.employee-sales')->middleware(['auth', 'admin']);
+Route::get('/employee-sales', [App\Http\Controllers\EmployeeController::class, 'index'])->name('page.employee-sales')->middleware(['auth', 'admin']);
 
 
 Route::get('/commision-employee', [DashboardController::class, 'commision_employee'])->name('page.commsion-employee')->middleware(['auth', 'admin']);
@@ -190,7 +194,7 @@ Route::get('/patients/{id}/view', [PatientController::class, 'view'])->name('pat
 Route::get('/patients/{id}/view', [PatientController::class, 'show'])->name('patient.view')->middleware(['auth', 'admin']);
 Route::get('/patients', [PatientController::class, 'index'])->name('patient.list')->middleware(['auth', 'admin']);
 
-Route::get('/service-product', [DashboardController::class, 'service-product'])->name('page.service-product')->middleware(['auth', 'admin']);
+Route::get('/service-product', [DashboardController::class, 'service_product'])->name('page.service-product')->middleware(['auth', 'admin']);
 
 
 
@@ -345,3 +349,5 @@ Route::get('/services/{id}/details', [ServiceProductController::class, 'getServi
 
 Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionController::class, 'index']);
 Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
+
+Route::get('/void-logs', [App\Http\Controllers\VoidLogController::class, 'voidLogs'])->name('void-logs');
