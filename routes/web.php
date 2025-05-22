@@ -352,6 +352,7 @@ Route::put('/package/update', [App\Http\Controllers\PackageController::class, 'u
 Route::delete('/package/delete', [App\Http\Controllers\PackageController::class, 'delete'])->name('package.delete');
 Route::get('/package/all', [App\Http\Controllers\PackageController::class, 'index'])->name('get.packages');
 
+use App\Http\Controllers\ServiceProductController;
 
 Route::get('/service-product', [ServiceProductController::class, 'index'])->name('service.product.report');
 Route::get('/services/{id}/details', [ServiceProductController::class, 'getServiceDetails']);
