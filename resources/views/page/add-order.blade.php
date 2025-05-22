@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 <!DOCTYPE html>
@@ -28,7 +29,7 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
-    
+
     <!-- Vendor CSS -->
     <link rel="stylesheet" href="{{ asset('vendor/libs/select2/select2.css') }}" />
 
@@ -64,7 +65,7 @@
                                     <div class="d-flex align-content-center flex-wrap gap-4">
                                         <div class="d-flex gap-4">
                                             <button type="button" class="btn btn-label-secondary" onclick="discardChanges()">Cancel</button>
-                                  
+
                                         </div>
                                         <button type="submit" class="btn btn-primary">Create Order</button>
                                     </div>
@@ -82,7 +83,7 @@
                                                 <div class="row mb-4">
                                                     <div class="col-md-6">
                                                         <label class="form-label">Customer Name</label>
-                                                        <input type="text" 
+                                                        <input type="text"
                                                         class="form-control"
                                                         placeholder="Customer name"
                                                         name="customer_name"
@@ -161,9 +162,6 @@
                                                 <div class="mt-3 d-flex justify-content-end gap-2">
                                                     <button type="button" class="btn btn-primary" id="addItemBtn" onclick="addOrderItem()">
                                                         <i class="ti ti-plus me-1"></i> Add Item
-                                                    </button>
-                                                    <button type="button" class="btn btn-success" id="finalizeItemsBtn" onclick="finalizeItems()">
-                                                        <i class="ti ti-check me-1"></i> Finalize Items
                                                     </button>
                                                 </div>
                                             </div>
@@ -266,7 +264,7 @@
     <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
     <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
-    
+
     <!-- Page JS -->
     <script src="{{ asset('assets/js/app-ecommerce.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
@@ -286,25 +284,10 @@
                 buttonsStyling: false
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = '/order-list'; 
+                    window.location.href = '/order-list';
                 }
             });
         }
-
-        function saveDraft() {
-            Swal.fire({
-                icon: 'success',
-                title: 'Draft Saved!',
-                text: 'Your order has been saved as draft',
-                customClass: {
-                    confirmButton: 'btn btn-primary'
-                },
-                buttonsStyling: false
-            });
-        }
-
-        let orderCount = 10; // Start from 10 instead of 1
-        let finalizedOrders = [];
 
         function addOrderItem() {
             const template = document.querySelector('.order-item').cloneNode(true);
@@ -319,71 +302,6 @@
             if (items.length > 1) {
                 button.closest('.order-item').remove();
                 updateTotals();
-            }
-        }
-
-        function finalizeItems() {
-            const items = document.querySelectorAll('.order-item');
-            if (items.length === 0 || (items.length === 1 && !items[0].querySelector('[name="items[]"]').value)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'No Items',
-                    text: 'Please add at least one item before finalizing.',
-                    confirmButtonText: 'OK'
-                });
-                return;
-            }
-
-            const invalidItems = Array.from(items).filter(item => {
-                const price = parseFloat(item.querySelector('[name="prices[]"]').value);
-                return isNaN(price) || price <= 0;
-            });
-
-            if (invalidItems.length > 0) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Items',
-                    text: 'All items must have valid prices before finalizing',
-                    confirmButtonText: 'OK'
-                });
-                return;
-            }
-
-            if (confirm('Do you want to finalize these items?')) {
-                const itemsData = Array.from(items).map(item => {
-                    const selectElement = item.querySelector('[name="items[]"]');
-                    const selectedOption = selectElement.options[selectElement.selectedIndex];
-                    return {
-                        id: selectElement.value,
-                        name: selectedOption.text,
-                        quantity: parseInt(item.querySelector('[name="quantities[]"]').value) || 1,
-                        price: parseFloat(item.querySelector('[name="prices[]"]').value) || 0,
-                        total: parseFloat(item.querySelector('[name="totals[]"]').value) || 0
-                    };
-                });
-
-                const currentOrder = {
-                    id: orderCount,
-                    items: itemsData
-                };
-                finalizedOrders.push(currentOrder);
-
-                document.querySelectorAll('.order-item').forEach(item => {
-                    item.querySelector('[name="items[]"]').value = '';
-                    item.querySelector('[name="quantities[]"]').value = '1';
-                    item.querySelector('[name="prices[]"]').value = '';
-                    item.querySelector('[name="totals[]"]').value = '';
-                });
-
-                updateTotals();
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Items Finalized',
-                    text: `Order #${currentOrder.id} has been finalized. You can start order #${orderCount}.`,
-                    confirmButtonText: 'OK'
-                });
-                orderCount--;
             }
         }
 
@@ -407,7 +325,7 @@
                 item.querySelector('[name="totals[]"]').value = total.toFixed(2);
                 subtotal += total;
             });
-            
+
             const taxRate = 0.1; // 10% tax rate
             const tax = subtotal * taxRate;
             const total = subtotal + tax;
@@ -421,17 +339,32 @@
             const form = document.getElementById('addOrderForm');
             const formData = new FormData(form);
 
-            if (finalizedOrders.length === 0) {
+            // Get all current items
+            const items = [];
+            document.querySelectorAll('.order-item').forEach(item => {
+                const selectElement = item.querySelector('[name="items[]"]');
+                if (selectElement && selectElement.value) {
+                    const selectedOption = selectElement.options[selectElement.selectedIndex];
+                    items.push({
+                        id: selectElement.value,
+                        name: selectedOption.text,
+                        quantity: parseInt(item.querySelector('[name="quantities[]"]').value) || 1,
+                        price: parseFloat(item.querySelector('[name="prices[]"]').value) || 0,
+                        total: parseFloat(item.querySelector('[name="totals[]"]').value) || 0
+                    });
+                }
+            });
+
+            if (items.length === 0) {
                 Swal.fire({
                     icon: 'error',
                     title: 'No Items',
-                    text: 'Please add and finalize at least one item'
+                    text: 'Please add at least one item to the order'
                 });
                 return;
             }
 
-            const orderItems = finalizedOrders[finalizedOrders.length - 1].items;
-            formData.append('items', JSON.stringify(orderItems));
+            formData.append('items', JSON.stringify(items));
 
             if (!validateForm()) {
                 return;
@@ -447,7 +380,7 @@
             });
 
             fetch('/order/create', {
-                method: 'POST',  
+                method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
@@ -471,7 +404,7 @@
             })
             .catch(error => {
                 Swal.fire({
-                    icon: 'error', 
+                    icon: 'error',
                     title: 'Error',
                     text: error.message || 'Something went wrong'
                 });
@@ -498,11 +431,17 @@
                 }
             }
 
-            if (finalizedOrders.length === 0) {
+            const items = document.querySelectorAll('.order-item');
+            const hasValidItems = Array.from(items).some(item => {
+                const selectElement = item.querySelector('[name="items[]"]');
+                return selectElement && selectElement.value;
+            });
+
+            if (!hasValidItems) {
                 Swal.fire({
                     icon: 'error',
                     title: 'No Items',
-                    text: 'Please add and finalize at least one item'
+                    text: 'Please add at least one item to the order'
                 });
                 return false;
             }

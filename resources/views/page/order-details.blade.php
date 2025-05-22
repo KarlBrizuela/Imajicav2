@@ -1,7 +1,5 @@
 <!doctype html>
 
-
-  
     <!-- =========================================================
 * Vuexy - Bootstrap Dashboard PRO | v3.0.0
 ==============================================================
@@ -28,11 +26,11 @@
   data-template="vertical-menu-template"
   data-bs-theme="light">
   
-<!-- Mirrored from demos.pixinvent.com/vuexy-html-admin-template/html/vertical-menu-template/app-ecommerce-order-details.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 22 Feb 2025 08:26:18 GMT -->
+<!-- Mirrored from demos.pixinvent.com/vuexy-html-admin-template/html/vertical-menu-template/app-ecommerce-order-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 22 Feb 2025 08:26:18 GMT -->
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Imajica Booking System</title>
 
     
@@ -47,7 +45,7 @@
       <meta property="og:site_name" content="Pixinvent" />
       <link rel="canonical" href="https://themeforest.net/item/vuexy-vuejs-html-laravel-admin-dashboard-template/23328599" />
     
-    
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <!-- ? PROD Only: Google Tag Manager (Default ThemeSelection: GTM-5DDHKGP, PixInvent: GTM-5J3LMKC) -->
       <script>
         (function (w, d, s, l, i) {
@@ -71,37 +69,39 @@
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;ampdisplay=swap" rel="stylesheet" />
 
-    />
-
     <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
 
     <!-- Core CSS -->
     <!-- build:css assets/vendor/css/theme.css  -->
     
-    <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
+     
+   <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.js') }}" />
+
     <link rel="stylesheet" href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}">
+  <link rel="stylesheet" href="{{ asset('/css/demo.css') }}" />
 
     
     <!-- Vendors CSS -->
     
-      <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}"/>
+      <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     
     <!-- endbuild -->
 
-     <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
   <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
   <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}" />
-   <link rel="stylesheet" href="{{ asset('vendor/libs/sweetalert2/sweetalert2.css') }}" />
-   <link rel="stylesheet" href="{{ asset('vendor/libs/select2/select2.css') }}" />
 
     <!-- Page CSS -->
     
 
     <!-- Helpers -->
-   <script src="{{ asset('vendor/js/helpers.js') }}"></script>
-
+    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    
+  
+    
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     
       <script src="../../assets/js/config.js"></script>
     
@@ -119,11 +119,6 @@
       @include('components.sidebar')
         
 
-
-
-
-<!-- Menu -->
-
 <div class="menu-mobile-toggler d-xl-none rounded-1">
   <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large text-bg-secondary p-2 rounded-1">
     <i class="ti tabler-menu icon-base"></i>
@@ -134,18 +129,8 @@
 
       
 
-
       <!-- Layout container -->
       <div class="layout-page">
-        
-          
-
-
-
-<!-- Navbar -->
-
-
-<!-- / Navbar -->
 
         
 
@@ -153,102 +138,143 @@
         <div class="content-wrapper">
           <!-- Content -->
           <div class="container-xxl flex-grow-1 container-p-y">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-6 row-gap-4">
-              <div class="d-flex flex-column justify-content-center">
-                <div class="d-flex align-items-center gap-3 mb-1">
-                  <span class="h5 mb-0">Order <span id="orderNumber"></span></span>
-                  <span id="orderStatus" class="badge bg-label ms-2"></span>
-                </div>
-                <p class="mb-0" id="orderDate"></p>
-              </div>
+  <!-- Order List Widget -->
+
+  <div class="card mb-6">
+    <div class="card-widget-separator-wrapper">
+      <div class="card-body card-widget-separator">
+        <div class="row gy-4 gy-sm-1">
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
               <div>
-                <a href="{{ route('page.order-list') }}" class="btn btn-primary">
-                  <i class="tabler-arrow-left me-1"></i>
-                  Back to Orders
+                <h4 class="mb-0">{{ $paymentCounts['pending'] }}</h4>
+                <p class="mb-0">Pending Payment</p>
+              </div>
+              <span class="avatar me-sm-6">
+                <span class="avatar-initial bg-label-warning rounded text-heading">
+                  <i class="icon-base ti tabler-calendar-stats icon-26px text-heading"></i>
+                </span>
+              </span>
+            </div>
+            <hr class="d-none d-sm-block d-lg-none me-6" />
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
+              <div>
+                <h4 class="mb-0">{{ $paymentCounts['paid'] }}</h4>
+                <p class="mb-0">Paid</p>
+              </div>
+              <span class="avatar p-2 me-lg-6">
+                <span class="avatar-initial bg-label-success rounded"><i class="icon-base ti tabler-checks icon-26px text-heading"></i></span>
+              </span>
+            </div>
+            <hr class="d-none d-sm-block d-lg-none" />
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
+              <div>
+                <h4 class="mb-0">{{ $paymentCounts['cancelled'] > 0 ? $paymentCounts['cancelled'] : 'None' }}</h4>
+                <p class="mb-0">Cancelled</p>
+              </div>
+              <span class="avatar p-2 me-sm-6">
+                <span class="avatar-initial bg-label-secondary rounded"><i class="icon-base ti tabler-wallet icon-26px text-heading"></i></span>
+              </span>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h4 class="mb-0">{{ $paymentCounts['failed'] > 0 ? $paymentCounts['failed'] : 'None' }}</h4>
+                <p class="mb-0">Failed</p>
+              </div>
+              <span class="avatar p-2">
+                <span class="avatar-initial bg-label-danger rounded"><i class="icon-base ti tabler-alert-octagon icon-26px text-heading"></i></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order List Table -->
+  <div class="card">
+    <table class="table border-top table-striped table-responsive" id="orderTable">
+      <thead class="table-light">
+        <tr>
+          <th></th>
+          <th>order</th>
+          <th>date</th>
+          <th>customers</th>
+          <th>payment</th>
+          <th>payment status</th>
+          <th>method</th>
+          <th>actions</th>
+        </tr>
+        <tbody>
+         @foreach ($orders as $order)
+          <tr 
+            data-id="{{ $order->order_id }}"
+            data-items='@json($order->orderItems)'>
+            <td></td>
+            <td>
+              <a href="javascript:void(0)" class="text-heading fw-bold">#{{ $order->order_number }}</a>
+            </td>
+            <td>{{ $order->order_date }}</td>
+            <td>
+            <div class="d-flex flex-column">
+              <h6 class="mb-0">{{ $order->customer_name }}</h6>
+              <small class="text-muted">{{ $order->customer_email ?? 'No email available' }}</small>
+            </div>
+      
+          </td>
+
+            <td>${{ $order->total }}</td>
+            <td>
+              <span class="badge bg-label-{{ 
+                $order->payment_status == 'Paid' ? 'success' : 
+                ($order->payment_status == 'Pending' ? 'warning' : 
+                ($order->payment_status == 'Failed' ? 'danger' : 
+                ($order->payment_status == 'Cancelled' ? 'secondary' : 'info'))) 
+            }} me-1">
+                {{ ucfirst($order->payment_status) }}
+            </span>
+            
+            </td>
+            <td>{{ $order->payment_method }}</td>
+            <td>
+              <div class="d-flex gap-2">
+                <a href="{{ route('page.order-details', $order->order_id) }}" 
+                   class="btn btn-sm btn-success view-order">
+                  <i class="ti tabler-eye me-1"></i> View
                 </a>
-                <button id="printReceiptBtn" class="btn btn-success ms-2">
-                  <i class="tabler-printer me-1"></i>
-                  Print Receipt
+                
+                <a href="{{ route('page.edit-order', $order->order_id) }}" 
+                   class="btn btn-sm btn-primary edit-order">
+                  <i class="ti tabler-edit me-1"></i> Edit
+                </a>
+            
+                <button class="btn btn-sm btn-danger delete-order">
+                  <i class="ti tabler-trash me-1"></i> Delete
                 </button>
               </div>
-            </div>
-
-  <!-- Order Details Table -->
-  <div class="row">
-    <div class="col-12">
-      <div class="card mb-6">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="card-title m-0">Order Items</h5>
-        </div>
-        <div class="card-datatable table-responsive">
-          <table class="table table-striped table-hover border-top" id="datatables-order-details">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Product/Item</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-            
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </thead>
+    </table>
   </div>
-
-  <!-- Customer and Order Summary -->
-  <div class="row">
-    <div class="col-12 col-lg-6">
-      <div class="card mb-6">
-        <div class="card-header border-bottom">
-          <h5 class="card-title m-0">Customer Details</h5>
-        </div>
-        <div class="card-body m-3">
-          <div class="d-flex justify-content-start align-items-center mb-4">
-            
-            <div class="d-flex flex-column">
-              <h6 class="mb-1">{{ $order['customer_name'] ?? 'N/A' }}</h6>
-              <span class="text-muted">Customer ID: #{{ $order['customer_id'] ?? 'N/A' }}</span>
-            </div>
-          </div>
-          <div class="mb-4">
-            <h6 class="mb-2">Contact Information</h6>
-            <p class="mb-1"><i class="tabler-mail me-1 text-muted"></i> { $order['customer_email'] ?? 'N/A' }}</p>
-            <p class="mb-1"><i class="tabler-credit-card me-1 text-muted"></i>Payment Method: <span id="orderPayment" class="badge bg-label-success"></span></p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-lg-6">
-      <div class="card mb-6">
-        <div class="card-header border-bottom">
-          <h5 class="card-title m-0">Order Summary</h5>
-        </div>
-        <div class="card-body m-3">
-          <div class="d-flex justify-content-between mb-3">
-            <span class="text-muted">Subtotal:</span>
-            <span>{{ $order['subtotal'] ? '₱'.number_format($order['subtotal'], 2) : 'N/A' }}</span>
-          </div>
-          <div class="d-flex justify-content-between mb-3">
-            <span class="text-muted">Tax:</span>
-            <span>{{ $order['tax'] ? '₱'.number_format($order['tax'], 2) : 'N/A' }}</span>
-          </div>
-          <hr class="my-3">
-          <div class="d-flex justify-content-between fw-bold">
-            <span>Total:</span>
-            <span class="text-primary h5 mb-0">{{ $order['total'] ? '₱'.number_format($order['total'], 2) : 'N/A' }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
+
+<!-- Delete Order Form (Hidden) -->
+<form id="deleteOrderForm" method="POST" action="{{ route('order.delete') }}" style="display: none;">
+    @csrf
+    @method('DELETE')
+    <input type="hidden" id="delete_order_id" name="order_id">
+    <input type="hidden" id="delete_void_reason" name="void_reason">
+</form>
+
           <!-- / Content -->
 
           
@@ -289,33 +315,36 @@
       <div class="drag-target"></div>
     
   </div>
-  <!-- / Layout wrapper --> 
+  <!-- / Layout wrapper -->
+
+    
+    
+    
+
+    
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/theme.js -->
     
     
-      <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
-    <script src="{{ asset('vendor/libs/%40algolia/autocomplete-js.js') }}"></script>
-    <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
-    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
-    <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
-    <script src="{{ asset('vendor/js/menu.js') }}"></script>
+     <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+   <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+ <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+  <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+   <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+  <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
+  <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+  <script src="{{ asset('vendor/js/menu.js') }}"></script>
+
+       
+<script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
+
+     <script src="{{ asset('vendor/js/menu.js') }}"></script>
     
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-      <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
-  <script src="../../assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
-   <script src="{{ asset('vendor/libs/cleave-zen/cleave-zen.js') }}"></script>
-   <script src="{{ asset('vendor/libs/%40form-validation/popular.js') }}"></script>
-    <script src="{{ asset('vendor/libs/%40form-validation/bootstrap5.js') }}"></script>
-    <script src="{{ asset('vendor/libs/%40form-validation/auto-focus.js') }}"></script>
-  <script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
+    <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
 
     <!-- Main JS -->
     
@@ -323,362 +352,165 @@
     
 
     <!-- Page JS -->
-    <script>
-      $(document).ready(function() {
-        function getStatusClass(status) {
-            const statusClasses = {
-                'Ordered': 'bg-label-warning',
-                'Delivered': 'bg-label-success', 
-                'Out for Delivery': 'bg-label-primary',
-                'Ready to Pickup': 'bg-label-info'
-            };
-            return statusClasses[status] || 'bg-label-secondary';
-        }
+    <script src="../../assets/js/order-list.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-        const orderId = window.location.pathname.split('/').pop();
-        let orderData = null;
 
-        $.ajax({
-            url: `/order/order-details/${orderId}`,
-            method: 'GET',
-            success: function(orderDetails) {
-                console.log('Order Details:', orderDetails);
-                
-                // Make sure we have the order data with proper totals
-                orderData = {
-                    ...orderDetails,
-                    subtotal: orderDetails.subtotal || 0,
-                    tax: orderDetails.tax || 0,
-                    total: orderDetails.total || 0
-                };
-                
-                // Update order header information
-                $('#orderNumber').text(orderDetails.number || 'N/A');
-                $('#orderDate').text(orderDetails.date || 'N/A');
-                $('#orderStatus').text(orderDetails.status || 'N/A')
-                    .addClass(getStatusClass(orderDetails.status));
+<script>
+$(document).ready(function () {
+  // Add custom CSS styling for the primary button
+  $('<style>')
+    .prop('type', 'text/css')
+    .html(`
+      .btn-primary {
+        background-color: var(--bs-primary) !important;
+        border-color: var(--bs-primary) !important;
+        color: var(--bs-primary-contrast) !important;
+      }
+      .btn-primary:hover {
+        background-color: color-mix(in sRGB, #000 10%, var(--bs-primary)) !important;
+        border-color: color-mix(in sRGB, #000 10%, var(--bs-primary)) !important;
+      }
+    `)
+    .appendTo('head');
 
-                // Update customer details
-                if (orderDetails.customer) {
-                    $('.card-body h6.mb-0').first().text(orderDetails.customer.name || 'N/A');
-                    $('p.mb-1').first().text(`Email: ${orderDetails.customer.email || 'N/A'}`);
-                    $('#orderPayment').text(orderDetails.payment || 'N/A');
-                }
+  // Existing DataTable initialization 
+  $('#orderTable').DataTable({
+    layout: {
+      topStart: {
+        rowClass: "card-header d-flex border-top rounded-0 flex-wrap py-0 flex-column flex-md-row align-items-center",
+        features: [{
+          pageLength: { menu: [7, 10, 25, 50, 100] }
+        }]
+      },
+      topEnd: {
+        rowClass: "row m-3 my-0 justify-content-between",
+        features: [{
+          search: {
+            className: "me-5 ms-n4 pe-5 mb-n6 mb-md-0",
+            placeholder: "Search Order"
+          },
+          buttons: [{
+            text: '<span class="d-flex align-items-center gap-1"><i class="ti tabler-plus me-1"></i>Add Order</span>',
+            className: "btn btn-primary",
+            action: function() {
+              window.location.href = "/add-order";
+            }
+          }]
+        }]
+      }
+    }
+  });
 
-                // Initialize DataTable
-                const table = $('.table').DataTable({
-                    data: orderDetails.items || [],
-                    columns: [
-                        { data: null, defaultContent: '', orderable: false },
-                        { 
-                            data: null,
-                            render: function(data, type, row) {
-                                return `
-                                    <div class="d-flex justify-content-start align-items-center product-name">
-                                        <div class="d-flex flex-column">
-                                            <h6 class="text-nowrap mb-0">${row.item_name}</h6>
-                                            <small class="text-truncate d-none d-sm-block">${row.description || ''}</small>
-                                        </div>
-                                    </div>`;
-                            }
-                        },
-                        { 
-                            data: 'unit_price',
-                            className: 'text-end',
-                            render: function(data) {
-                                return `₱${parseFloat(data).toFixed(2)}`;
-                            }
-                        },
-                        { 
-                            data: 'quantity',
-                            className: 'text-center'
-                        },
-                        { 
-                            data: 'total',
-                            className: 'text-end fw-semibold',
-                            render: function(data) {
-                                return `₱${parseFloat(data).toFixed(2)}`;
-                            }
-                        }
-                    ],
-                    responsive: true,
-                    order: [[1, 'asc']],
-                    dom: '<"row mx-1"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row mx-1"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
-                    lengthMenu: [10, 25, 50, 75, 100],
-                    pageLength: 10,
-                    language: {
-                        paginate: {
-                            previous: '<i class="tabler-chevron-left"></i>',
-                            next: '<i class="tabler-chevron-right"></i>'
-                        }
-                    }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching order details:', error);
-                console.log('Response:', xhr.responseText); // Add this for debugging
-                Swal.fire({
+  // Enhanced click handler for view buttons
+  $('.view-order').on('click', function(e) {
+    e.preventDefault();
+    const row = $(this).closest('tr');
+    const orderId = row.data('id');
+    const orderItems = row.data('items');
+    
+    // Store all order details in session storage
+    const orderDetails = {
+      id: orderId,
+      items: orderItems,
+      number: row.find('td:eq(1)').text().trim(),
+      date: row.find('td:eq(2)').text().trim(),
+      customer: {
+        name: row.find('td:eq(3) h6').text().trim(),
+        email: row.find('td:eq(3) small').text().trim()
+      },
+      total: row.find('td:eq(4)').text().trim(),
+      status: row.find('td:eq(5)').text().trim(),
+      payment: row.find('td:eq(6)').text().trim()
+    };
+    
+    sessionStorage.setItem('orderDetails', JSON.stringify(orderDetails));
+    sessionStorage.setItem('currentOrderItems', JSON.stringify(orderItems));
+    console.log("Order details from order list:", orderDetails);
+    // Redirect to order details page
+    window.location.href = $(this).attr('href');
+  });
+
+  // Handle delete order button clicks - COMPLETE IMPLEMENTATION
+  $(document).on('click', '.delete-order', function() {
+    const orderId = $(this).closest('tr').data('id');
+    const orderNumber = $(this).closest('tr').find('td:eq(1)').text().trim();
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You want to delete order ${orderNumber}? This action cannot be undone!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Show loading state
+        Swal.fire({
+          title: 'Deleting...',
+          text: 'Please wait while we delete the order',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: false,
+          didOpen: () => {
+            Swal.showLoading()
+            
+            // Set the order ID in the hidden form
+            $('#delete_order_id').val(orderId);
+            $('#delete_void_reason').val('Order deleted by staff');
+            
+            // Submit the form via AJAX
+            $.ajax({
+              type: "POST",
+              url: "{{ route('order.delete') }}",
+              data: $('#deleteOrderForm').serialize(),
+              success: function(response) {
+                if(response.status) {
+                  // Success message
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: `Order ${orderNumber} has been deleted successfully`,
+                    timer: 2000,
+                    showConfirmButton: false
+                  }).then(() => {
+                    // Reload the page to refresh the order list
+                    location.reload();
+                  });
+                } else {
+                  // Error message
+                  Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to load order details: ' + (xhr.responseJSON?.message || error)
-                });
-            }
-        });
-
-        // Print Receipt functionality
-        $('#printReceiptBtn').on('click', function() {
-            if (!orderData) {
+                    title: 'Oops...',
+                    text: response.message || 'Something went wrong!'
+                  });
+                }
+              },
+              error: function(xhr) {
+                let errorMessage = 'Failed to delete order';
+                if(xhr.responseJSON && xhr.responseJSON.message) {
+                  errorMessage = xhr.responseJSON.message;
+                }
                 Swal.fire({
-                    icon: 'warning',
-                    title: 'Error',
-                    text: 'Order data not loaded yet. Please try again.'
+                  icon: 'error',
+                  title: 'Error',
+                  text: errorMessage
                 });
-                return;
-            }
-            
-            printReceipt(orderData);
-        });
-        
-        function printReceipt(orderData) {
-            // Debug - log the order data to console
-            console.log('Print Receipt - Order Data:', orderData);
-            
-            // Create a new window for printing
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Warning',
-                    text: 'Please allow pop-ups to print the receipt.'
-                });
-                return;
-            }
-            
-            // Format the date
-            const orderDate = orderData.date ? new Date(orderData.date) : new Date();
-            const formattedDate = orderDate.toLocaleDateString('en-PH', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
+              }
             });
-            
-            // Calculate totals from items if not available directly
-            let subtotal = 0;
-            let tax = 0;
-            let total = 0;
-            
-            // Try to get values from orderData directly
-            if (typeof orderData.subtotal !== 'undefined' && orderData.subtotal !== null) {
-                subtotal = parseFloat(orderData.subtotal);
-            }
-            
-            if (typeof orderData.tax !== 'undefined' && orderData.tax !== null) {
-                tax = parseFloat(orderData.tax);
-            }
-            
-            if (typeof orderData.total !== 'undefined' && orderData.total !== null) {
-                total = parseFloat(orderData.total);
-            }
-            
-            // If we still don't have totals, calculate from items
-            if (subtotal === 0 && orderData.items && orderData.items.length > 0) {
-                subtotal = orderData.items.reduce((sum, item) => sum + parseFloat(item.total || 0), 0);
-                // Assuming tax is included in total already
-                total = subtotal + tax;
-            }
-            
-            // Create HTML content for the receipt
-            let receiptHtml = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Receipt - Order #${orderData.number || 'N/A'}</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            margin: 0;
-                            padding: 20px;
-                            font-size: 14px;
-                        }
-                        .receipt {
-                            max-width: 800px;
-                            margin: 0 auto;
-                            border: 1px solid #ddd;
-                            padding: 20px;
-                        }
-                        .header {
-                            text-align: center;
-                            margin-bottom: 20px;
-                            border-bottom: 1px solid #ddd;
-                            padding-bottom: 10px;
-                        }
-                        .logo {
-                            font-size: 24px;
-                            font-weight: bold;
-                            margin-bottom: 5px;
-                        }
-                        .order-info {
-                            display: flex;
-                            justify-content: space-between;
-                            margin-bottom: 20px;
-                        }
-                        .items-table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin-bottom: 20px;
-                        }
-                        .items-table th, .items-table td {
-                            border: 1px solid #ddd;
-                            padding: 8px;
-                            text-align: left;
-                        }
-                        .items-table th {
-                            background-color: #f2f2f2;
-                        }
-                        .summary {
-                            margin-top: 20px;
-                            margin-left: auto;
-                            width: 40%;
-                        }
-                        .summary-row {
-                            display: flex;
-                            justify-content: space-between;
-                            padding: 5px 0;
-                        }
-                        .total {
-                            font-weight: bold;
-                            border-top: 1px solid #ddd;
-                            padding-top: 5px;
-                        }
-                        .footer {
-                            text-align: center;
-                            margin-top: 30px;
-                            font-size: 12px;
-                            color: #777;
-                        }
-                        @media print {
-                            body {
-                                padding: 0;
-                            }
-                            .receipt {
-                                border: none;
-                            }
-                            .no-print {
-                                display: none;
-                            }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="receipt">
-                        <div class="header">
-                            <div class="logo">Imajica Aesthetics Skin Care</div>
-                            <div class="logo">&</div>
-                            <div class="logo">Medical Clinic</div>
-                            <div>Receipt</div>
-                        </div>
-                        
-                        <div class="order-info">
-                            <div>
-                                <p><strong>Order #:</strong> ${orderData.number || 'N/A'}</p>
-                                <p><strong>Date:</strong> ${formattedDate}</p>
-                                <p><strong>Status:</strong> ${orderData.status || 'N/A'}</p>
-                                <p><strong>Payment Method:</strong> ${orderData.payment || 'N/A'}</p>
-                            </div>
-                            <div>
-                                <p><strong>Customer:</strong> ${orderData.customer?.name || 'N/A'}</p>
-                                <p><strong>Email:</strong> ${orderData.customer?.email || 'N/A'}</p>
-                                <p><strong>Customer ID:</strong> ${orderData.customer_id || 'N/A'}</p>
-                            </div>
-                        </div>
-                        
-                        <table class="items-table">
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
-                            
-            // Add items to the receipt
-            if (orderData.items && orderData.items.length > 0) {
-                orderData.items.forEach(item => {
-                    receiptHtml += `
-                        <tr>
-                            <td>${item.item_name}</td>
-                            <td>₱${parseFloat(item.unit_price).toFixed(2)}</td>
-                            <td>${item.quantity}</td>
-                            <td>₱${parseFloat(item.total).toFixed(2)}</td>
-                        </tr>`;
-                });
-            } else {
-                receiptHtml += `
-                    <tr>
-                        <td colspan="4" style="text-align: center;">No items found</td>
-                    </tr>`;
-            }
-            
-            receiptHtml += `
-                            </tbody>
-                        </table>
-                        
-                        <div class="summary">
-                            <div class="summary-row">
-                                <span>Subtotal:</span>
-                                <span>₱${parseFloat(subtotal).toFixed(2)}</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Tax:</span>
-                                <span>₱${parseFloat(tax).toFixed(2)}</span>
-                            </div>
-                            <div class="summary-row total">
-                                <span>Total:</span>
-                                <span>₱${parseFloat(total).toFixed(2)}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="footer">
-                            <p>Thank you for your business!</p>
-                            <p>© ${new Date().getFullYear()} Imajica Aesthetics</p>
-                        </div>
-                        
-                        <div class="no-print" style="text-align: center; margin-top: 30px;">
-                            <button onclick="window.print();" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; font-size: 16px;">
-                                Print Receipt
-                            </button>
-                            <button onclick="window.close();" style="padding: 10px 20px; margin-left: 10px; background-color: #f44336; color: white; border: none; cursor: pointer; font-size: 16px;">
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `;
-            
-            // Write to the print window and print
-            printWindow.document.open();
-            printWindow.document.write(receiptHtml);
-            printWindow.document.close();
-            
-            // Wait for content to load before printing
-            printWindow.onload = function() {
-                // Automatically print on some browsers
-                // printWindow.print();
-            };
-        }
-      });
-    </script>
+          }
+        });
+      }
+    });
+  });
+});
+</script>
   </body>
 
-<!-- Mirrored from demos.pixinvent.com/vuexy-html-admin-template/html/vertical-menu-template/app-ecommerce-order-details.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 22 Feb 2025 08:26:20 GMT -->
+<!-- Mirrored from demos.pixinvent.com/vuexy-html-admin-template/html/vertical-menu-template/app-ecommerce-order-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 22 Feb 2025 08:26:18 GMT -->
 </html>
 
   <!-- beautify ignore:end -->
-
