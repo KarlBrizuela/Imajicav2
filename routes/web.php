@@ -300,17 +300,17 @@ Route::prefix('patient')->group(function () {
     Route::get('/allergy/{id}', [PatientController::class, 'getAllergy'])->name('patient.allergy.get')->middleware(['auth', 'admin']);
     Route::put('/allergy/{id}', [PatientController::class, 'updateAllergy'])->name('patient.allergy.update')->middleware(['auth', 'admin']);
     Route::delete('/allergy/{id}', [PatientController::class, 'deleteAllergy'])->name('patient.allergy.delete')->middleware(['auth', 'admin']);
-    
+
     // Medications
     Route::get('/medication/{id}', [PatientController::class, 'getMedication'])->name('patient.medication.get')->middleware(['auth', 'admin']);
     Route::put('/medication/{id}', [PatientController::class, 'updateMedication'])->name('patient.medication.update')->middleware(['auth', 'admin']);
     Route::delete('/medication/{id}', [PatientController::class, 'deleteMedication'])->name('patient.medication.delete')->middleware(['auth', 'admin']);
-    
+
     // Health Concerns
     Route::get('/health-concern/{id}', [PatientController::class, 'getHealthConcern'])->name('patient.health-concern.get')->middleware(['auth', 'admin']);
     Route::put('/health-concern/{id}', [PatientController::class, 'updateHealthConcern'])->name('patient.health-concern.update')->middleware(['auth', 'admin']);
     Route::delete('/health-concern/{id}', [PatientController::class, 'deleteHealthConcern'])->name('patient.health-concern.delete')->middleware(['auth', 'admin']);
-    
+
     // Attachments
     Route::post('/attachment/add', [PatientController::class, 'addAttachment'])->name('patient.attachment.add')->middleware(['auth', 'admin']);
     Route::get('/attachment/{id}', [PatientController::class, 'getAttachment'])->name('patient.attachment.get')->middleware(['auth', 'admin']);
@@ -320,7 +320,7 @@ Route::prefix('patient')->group(function () {
      // Add this new route for prescription updates
     Route::put('/prescription/{id}', [PatientController::class, 'updatePrescription'])
         ->name('patient.prescription.update')->middleware(['auth', 'admin']);
-    
+
     // Add this new route for deleting prescriptions
     Route::delete('/prescription/{id}', [PatientController::class, 'deletePrescription'])
         ->name('patient.prescription.delete')->middleware(['auth', 'admin']);
@@ -360,7 +360,10 @@ Route::get('/services/{id}/details', [ServiceProductController::class, 'getServi
 Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionController::class, 'index']);
 Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
 
+Route::get('/void-logs', [VoidLogController::class, 'voidLogs'])->name('void.logs');
+
 // routes/web.php
 use App\Http\Controllers\VoidLogController;
 
 Route::get('/void-logs', [VoidLogController::class, 'voidLogs']);
+

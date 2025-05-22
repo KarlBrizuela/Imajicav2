@@ -391,15 +391,31 @@
 
                 <!-- Filter by -->
                 <div class="d-flex flex-column" style="width: 160px;">
-                  <label class="form-label text-muted small mb-1">Filter by</label>
+                  <label class="form-label text-muted small mb-1">Filter by Status</label>
                   <select class="form-select form-select-sm" id="filterBy">
                     <option value="">All</option>
-                    <option value="ordered">Ordered</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="out_for_delivery">Out for Delivery</option>
-                    <option value="ready_to_pickup">Ready to Pickup</option>
-                    <option value="price_high">Price: (High to Low)</option>
-                    <option value="price_low">Price: (Low to High)</option>
+                    <optgroup label="Order Status">
+                      <option value="ordered">Ordered</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="out_for_delivery">Out for Delivery</option>
+                      <option value="ready_to_pickup">Ready to Pickup</option>
+                    </optgroup>
+                    <optgroup label="Price">
+                      <option value="price_high">Price: (High to Low)</option>
+                      <option value="price_low">Price: (Low to High)</option>
+                    </optgroup>
+                  </select>
+                </div>
+
+                <!-- Filter by Payment -->
+                <div class="d-flex flex-column" style="width: 160px;">
+                  <label class="form-label text-muted small mb-1">Filter by Payment</label>
+                  <select class="form-select form-select-sm" id="filterByPayment">
+                    <option value="">All</option>
+                    <option value="paid">Paid</option>
+                    <option value="pending">Pending</option>
+                    <option value="failed">Failed</option>
+                    <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
 
@@ -429,7 +445,8 @@
                     <th>Branch Name</th>
                     <th>Payment Category</th>
                     <th>Service Cost</th>
-                    <th>Type</th>
+                    <th>Payment Status</th>
+                    <th>Order Status</th>
                     <th class="text-center">Actions</th>
                   </tr>
                 </thead>
@@ -440,10 +457,15 @@
                     <td>{{ $service->date }}</td>
                     <td>{{ $service->branch_name }}</td>
                     <td>{{ $service->service_category }}</td>
-                    <td>{{ $service->formatted_cost }}</td> <!-- Using your accessor -->
+                    <td>{{ $service->formatted_cost }}</td>
                     <td>
-                      <span class="badge {{ $service->type === 'service' ? 'bg-label-warning' : 'bg-label-success' }}">
-                        {{ ucfirst($service->type) }}
+                      <span class="badge {{ $service->payment_status === 'Paid' ? 'bg-label-success' : ($service->payment_status === 'Pending' ? 'bg-label-warning' : ($service->payment_status === 'Failed' ? 'bg-label-danger' : 'bg-label-secondary')) }}">
+                        {{ $service->payment_status }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge {{ $service->order_status === 'Delivered' ? 'bg-label-success' : ($service->order_status === 'Out for Delivery' ? 'bg-label-info' : ($service->order_status === 'Ready to Pickup' ? 'bg-label-warning' : ($service->order_status === 'Ordered' ? 'bg-label-success' : 'bg-label-primary'))) }}">
+                        {{ $service->order_status }}
                       </span>
                     </td>
                     <td class="text-center">
@@ -497,6 +519,192 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
+
+  const searchInput = document.getElementById('searchInput');
+  const filterBy = document.getElementById('filterBy');
+  const filterByPayment = document.getElementById('filterByPayment');
+  const filterByDate = document.getElementById('filterByDate');
+  const tableBody = document.querySelector('#servicesTable tbody');
+  const tableRows = Array.from(tableBody.querySelectorAll('tr'));
+
+  // Apply filters on input/change
+  [searchInput, filterBy, filterByPayment, filterByDate].forEach(el => {
+      el.addEventListener('change', applyFilters);
+  });
+  searchInput.addEventListener('input', applyFilters);
+
+  function applyFilters() {
+      const searchText = searchInput.value.trim().toLowerCase();
+      const filterValue = filterBy.value;
+      const paymentFilter = filterByPayment.value;
+      const dateFilter = filterByDate.value;
+
+      // First, show all rows to reset any previous filtering
+      tableRows.forEach(row => {
+          row.style.display = '';
+      });
+
+      // === SEARCH FILTER ===
+      if (searchText) {
+          tableRows.forEach(row => {
+              const serviceName = row.cells[0].textContent.toLowerCase();
+              const branchName = row.cells[2].textContent.toLowerCase();
+              const paymentCategory = row.cells[3].textContent.toLowerCase();
+
+              if (!serviceName.includes(searchText) &&
+                  !branchName.includes(searchText) &&
+                  !paymentCategory.includes(searchText)) {
+                  row.style.display = 'none';
+              }
+          });
+      }
+
+      // === FILTER BY PAYMENT STATUS ===
+      if (paymentFilter) {
+          tableRows.forEach(row => {
+              if (row.style.display === 'none') return;
+
+              const paymentStatusBadge = row.cells[5].querySelector('.badge');
+              const paymentStatus = paymentStatusBadge ? paymentStatusBadge.textContent.trim().toLowerCase() : '';
+
+              if (paymentStatus !== paymentFilter.toLowerCase()) {
+                  row.style.display = 'none';
+              }
+          });
+      }
+
+      // === FILTER BY ORDER STATUS ===
+      if (filterValue) {
+          if (['ordered', 'delivered', 'out_for_delivery', 'ready_to_pickup'].includes(filterValue)) {
+              tableRows.forEach(row => {
+                  if (row.style.display === 'none') return;
+
+                  const orderStatusBadge = row.cells[6].querySelector('.badge');
+                  const orderStatus = orderStatusBadge ? orderStatusBadge.textContent.trim().toLowerCase() : '';
+                  const filterText = filterValue.replace(/_/g, ' ').toLowerCase();
+
+                  if (orderStatus !== filterText) {
+                      row.style.display = 'none';
+                  }
+              });
+          } else if (filterValue === 'price_high' || filterValue === 'price_low') {
+              // Get visible rows first
+              const visibleRows = tableRows.filter(row => row.style.display !== 'none');
+
+              // Convert to array of objects with row and price for easier sorting
+              const rowsWithPrices = visibleRows.map(row => {
+                  const priceText = row.cells[4].textContent;
+                  // Extract numeric value from price (removing currency symbol and commas)
+                  const price = parseFloat(priceText.replace(/[₱,]/g, ''));
+                  return { row, price };
+              });
+
+              // Sort by price
+              rowsWithPrices.sort((a, b) => {
+                  return filterValue === 'price_high' ? b.price - a.price : a.price - b.price;
+              });
+
+              // Hide all visible rows first
+              visibleRows.forEach(row => {
+                  row.style.display = 'none';
+              });
+
+              // Then show them in the sorted order
+              rowsWithPrices.forEach(item => {
+                  // Get the parent tbody
+                  const tbody = item.row.parentNode;
+                  // Reorder in the DOM
+                  tbody.appendChild(item.row);
+                  // Make visible
+                  item.row.style.display = '';
+              });
+          }
+      }
+
+      // === FILTER BY DATE RANGE ===
+      if (dateFilter) {
+          const now = new Date();
+          const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+          tableRows.forEach(row => {
+              if (row.style.display === 'none') return;
+
+              const dateText = row.cells[1].textContent.trim();
+              const rowDate = new Date(dateText);
+
+              if (isNaN(rowDate.getTime())) {
+                  // Skip this row if date is invalid
+                  return;
+              }
+
+              // Reset time part for proper date comparison
+              const rowDateOnly = new Date(rowDate.getFullYear(), rowDate.getMonth(), rowDate.getDate());
+
+              switch (dateFilter) {
+                  case 'today':
+                      if (rowDateOnly.getTime() !== today.getTime()) {
+                          row.style.display = 'none';
+                      }
+                      break;
+                  case 'yesterday':
+                      const yesterday = new Date(today);
+                      yesterday.setDate(yesterday.getDate() - 1);
+                      if (rowDateOnly.getTime() !== yesterday.getTime()) {
+                          row.style.display = 'none';
+                      }
+                      break;
+                  case 'last_week':
+                      const weekAgo = new Date(today);
+                      weekAgo.setDate(weekAgo.getDate() - 7);
+                      if (rowDateOnly < weekAgo || rowDateOnly > today) {
+                          row.style.display = 'none';
+                      }
+                      break;
+                  case 'last_month':
+                      const monthAgo = new Date(today);
+                      monthAgo.setDate(monthAgo.getDate() - 30);
+                      if (rowDateOnly < monthAgo || rowDateOnly > today) {
+                          row.style.display = 'none';
+                      }
+                      break;
+                  case 'this_month':
+                      if (rowDateOnly.getMonth() !== today.getMonth() ||
+                          rowDateOnly.getFullYear() !== today.getFullYear()) {
+                          row.style.display = 'none';
+                      }
+                      break;
+                  case 'last_3months':
+                      const threeMonthsAgo = new Date(today);
+                      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                      if (rowDateOnly < threeMonthsAgo || rowDateOnly > today) {
+                          row.style.display = 'none';
+                      }
+                      break;
+              }
+          });
+      }
+
+      // Show message if no results found
+      const visibleRowsCount = tableRows.filter(row => row.style.display !== 'none').length;
+      const noResultsRow = document.getElementById('noResultsRow');
+
+      if (visibleRowsCount === 0) {
+          if (!noResultsRow) {
+              const newRow = document.createElement('tr');
+              newRow.id = 'noResultsRow';
+              const cell = document.createElement('td');
+              cell.colSpan = 8; // Updated to match new number of columns
+              cell.textContent = 'No matching records found';
+              cell.style.textAlign = 'center';
+              newRow.appendChild(cell);
+              tableBody.appendChild(newRow);
+          }
+      } else if (noResultsRow) {
+          noResultsRow.remove();
+      }
+  }
+});
+=======
     const searchInput = document.getElementById('searchInput');
     const filterBy = document.getElementById('filterBy');
     const filterByDate = document.getElementById('filterByDate');
@@ -668,6 +876,7 @@
         }
     }
   });
+
 </script>
 </body>
 </html>
