@@ -335,9 +335,9 @@
                     </a>
                 </li>
 
-                <li class="menu-item {{ request()->is('void-logs') ? 'active' : '' }}">
-                    <a href="/void-logs" class="menu-link">
-                        <div data-i18n="Void Logs">Void Logs</div>
+                <li class="menu-item {{ request()->is('voided-orders') ? 'active' : '' }}">
+                    <a href="/voided-orders" class="menu-link">
+                        <div data-i18n="Voided Orders">Voided Orders</div>
                     </a>
                 </li>
                 </ul>

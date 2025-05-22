@@ -30,6 +30,7 @@ use App\Http\Controllers\wasteController;
 
 use App\Http\Controllers\ServiceProductController;
 use App\Http\Controllers\VoidLogController;
+use App\Http\Controllers\VoidedOrdersController;
 
 
 // Route::get('/', function () {
@@ -91,6 +92,7 @@ Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase.in
 
 
 Route::get('/void-logs', [DashboardController::class, 'void_logs'])->name('page.void-logs')->middleware(['auth', 'admin']);
+Route::get('/voided-orders', [VoidedOrdersController::class, 'index'])->name('page.voided-orders')->middleware(['auth', 'admin']);
 
 Route::get('/product-list', [DashboardController::class, 'product_list'])->name('page.product-list')->middleware(['auth', 'admin']);
 
@@ -105,7 +107,7 @@ Route::get('/edit-order/{id}', [OrderController::class, 'edit'])->name('page.edi
 Route::put('/order/update', [OrderController::class, 'update'])->name('order.update')->middleware(['auth', 'admin']);
 Route::get('/order-details/{id}', [OrderController::class, 'show'])->name('page.order-details')->middleware(['auth', 'admin']);
 Route::get('/order/order-details/{orderId}', [OrderController::class, 'getOrderDetails'])->name('api.order.details')->middleware(['auth', 'admin']);
-Route::delete('/order/delete', [OrderController::class, 'delete'])->name('order.delete')->middleware(['auth', 'admin']);
+Route::delete('/orders/delete', [OrderController::class, 'delete'])->name('order.delete');
 Route::get('/add-product', [DashboardController::class, 'add_product'])->name('page.add-product')->middleware(['auth', 'admin']);
 Route::post('/product/create', [AddProductController::class, 'create'])->name('product.create')->middleware(['auth', 'admin']);
 Route::get('/edit-product/{sku}', [AddProductController::class, 'edit'])
