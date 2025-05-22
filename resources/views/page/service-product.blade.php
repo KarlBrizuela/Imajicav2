@@ -1,5 +1,6 @@
     @extends('layouts.app')
 
+<<<<<<< HEAD
     <!DOCTYPE html>
     <html
     lang="en"
@@ -9,6 +10,17 @@
     data-assets-path="../../assets/"
     data-template="vertical-menu-template"
     data-bs-theme="light"
+=======
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="layout-navbar-fixed layout-menu-fixed layout-compact"
+  dir="ltr"
+  data-skin="default"
+  data-assets-path="../../assets/"
+  data-template="vertical-menu-template"
+  data-bs-theme="light">
+>>>>>>> 6d13f5374000ae59c6aaae8765b47805b9a3494d
 
         <head>
         <title>Product Report - Imajica</title>
@@ -62,6 +74,7 @@
         <!-- Page CSS -->
         <link rel="stylesheet" href="{{ asset('vendor/css/pages/cards-advance.css') }}" />
 
+<<<<<<< HEAD
         <!-- Helpers -->
         <script src="{{ asset('vendor/js/helpers.js') }}"></script>
         <script src="../../assets/js/config.js"></script>
@@ -69,6 +82,17 @@
         </head>
         <style>
         @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+=======
+    <!-- Helpers -->
+      <script src="{{ asset('vendor/js/helpers.js') }}"></script>
+    <script src="../../assets/js/config.js"></script>
+    
+    <!-- Add SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    </head>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+>>>>>>> 6d13f5374000ae59c6aaae8765b47805b9a3494d
 
         * {
             margin: 0;
@@ -323,12 +347,31 @@
             border-right: none;
         }
 
+<<<<<<< HEAD
         .form-control:focus {
             border-color: #134013;
             box-shadow: 0 0 0 0.2rem rgba(19, 64, 19, 0.25);
         }
         </style>
     </head>
+=======
+  <body>
+    @include('components.sidebar')
+    <div class="menu-mobile-toggler d-xl-none rounded-1 layout-wrapper">
+      <a
+        href="javascript:void(0);"
+        class="layout-menu-toggle menu-link text-large text-bg-secondary p-2 rounded-1"
+      >
+        <i class="ti tabler-menu icon-base"></i>
+        <i class="ti tabler-chevron-right icon-base"></i>
+      </a>
+    </div>
+<div class="container-p-y">
+       <div class="container rounded  ">
+      <div class="header">
+        <h1>Product Report Summary</h1>
+      </div>
+>>>>>>> 6d13f5374000ae59c6aaae8765b47805b9a3494d
 
     <body>
         @include('components.sidebar')
@@ -365,6 +408,7 @@
             </div>
             </div>
 
+<<<<<<< HEAD
             <div class="card mt-4">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -479,10 +523,57 @@
                 </table>
                 </div>
             </div>
+=======
+            <!-- Table -->
+            <div class="table-responsive text-nowrap">
+              <table class="table table-striped" id="servicesTable">
+                <thead>
+                  <tr class="table-light">
+                    <th>Services Name</th>
+                    <th>Date</th>
+                    <th>Branch Name</th>
+                    <th>Payment Category</th>
+                    <th>Service Cost</th>
+                    <th>Payment Status</th>
+                    <th>Order Status</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($services as $service)
+                  <tr>
+                    <td>{{ $service->service_name }}</td>
+                    <td>{{ $service->date }}</td>
+                    <td>{{ $service->branch_name }}</td>
+                    <td>{{ $service->service_category }}</td>
+                    <td>{{ $service->formatted_cost }}</td>
+                    <td>
+                      <span class="badge {{ $service->payment_status === 'Paid' ? 'bg-label-success' : ($service->payment_status === 'Pending' ? 'bg-label-warning' : ($service->payment_status === 'Failed' ? 'bg-label-danger' : 'bg-label-secondary')) }}">
+                        {{ $service->payment_status }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge {{ $service->order_status === 'Delivered' ? 'bg-label-success' : ($service->order_status === 'Out for Delivery' ? 'bg-label-info' : ($service->order_status === 'Ready to Pickup' ? 'bg-label-warning' : ($service->order_status === 'Ordered' ? 'bg-label-success' : 'bg-label-primary'))) }}">
+                        {{ $service->order_status }}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <div class="d-flex gap-2 justify-content-center">
+                        <button class="btn btn-sm btn-primary" onclick="exportToExcel()">
+                          <i class="ti tabler-download me-1"></i> Export
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  @endforeach
+                </tbody>
+              </table>
+>>>>>>> 6d13f5374000ae59c6aaae8765b47805b9a3494d
             </div>
         </div>
         </div>
 
+<<<<<<< HEAD
     <script>
     document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
@@ -491,6 +582,49 @@
     const filterByDate = document.getElementById('filterByDate');
     const tableBody = document.querySelector('#servicesTable tbody');
     const tableRows = Array.from(tableBody.querySelectorAll('tr'));
+=======
+<script>
+  // Export to Excel function
+  function exportToExcel() {
+    // Get the table element
+    const table = document.getElementById('servicesTable');
+    
+    // Clone the table to avoid modifying the original
+    const clone = table.cloneNode(true);
+    
+    // Remove the Actions column (last column)
+    const rows = clone.querySelectorAll('tr');
+    rows.forEach(row => {
+      if (row.cells.length > 0) {
+        row.deleteCell(row.cells.length - 1);
+      }
+    });
+    
+    // Convert the table to a worksheet
+    const ws = XLSX.utils.table_to_sheet(clone);
+    
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Service Report");
+    
+    // Generate a file name with current date
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+    const fileName = `Service_Report_${dateString}.xlsx`;
+    
+    // Export to Excel file
+    XLSX.writeFile(wb, fileName);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+
+  const searchInput = document.getElementById('searchInput');
+  const filterBy = document.getElementById('filterBy');
+  const filterByPayment = document.getElementById('filterByPayment');
+  const filterByDate = document.getElementById('filterByDate');
+  const tableBody = document.querySelector('#servicesTable tbody');
+  const tableRows = Array.from(tableBody.querySelectorAll('tr'));
+>>>>>>> 6d13f5374000ae59c6aaae8765b47805b9a3494d
 
     // Apply filters on input/change
     [searchInput, filterBy, filterByPayment, filterByDate].forEach(el => {
@@ -662,6 +796,7 @@
         // Create a new workbook
         const wb = XLSX.utils.book_new();
 
+<<<<<<< HEAD
         // Convert the data to a worksheet
         const ws = XLSX.utils.json_to_sheet([rowData]);
 
@@ -679,3 +814,197 @@
     </script>
     </body>
     </html>
+=======
+      if (visibleRowsCount === 0) {
+          if (!noResultsRow) {
+              const newRow = document.createElement('tr');
+              newRow.id = 'noResultsRow';
+              const cell = document.createElement('td');
+              cell.colSpan = 8; // Updated to match new number of columns
+              cell.textContent = 'No matching records found';
+              cell.style.textAlign = 'center';
+              newRow.appendChild(cell);
+              tableBody.appendChild(newRow);
+          }
+      } else if (noResultsRow) {
+          noResultsRow.remove();
+      }
+  }
+});
+
+    const searchInput = document.getElementById('searchInput');
+    const filterBy = document.getElementById('filterBy');
+    const filterByDate = document.getElementById('filterByDate');
+    const tableBody = document.querySelector('#servicesTable tbody');
+    const tableRows = Array.from(tableBody.querySelectorAll('tr'));
+
+    // Apply filters on input/change
+    [searchInput, filterBy, filterByDate].forEach(el => {
+        el.addEventListener('change', applyFilters);
+    });
+    searchInput.addEventListener('input', applyFilters);
+
+    function applyFilters() {
+        const searchText = searchInput.value.trim().toLowerCase();
+        const filterValue = filterBy.value;
+        const dateFilter = filterByDate.value;
+
+        // First, show all rows to reset any previous filtering
+        tableRows.forEach(row => {
+            row.style.display = '';
+        });
+
+        // === SEARCH FILTER ===
+        if (searchText) {
+            tableRows.forEach(row => {
+                const serviceName = row.cells[0].textContent.toLowerCase();
+                const branchName = row.cells[2].textContent.toLowerCase();
+                const paymentCategory = row.cells[3].textContent.toLowerCase();
+
+                if (!serviceName.includes(searchText) &&
+                    !branchName.includes(searchText) &&
+                    !paymentCategory.includes(searchText)) {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // === FILTER BY TYPE / PRICE ===
+        if (filterValue) {
+            if (['ordered', 'delivered', 'out_for_delivery', 'ready_to_pickup'].includes(filterValue)) {
+                tableRows.forEach(row => {
+                    // Check the status in the 6th column (index 5) - the 'Type' column
+                    // The status is displayed as a badge in this column
+                    const statusBadge = row.cells[5].querySelector('.badge');
+                    const status = statusBadge ? statusBadge.textContent.trim().toLowerCase() : '';
+
+                    // Get the value we're filtering for and normalize it
+                    const filterText = filterValue.replace(/_/g, ' ').toLowerCase();
+
+                    // If the status doesn't match our filter, hide the row
+                    if (status !== filterText) {
+                        row.style.display = 'none';
+                    }
+                });
+            } else if (filterValue === 'price_high' || filterValue === 'price_low') {
+                // Get visible rows first
+                const visibleRows = tableRows.filter(row => row.style.display !== 'none');
+
+                // Convert to array of objects with row and price for easier sorting
+                const rowsWithPrices = visibleRows.map(row => {
+                    const priceText = row.cells[4].textContent;
+                    // Extract numeric value from price (removing currency symbol and commas)
+                    const price = parseFloat(priceText.replace(/[₱,]/g, ''));
+                    return { row, price };
+                });
+
+                // Sort by price
+                rowsWithPrices.sort((a, b) => {
+                    return filterValue === 'price_high' ? b.price - a.price : a.price - b.price;
+                });
+
+                // Hide all visible rows first
+                visibleRows.forEach(row => {
+                    row.style.display = 'none';
+                });
+
+                // Then show them in the sorted order
+                rowsWithPrices.forEach(item => {
+                    // Get the parent tbody
+                    const tbody = item.row.parentNode;
+                    // Reorder in the DOM
+                    tbody.appendChild(item.row);
+                    // Make visible
+                    item.row.style.display = '';
+                });
+            }
+        }
+
+        // === FILTER BY DATE RANGE ===
+        if (dateFilter) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            tableRows.forEach(row => {
+                if (row.style.display === 'none') return;
+
+                const dateText = row.cells[1].textContent.trim();
+                const rowDate = new Date(dateText);
+
+                if (isNaN(rowDate.getTime())) {
+                    // Skip this row if date is invalid
+                    return;
+                }
+
+                // Reset time part for proper date comparison
+                const rowDateOnly = new Date(rowDate.getFullYear(), rowDate.getMonth(), rowDate.getDate());
+
+                switch (dateFilter) {
+                    case 'today':
+                        if (rowDateOnly.getTime() !== today.getTime()) {
+                            row.style.display = 'none';
+                        }
+                        break;
+                    case 'yesterday':
+                        const yesterday = new Date(today);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        if (rowDateOnly.getTime() !== yesterday.getTime()) {
+                            row.style.display = 'none';
+                        }
+                        break;
+                    case 'last_week':
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        if (rowDateOnly < weekAgo || rowDateOnly > today) {
+                            row.style.display = 'none';
+                        }
+                        break;
+                    case 'last_month':
+                        const monthAgo = new Date(today);
+                        monthAgo.setDate(monthAgo.getDate() - 30);
+                        if (rowDateOnly < monthAgo || rowDateOnly > today) {
+                            row.style.display = 'none';
+                        }
+                        break;
+                    case 'this_month':
+                        if (rowDateOnly.getMonth() !== today.getMonth() ||
+                            rowDateOnly.getFullYear() !== today.getFullYear()) {
+                            row.style.display = 'none';
+                        }
+                        break;
+                    case 'last_3months':
+                        const threeMonthsAgo = new Date(today);
+                        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                        if (rowDateOnly < threeMonthsAgo || rowDateOnly > today) {
+                            row.style.display = 'none';
+                        }
+                        break;
+                }
+            });
+        }
+
+        // Show message if no results found
+        const visibleRowsCount = tableRows.filter(row => row.style.display !== 'none').length;
+        const noResultsRow = document.getElementById('noResultsRow');
+
+        if (visibleRowsCount === 0) {
+            if (!noResultsRow) {
+                const newRow = document.createElement('tr');
+                newRow.id = 'noResultsRow';
+                const cell = document.createElement('td');
+                cell.colSpan = 7;
+                cell.textContent = 'No matching records found';
+                cell.style.textAlign = 'center';
+                newRow.appendChild(cell);
+                tableBody.appendChild(newRow);
+            }
+        } else if (noResultsRow) {
+            noResultsRow.remove();
+        }
+    }
+  });
+
+</script>
+</body>
+</html>
+>>>>>>> 6d13f5374000ae59c6aaae8765b47805b9a3494d
