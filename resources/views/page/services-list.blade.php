@@ -169,10 +169,7 @@
                     <th>Services Name</th>
                     <th>Branch Name</th>
                     <th>Description</th>
-                    <th class="text-center">Duration</th>
-            
-                 
-                    
+                    <th class="text-center">Service</th>  
                     <th class="text-center">Actions</th>
                   </tr>
                 </thead>
@@ -182,8 +179,6 @@
                     <td>{{ $service->service_name }}</td>
                     <td>{{ $service->branch ? $service->branch->branch_name : $service->branch_code }}</td>
                     <td>{{ $service->description }}</td>
-
-                 
                     <td>₱{{ number_format($service->service_cost, 2) }}</td>
                    
                     <td class="text-center">
@@ -377,7 +372,7 @@
   <!-- Core JS -->
   <!-- build:js assets/vendor/js/theme.js -->
 
- <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+<script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
 
    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
   <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>

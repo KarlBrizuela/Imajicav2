@@ -69,6 +69,7 @@ class PackageController extends Controller
                 'description' => $validatedData['description'],
                 'inclusions' => [], // Add empty array for inclusions
                 'free' => $validatedData['free'],
+                'price' => $request->price,
             ]);
             
             Log::info('Package created:', ['id' => $package->package_id]);

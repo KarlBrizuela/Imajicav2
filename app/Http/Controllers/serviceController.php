@@ -56,7 +56,7 @@ public function update(Request $request) {
         'service_name' => 'required',
         'branch_code' => 'required',
         'description' => 'required',
-        'service_cost',
+        'service_cost' => 'required|numeric|min:0',
     ]);
 
     // Find the service by ID
@@ -133,6 +133,23 @@ public function delete(Request $request)
     // Return the edit view with service data
     return view('page.edit-service', compact('service', 'branches'));
 }
+
+public function store(Request $request)
+    {
+        // Validate the request data
+        $validated = $request->validate([
+            'service_name' => 'required|string|max:255',
+            'branch_code' => 'required|exists:branches,branch_code',
+            'description' => 'nullable|string',
+            'service_cost' => 'required|numeric|min:0', // Ensures cost is a positive number
+        ]);
+
+        // Create the service
+        Service::create($validated);
+
+        return redirect()->route('service.index')
+            ->with('success', 'Service created successfully!');
+    }
 
 }
 
