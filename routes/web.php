@@ -42,8 +42,8 @@ Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost']
 Route::get('/service/get-cost', [ServiceCostController::class, 'getServiceCost'])->name('service.get_cost');
 
 
-use App\Http\Controllers\ServiceCostController;
-use App\Http\Controllers\PackageCostController;
+
+
 
 
 Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost'])->name('package.get_cost');
