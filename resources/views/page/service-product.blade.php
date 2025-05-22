@@ -704,7 +704,7 @@
       }
   }
 });
-=======
+
     const searchInput = document.getElementById('searchInput');
     const filterBy = document.getElementById('filterBy');
     const filterByDate = document.getElementById('filterByDate');
