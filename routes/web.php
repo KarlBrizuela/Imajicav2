@@ -361,3 +361,9 @@ Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionControlle
 Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
 
 Route::get('/void-logs', [VoidLogController::class, 'voidLogs'])->name('void.logs');
+
+// routes/web.php
+use App\Http\Controllers\VoidLogController;
+
+Route::get('/void-logs', [VoidLogController::class, 'voidLogs']);
+

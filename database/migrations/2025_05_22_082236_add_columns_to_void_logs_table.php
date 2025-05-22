@@ -4,8 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class AddColumnsToVoidLogsTable extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up()
 {
     Schema::table('void_logs', function (Blueprint $table) {
@@ -17,8 +22,15 @@ return new class extends Migration
     });
 }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down()
     {
-        Schema::dropIfExists('void_logs');
+        Schema::table('void_logs', function (Blueprint $table) {
+            //
+        });
     }
-};
+}
