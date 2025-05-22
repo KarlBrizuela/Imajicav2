@@ -40,6 +40,14 @@ Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost']
 
 
 Route::get('/service/get-cost', [ServiceCostController::class, 'getServiceCost'])->name('service.get_cost');
+
+
+use App\Http\Controllers\ServiceCostController;
+use App\Http\Controllers\PackageCostController;
+
+
+Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost'])->name('package.get_cost');
+
 Route::get('/', [LoginController::class, 'index'])->name('page.index');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -47,7 +55,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/expenses-report', [App\Http\Controllers\ExpensesReportController::class, 'index'])->name('page.expenses-report')->middleware(['auth', 'admin']);
 
 Route::get('/employee-report', [App\Http\Controllers\EmployeeReportController::class, 'index'])->name('page.employee-report')->middleware(['auth', 'admin']);
-
 
 
 Route::get('/clear-config', function () {
@@ -82,7 +89,7 @@ Route::get('/new-loyalty', [DashboardController::class, 'new_loyalty'])->name('p
 
 Route::get('/sales-transaction', [DashboardController::class, 'sales_transaction'])->name('page.sales-transaction')->middleware(['auth', 'admin']);
 
-Route::get('/employee-sales', [DashboardController::class, 'employee_sales'])->name('page.employee-sales')->middleware(['auth', 'admin']);
+Route::get('/employee-sales', [App\Http\Controllers\EmployeeController::class, 'index'])->name('page.employee-sales')->middleware(['auth', 'admin']);
 
 
 Route::get('/commision-employee', [DashboardController::class, 'commision_employee'])->name('page.commsion-employee')->middleware(['auth', 'admin']);
@@ -344,3 +351,12 @@ Route::get('/package/edit/{id}', [App\Http\Controllers\PackageController::class,
 Route::put('/package/update', [App\Http\Controllers\PackageController::class, 'update'])->name('package.update');
 Route::delete('/package/delete', [App\Http\Controllers\PackageController::class, 'delete'])->name('package.delete');
 Route::get('/package/all', [App\Http\Controllers\PackageController::class, 'index'])->name('get.packages');
+
+
+Route::get('/service-product', [ServiceProductController::class, 'index'])->name('service.product.report');
+Route::get('/services/{id}/details', [ServiceProductController::class, 'getServiceDetails']);
+
+Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionController::class, 'index']);
+Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
+
+Route::get('/void-logs', [VoidLogController::class, 'voidLogs'])->name('void.logs');

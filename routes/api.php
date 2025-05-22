@@ -35,3 +35,9 @@ Route::prefix('products')->group(function () {
 Route::get('/bookings/{booking_id}', [BookingController::class, 'getBookingDetails']);
 Route::get('/bookings/{booking_id}/notes', [BookingController::class, 'getBookingNotes']);
 Route::get('/package-price/{package_id}', [PackageController::class, 'getPackagePrice']);
+
+use App\Http\Controllers\EmployeeReportController;
+Route::prefix('api')->group(function () {
+    Route::get('/employees/{id}', [EmployeeReportController::class, 'getEmployee']);
+    Route::get('/employees/{id}/transactions', [EmployeeReportController::class, 'getEmployeeTransactions']);
+});

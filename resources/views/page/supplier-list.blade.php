@@ -11,17 +11,18 @@
     <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
 
     <!-- Core CSS -->
-    <link rel="stylesheet" href="../../assets/vendor/fonts/iconify-icons.css" />
-    <link rel="stylesheet" href="../../assets/vendor/css/core.css" />
-    <link rel="stylesheet" href="../../assets/css/demo.css" />
+    <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}">
+    <link rel="stylesheet" href="{{ asset('/css/demo.css') }}" />
+
     
     <!-- Vendors CSS -->
-    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
     
     <!-- Helpers -->
-    <script src="../../assets/vendor/js/helpers.js"></script>
+    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="../../assets/js/config.js"></script>
     
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -275,28 +276,31 @@
     </div>
 
     <!-- Core JS -->
-    <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="../../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../../assets/vendor/js/bootstrap.js"></script>
-    <script src="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-    <script src="../../assets/vendor/libs/node-waves/node-waves.js"></script>
-    <script src="../../assets/vendor/js/menu.js"></script>
+      <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+   <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('vendor/js/menu.js') }}"></script>
 
 
 
-    <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
-    <script src="../../assets/vendor/libs/datatables-buttons/datatables-buttons.js"></script>
-    <script src="../../assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.js"></script>
+
+    <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+   <script src="{{ asset('vendor/libs/datatables-buttons/datatables-buttons.js') }}"></script>
+
+   <script src="{{ asset('vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.js') }}"></script>
+
     <script src="../../assets/vendor/libs/jszip/jszip.js"></script>
     <script src="../../assets/vendor/libs/pdfmake/pdfmake.js"></script>
     <script src="../../assets/vendor/libs/datatables-buttons/buttons.html5.js"></script>
     <script src="../../assets/vendor/libs/datatables-buttons/buttons.print.js"></script>
 
-    <script src="../../assets/vendor/libs/moment/moment.js"></script>
-    <script src="../../assets/vendor/libs/flatpickr/flatpickr.js"></script>
-    <script src="../../assets/vendor/libs/%40form-validation/popular.js"></script>
-    <script src="../../assets/vendor/libs/%40form-validation/bootstrap5.js"></script>
-    <script src="../../assets/vendor/libs/%40form-validation/auto-focus.js"></script>
+  <script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
+   <link rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}" />
+    <script src="{{ asset('vendor/libs/@form-validation/popular.js') }}"></script>
+     <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+  <script src="{{ asset('vendor/libs/@form-validation/auto-focus.js') }}"></script>
 
 
 

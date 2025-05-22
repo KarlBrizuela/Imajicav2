@@ -11,20 +11,20 @@ class CreateExpensesTable extends Migration
      *
      * @return void
      */
-    public function up()
-    {
-        Schema::create('expenses', function (Blueprint $table) {
-            $table->id('expense_id');
-            $table->string('expense_name');
-            $table->bigInteger('category_expense_id');
-            $table->string('date_expense');
-            $table->string('payment_status');
-            $table->string('invoice_number')->nullable();
-            $table->string('remarks');
-            $table->string('branch_code');
-
-        });
-    }
+   public function up()
+{
+    Schema::create('expenses', function (Blueprint $table) {
+        $table->id('expense_id');
+        $table->string('expense_name');
+        $table->decimal('expense_cost', 10, 2)->default(0.00); // Added this line
+        $table->bigInteger('category_expense_id');
+        $table->string('date_expense');
+        $table->string('payment_status');
+        $table->string('invoice_number')->nullable();
+        $table->string('remarks');
+        $table->string('branch_code');
+    });
+}
 
     /**
      * Reverse the migrations.

@@ -475,7 +475,7 @@
         $('#edit_branch_code').val($(this).data('service-branch'));
         $('#edit_description').val($(this).data('service-description'));
         $('#edit_duration').val($(this).data('service-duration'));
-        $('#edit_service_cost').val($(this).data('service-cost'));
+        $('#edit_service_cost').val($(this).data('service_cost'));
         $('#edit_loyalty_pts').val($(this).data('service-points'));
 
         // For debugging - add this temporarily
