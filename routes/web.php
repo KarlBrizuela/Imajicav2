@@ -28,20 +28,11 @@ use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\wasteController;
 
-use App\Http\Controllers\ServiceProductController;
-use App\Http\Controllers\VoidLogController;
-
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 use App\Http\Controllers\ServiceCostController;
 use App\Http\Controllers\PackageCostController;
 
 
 Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost'])->name('package.get_cost');
-
 
 
 Route::get('/service/get-cost', [ServiceCostController::class, 'getServiceCost'])->name('service.get_cost');
@@ -52,7 +43,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/expenses-report', [App\Http\Controllers\ExpensesReportController::class, 'index'])->name('page.expenses-report')->middleware(['auth', 'admin']);
 
 Route::get('/employee-report', [App\Http\Controllers\EmployeeReportController::class, 'index'])->name('page.employee-report')->middleware(['auth', 'admin']);
-
 
 
 Route::get('/clear-config', function () {
