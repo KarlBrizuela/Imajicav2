@@ -5,6 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\LoyaltyPointsController;
+
+Route::get('/loyalty/get-service-points', [LoyaltyPointsController::class, 'getServicePoints'])->name('loyalty.get_service_points');
+
 
 /*
 |--------------------------------------------------------------------------
