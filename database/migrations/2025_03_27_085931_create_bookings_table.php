@@ -23,7 +23,6 @@ class CreateBookingsTable extends Migration
             $table->string(column: 'branch_code');
             $table->bigInteger(column: 'patient_id');
             $table->string(column: 'useReward');
-
             $table->text(column: 'remarks');
         });
     }
