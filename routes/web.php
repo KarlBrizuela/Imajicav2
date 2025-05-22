@@ -28,6 +28,7 @@ use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\wasteController;
 
+
 use App\Http\Controllers\ServiceCostController;
 use App\Http\Controllers\PackageCostController;
 
@@ -35,7 +36,6 @@ use App\Http\Controllers\PackageCostController;
 Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost'])->name('package.get_cost');
 
 
-Route::get('/service/get-cost', [ServiceCostController::class, 'getServiceCost'])->name('service.get_cost');
 Route::get('/', [LoginController::class, 'index'])->name('page.index');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
