@@ -318,11 +318,7 @@
 
                 <li class="menu-item {{ request()->is('sales-transaction') ? 'active' : '' }}">
                     <a href="/sales-transaction" class="menu-link">
-<<<<<<< HEAD
                         <div data-i18n="Services Transaction">Sale Transaction</div>
-=======
-                        <div data-i18n="Services Transaction">Sales Transaction</div>
->>>>>>> 6d13f5374000ae59c6aaae8765b47805b9a3494d
                     </a>
                 </li>
 
