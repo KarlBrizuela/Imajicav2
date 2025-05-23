@@ -380,3 +380,13 @@ Route::get('/package/get-cost', [PackageController::class, 'getCost'])->name('pa
 
 Route::get('/package/get-cost', [App\Http\Controllers\PackageController::class, 'getCost'])->name('package.get_cost');
 
+// Temporary debug route
+Route::get('/debug-coupon/{id}', function($id) {
+    $coupon = App\Models\Coupon::find($id);
+    return response()->json([
+        'start_date' => $coupon->start_date,
+        'end_date' => $coupon->end_date,
+        'now' => now()->format('Y-m-d H:i:s'),
+        'timezone' => config('app.timezone')
+    ]);
+});
