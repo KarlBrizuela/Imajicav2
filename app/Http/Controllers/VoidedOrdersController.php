@@ -25,8 +25,4 @@ class VoidedOrdersController extends Controller
 
         return view('page.voided-orders', compact('voidedOrders'));
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/main
