@@ -331,7 +331,7 @@ Route::post('/user/create', [UserController::class, 'create'])->name('user.creat
 Route::get('/user/edit/{id}', [UserController::class, 'edit'])->name('page.edit-user')->middleware(['auth', 'admin']);
 Route::post('/user/update', [UserController::class, 'update'])->name('user.update')->middleware(['auth', 'admin']);
 Route::post('/user/delete/{id}', [UserController::class, 'delete'])->name('user.delete')->middleware(['auth', 'admin']);
-
+Route::get('/users/create', [UserController::class, 'createForm'])->name('user.create.form');
 
 
 Route::post('/check-first-time-patient', [App\Http\Controllers\BookingController::class, 'checkFirstTimePatient'])->name('check.first.time.patient');
@@ -351,4 +351,32 @@ Route::get('/services/{id}/details', [ServiceProductController::class, 'getServi
 
 Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionController::class, 'index']);
 Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
+
+Route::get('/service/get-cost', [ServiceController::class, 'getCost'])->name('service.get_cost');
+
+// Or for API routes
+Route::get('/api/service/get-cost', [ServiceController::class, 'getCost'])->name('service.get_cost');
+
+// If it's a POST request
+Route::post('/service/get-cost', [ServiceController::class, 'getCost'])->name('service.get_cost');
+
+// In routes/web.php or routes/api.php
+
+
+Route::get('/booking', [BookingController::class, 'index']);
+Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+
+// Should have something like this:
+Route::get('/booking', [BookingController::class, 'index'])->name('page.booking');
+// In routes/web.php
+Route::get('/booking', [BookingController::class, 'index'])->name('page.booking');
+
+Route::get('/booking', function () {return view('page.booking');})->name('page.booking');
+
+Route::get('/booking', [App\Http\Controllers\BookingController::class, 'index'])->name('page.booking');
+
+// Add this to your routes/web.php
+Route::get('/package/get-cost', [PackageController::class, 'getCost'])->name('package.get_cost');
+
+Route::get('/package/get-cost', [App\Http\Controllers\PackageController::class, 'getCost'])->name('package.get_cost');
 

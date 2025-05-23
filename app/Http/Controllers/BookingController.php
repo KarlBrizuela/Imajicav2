@@ -510,7 +510,7 @@ class BookingController extends Controller
                 'notes' => $formattedNotes
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error fetching booking notes: ' . $e->getMessage());
+            Log::error('Error fetching booking notes: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to retrieve notes: ' . $e->getMessage()
