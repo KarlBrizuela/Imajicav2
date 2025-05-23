@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\order;
 use App\Models\OrderItem;
+use App\Models\VoidLogs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -135,25 +136,20 @@ class OrderController extends Controller
         }
     }
 
-    public function index()
-    {
-        $orders = order::with('orderItems')->get();
+public function index()
+{
+    $orders = order::with('orderItems')->get();
 
-    
+    // Calculate payment status counts for the dashboard widgets
+    $paymentCounts = [
+        'pending' => $orders->where('payment_status', 'Pending')->count(),
+        'paid' => $orders->where('payment_status', 'Paid')->count(),
+        'cancelled' => $orders->where('payment_status', 'Cancelled')->count(),
+        'failed' => $orders->where('payment_status', 'Failed')->count(),
+    ];
 
-        return view('page.order-list', compact('orders'));
-    }
-
-    public function show($id)
-    {
-        try {
-            $order = order::with(['orderItems.product'])->findOrFail($id);
-            return view('page.order-details', compact('order'));
-        } catch (\Exception $e) {
-            return redirect()->route('page.order-list')
-                           ->with('error', 'Order not found.');
-        }
-    }
+    return view('page.order-list', compact('orders', 'paymentCounts'));
+}
 
     public function getOrderDetails($orderId)
     {
@@ -189,45 +185,78 @@ class OrderController extends Controller
         ]);
     }
 
-    public function delete(Request $request)
-    {
-        try {
-            $orderId = $request->input('order_id');
-            $order = order::findOrFail($orderId);
-                
-            // Delete related order items first 
-            $order->orderItems()->delete();
-            
-            // Then delete the order
-            $order->delete();
-
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Order deleted successfully'
-                ]);
-            }
-
-            return redirect()->route('page.order-list')
-                ->with('success', 'Order deleted successfully!');
-
-        } catch (\Exception $e) {
-            Log::error('Error deleting order:', [
-                'order_id' => $orderId,
-                'error' => $e->getMessage()
-            ]);
-
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Failed to delete order: ' . $e->getMessage()
-                ], 500);
-            }
-
-            return redirect()->back()
-                ->with('error', 'Failed to delete order: ' . $e->getMessage());
+public function delete(Request $request)
+{
+    try {
+        $orderId = $request->input('order_id');
+        
+        // Validate that order_id is provided
+        if (!$orderId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Order ID is required'
+            ], 400);
         }
+
+        // Use lowercase 'order' to match your model name
+        $order = order::findOrFail($orderId);
+        
+        // Save order information to the order_void_logs table
+        DB::table('order_void_logs')->insert([
+            'order_id' => $order->order_id,
+            'order_number' => $order->order_number,
+            'customer_name' => $order->customer_name,
+            'customer_email' => $order->customer_email,
+            'payment_method' => $order->payment_method,
+            'payment_status' => $order->payment_status,
+            'order_status' => $order->order_status,
+            'total_amount' => $order->total,
+            'void_reason' => $request->input('void_reason', 'Order deleted by staff'),
+            'voided_by' => auth()->user() ? auth()->user()->id : null,
+            'voided_at' => now()
+        ]);
+        
+        // Delete related order items first 
+        $order->orderItems()->delete();
+        
+        // Delete the order
+        $order->delete();
+
+        Log::info('Order deleted successfully', [
+            'order_id' => $orderId,
+            'order_number' => $order->order_number,
+            'total_amount' => $order->total
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Order deleted successfully'
+        ]);
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        Log::error('Order not found for deletion:', [
+            'order_id' => $orderId ?? 'not provided'
+        ]);
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Order not found'
+        ], 404);
+
+    } catch (\Exception $e) {
+        Log::error('Error deleting order:', [
+            'order_id' => $orderId ?? 'not provided',
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile()
+        ]);
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to delete order: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     public function edit($id)
     {

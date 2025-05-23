@@ -37,54 +37,32 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="../../assets/vendor/fonts/iconify-icons.css" />
+      <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
 
     <!-- Core CSS -->
     <!-- build:css assets/vendor/css/theme.css  -->
 
-    <link
-      rel="stylesheet"
-      href="../../assets/vendor/libs/node-waves/node-waves.css"
-    />
+     <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
+    <link rel="stylesheet"  href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
 
-    <link
-      rel="stylesheet"
-      href="../../assets/vendor/libs/pickr/pickr-themes.css"
-    />
-
-    <link rel="stylesheet" href="../../assets/vendor/css/core.css" />
-    <link rel="stylesheet" href="../../assets/css/demo.css" />
 
     <!-- Vendors CSS -->
 
-    <link
-      rel="stylesheet"
-      href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"
-    />
-    <link
-      rel="stylesheet"
-      href="../../assets/vendor/libs/flatpickr/flatpickr.css"
-    />
-    <link
-      rel="stylesheet"
-      href="../../assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css"
-    />
-    <link
-      rel="stylesheet"
-      href="../../assets/vendor/libs/jquery-timepicker/jquery-timepicker.css"
-    />
+    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+   <link  rel="stylesheet"  href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}"  />
+    <link  rel="stylesheet"   href="{{ asset('vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css') }}" />
+    <link  rel="stylesheet"  href="{{ asset('vendor/libs/jquery-timepicker/jquery-timepicker.css') }}" />
 
     <!-- endbuild -->
 
-    <link
-      rel="stylesheet"
-      href="../../assets/vendor/libs/select2/select2.css"
-    />
+    <link rel="stylesheet" href="{{ asset('vendor/libs/select2/select2.css') }}" />
 
     <!-- Page CSS -->
 
     <!-- Helpers -->
-    <script src="../../assets/vendor/js/helpers.js"></script>
+   <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 
     <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
@@ -378,42 +356,21 @@
                                       </select>
                                     </div>
 
-                                    <div class="col-md-6">
-                                      <label class="form-label">Link to Staff</label>
-                                      <select
-                                        class="select2 form-select"
-                                        data-allow-clear="true"
-                                        id="staff"
-                                        name="staff"
-                                      >
-                                        <option value="">Select Staff</option>
-                                        @foreach ($staffs as $staff)
-                                          <option value="{{ $staff->id }}">
-                                            {{ $staff->firstname }} {{ $staff->lastname }}
-                                          </option>
-                                        
-                                        @endforeach
-                                      </select>
-                                    </div>
+          
 
-                                    <div class="col-md-6">
-                                      <label class="form-label">Branch</label>
-                                      <select
-                                        class="select2 form-select"
-                                        data-allow-clear="true"
-                                        id="branch"
-                                        name="branch"
-                                      >
-                                        <option value="">Select Branch</option>
-                                        @foreach ($branches as $branch)
-                                          <option value="{{ $branch->branch_code }}">
-                                            {{ $branch->branch_name }}
-                                          </option>
-                                        
-                                        @endforeach
-                                      </select>
-                                    </div>
-                                  </div>
+<div class="col-md-6">
+  <label class="form-label">Branch</label>
+  <select class="select2 form-select" id="branch" name="branch">
+    <option value="">Select Branch</option>
+    @isset($branches)
+      @foreach ($branches as $branch)
+        <option value="{{ $branch->branch_code }}">
+          {{ $branch->branch_name }}
+        </option>
+      @endforeach
+    @endisset
+  </select>
+</div>
 
                                   <!-- 2. Delivery Type -->
 
@@ -466,43 +423,51 @@
     </div>
 
     <!-- Keep existing scripts -->
-    <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
-
-    <script src="../../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../../assets/vendor/js/bootstrap.js"></script>
-    <script src="../../assets/vendor/libs/node-waves/node-waves.js"></script>
-
-    <script src="../../assets/vendor/libs/%40algolia/autocomplete-js.js"></script>
-
-    <script src="../../assets/vendor/libs/pickr/pickr.js"></script>
-
-    <script src="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-
-    <script src="../../assets/vendor/libs/hammer/hammer.js"></script>
-
-    <script src="../../assets/vendor/libs/i18n/i18n.js"></script>
-
-    <script src="../../assets/vendor/js/menu.js"></script>
-
+    <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+    <script src="{{ asset('vendor/libs/%40algolia/autocomplete-js.js') }}"></script>
+    <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
+    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
+    <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
+    <script src="{{ asset('vendor/js/menu.js') }}"></script>
     <!-- endbuild -->
 
-    <!-- Vendors JS -->
-    <script src="../../assets/vendor/libs/cleave-zen/cleave-zen.js"></script>
-    <script src="../../assets/vendor/libs/select2/select2.js"></script>
+    <script>
+      $(document).ready(function() {
+    // Set CSRF token for all AJAX requests
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-    <script src="../../assets/vendor/libs/moment/moment.js"></script>
-    <script src="../../assets/vendor/libs/flatpickr/flatpickr.js"></script>
-    <script src="../../assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js"></script>
-    <script src="../../assets/vendor/libs/jquery-timepicker/jquery-timepicker.js"></script>
-    <script src="../../assets/vendor/libs/pickr/pickr.js"></script>
+    // Your existing form submission code...
+    $('form').on('submit', function(e) {
+        e.preventDefault();
+        // AJAX request...
+    });
+});
+    </script>
+
+    <!-- Vendors JS -->
+    <script src="{{ asset('vendor/libs/cleave-zen/cleave-zen.js') }}"></script>
+    <script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
+    <script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{{ asset('vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js') }}"></script>
+    <script src="{{ asset('vendor/libs/jquery-timepicker/jquery-timepicker.js') }}"></script>
+  <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
 
     <!-- Main JS -->
 
     <script src="../../assets/js/main.js"></script>
 
     <!-- Page JS -->
-    <script src="../../assets/js/form-layouts.js"></script>
-    <script src="../../assets/js/forms-pickers.js"></script>
+   <script src="{{ asset('assets/js/form-layouts.js') }}"></script>
+<script src="{{ asset('assets/js/forms-pickers.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
       $(document).ready(function() {
@@ -572,50 +537,75 @@
                 });
               }
             },
-            error: function(xhr) {
-              // Handle duplicate entry error
-              if(xhr.responseText.includes('Duplicate entry')) {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Email error',
-                  text: 'Email already registered.',
-                  confirmButtonColor: '#0A3622'
-                }).then(() => {
-                  // Clear only the branch_code field
-                  $('#email').val('').focus();
-                });
-                return;
-              }
+           error: function(xhr, status, error) {
+    console.log(xhr.responseText); // Add this to see the actual error response
+    
+    // Handle network errors
+    if (xhr.status === 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: 'Please check your internet connection',
+            confirmButtonColor: '#0A3622'
+        });
+        return;
+    }
 
-              // Handle validation errors
-              if(xhr.status === 422) {
-                let errors = xhr.responseJSON.errors;
-                let errorList = '<ul class="text-start">';
-                Object.keys(errors).forEach(key => {
-                  errorList += `<li>${errors[key][0]}</li>`;
-                });
-                errorList += '</ul>';
-                
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Validation Error',
-                  html: errorList,
-                  confirmButtonColor: '#0A3622'
-                });
-                return;
-              }
+    // Handle validation errors (422 status code)
+    if (xhr.status === 422) {
+        let errors = xhr.responseJSON.errors;
+        let errorMessages = [];
+        
+        // Collect all error messages
+        for (let field in errors) {
+            errorMessages.push(errors[field][0]);
+        }
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            html: errorMessages.join('<br>'),
+            confirmButtonColor: '#0A3622'
+        });
+        return;
+    }
 
-              // Handle other errors
-              Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'An unexpected error occurred. Please try again.',
-                confirmButtonColor: '#0A3622'
-              });
-            }
+    // Handle duplicate entry (usually 409 or 500 status code)
+    if (xhr.responseText.includes('Duplicate entry')) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Duplicate Entry',
+            text: 'This email is already registered',
+            confirmButtonColor: '#0A3622'
+        });
+        return;
+    }
+
+    // Handle server errors (500 status code)
+    if (xhr.status === 500) {
+        let response = JSON.parse(xhr.responseText);
+        Swal.fire({
+            icon: 'error',
+            title: 'Server Error',
+            text: response.message || 'An error occurred on the server',
+            confirmButtonColor: '#0A3622'
+        });
+        return;
+    }
+
+    // Generic error handler
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: xhr.responseJSON?.message || 'An unexpected error occurred',
+        confirmButtonColor: '#0A3622'
+    });
+}
           });
         });
       });
+
+    
     </script>
 </body>
 </html>

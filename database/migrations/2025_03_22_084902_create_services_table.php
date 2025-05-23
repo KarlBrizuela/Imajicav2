@@ -22,7 +22,7 @@ class CreateServicesTable extends Migration
             $table->text('description');
             $table->bigInteger('duration');
             $table->string('service_category');
-            $table->bigInteger('service_cost');
+            $table->decimal('service_cost', 10, 2); // Instead of bigInteger()
             $table->bigInteger('loyalty_pts');
             $table->timestamps();
         });

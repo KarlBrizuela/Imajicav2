@@ -65,7 +65,6 @@
     margin-left: auto;
   }
 
-  /* Keep all other existing styles exactly the same */
   .page-title {
     color: #5a6acf;
     font-weight: 700;
@@ -90,7 +89,7 @@
     overflow: hidden;
   }
 
-  #voidTable thead th {
+  #voidedOrdersTable thead th {
     background-color: #1b392f;
     color: white;
     border: none;
@@ -98,7 +97,7 @@
     padding: 12px;
   }
 
-  #voidTable tbody td {
+  #voidedOrdersTable tbody td {
     padding: 12px;
     vertical-align: middle;
   }
@@ -153,26 +152,59 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-striped" id="voidTable">
+                                <table class="table table-striped" id="voidedOrdersTable">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
+                                            <th>Order No.</th>
                                             <th>Date Voided</th>
+                                            <th>Customer</th>
                                             <th>Amount</th>
-                                            <th>Status</th>
+                                            <th>Payment Method</th>
+                                            <th>Order Status</th>
+                                            <th>Payment Status</th>
+                                            <th>Reason</th>
+                                            <th>Deleted By</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($voids as $void)
+                                        @forelse ($voidedOrders as $order)
                                         <tr>
-                                            <td>{{ $void->booking_id ?? 'N/A' }}</td>
-                                            <td>{{ $void->start_date ? $void->start_date->format('M d, Y h:i A') : 'N/A' }}</td>
-                                            <td>₱{{ number_format($void->service_cost ?? 0, 2) }}</td>
-                                            <td>{{ $void->status ?? 'N/A' }}</td>
+                                            <td>{{ $order->order_number ?? 'N/A' }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($order->voided_at)->format('M d, Y h:i A') }}</td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span>{{ $order->customer_name ?? 'N/A' }}</span>
+                                                    <small class="text-muted">{{ $order->customer_email ?? '' }}</small>
+                                                </div>
+                                            </td>
+                                            <td>₱{{ number_format($order->total_amount ?? 0, 2) }}</td>
+                                            <td>{{ $order->payment_method ?? 'N/A' }}</td>
+                                            <td>
+                                                <span class="badge bg-label-{{ 
+                                                    $order->order_status == 'Delivered' ? 'success' : 
+                                                    ($order->order_status == 'Ordered' ? 'primary' : 
+                                                    ($order->order_status == 'Out for Delivery' ? 'warning' : 
+                                                    ($order->order_status == 'Ready to Pickup' ? 'info' : 'secondary'))) 
+                                                }} me-1">
+                                                    {{ $order->order_status ?? 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-label-{{ 
+                                                    $order->payment_status == 'Paid' ? 'success' : 
+                                                    ($order->payment_status == 'Pending' ? 'warning' : 
+                                                    ($order->payment_status == 'Failed' ? 'danger' : 
+                                                    ($order->payment_status == 'Cancelled' ? 'secondary' : 'info'))) 
+                                                }} me-1">
+                                                    {{ $order->payment_status ?? 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td>{{ $order->void_reason ?? 'No reason provided' }}</td>
+                                            <td>{{ $order->voided_by_name ?? 'N/A' }}</td>
                                         </tr>
                                         @empty
                                         <tr>
-                                            <td colspan="4" class="text-center text-muted">No voided orders found</td>
+                                            <td colspan="9" class="text-center text-muted">No voided orders found</td>
                                         </tr>
                                         @endforelse
                                     </tbody>
@@ -205,10 +237,10 @@
     <!-- Main JS -->
     <script src="{{ asset('js/main.js') }}"></script>
 
-    @if($voids->isNotEmpty())
+    @if($voidedOrders->isNotEmpty())
     <script>
         $(document).ready(function () {
-            $('#voidTable').DataTable({
+            $('#voidedOrdersTable').DataTable({
                 responsive: true,
                 pageLength: 25,
                 lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
@@ -258,4 +290,4 @@
     </script>
     @endif
 </body>
-</html>
+</html> 

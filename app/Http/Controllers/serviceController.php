@@ -17,11 +17,13 @@ class serviceController extends Controller
                 'service_name' => 'required',
                 'branch_code' => 'required',
                 'description' => 'required',
-                'service_cost',
-
+                'service_cost' => 'nullable|numeric|min:0',
             ]);
 
-  
+            // Ensure service_cost is properly set (defaults to 0 if empty)
+            if (empty($data['service_cost'])) {
+                $data['service_cost'] = 0;
+            }
 
             $service = service::create($data);
 
@@ -56,7 +58,11 @@ public function update(Request $request) {
         'service_name' => 'required',
         'branch_code' => 'required',
         'description' => 'required',
-        'service_cost',
+<<<<<<< HEAD
+        'service_cost' => 'nullable|numeric|min:0',
+=======
+        'service_cost' => 'required|numeric|min:0',
+>>>>>>> origin/main
     ]);
 
     // Find the service by ID
@@ -65,13 +71,11 @@ public function update(Request $request) {
         return redirect()->back()->with('error', 'Service not found');
     }
 
-  
-
     // Update service details
     $service->service_name = $request->service_name;
     $service->branch_code = $request->branch_code;
     $service->description = $request->description;
-    $service->service_cost = $request->service_cost;
+    $service->service_cost = !empty($request->service_cost) ? $request->service_cost : 0;
 
     $service->save();
 
@@ -132,6 +136,34 @@ public function delete(Request $request)
     
     // Return the edit view with service data
     return view('page.edit-service', compact('service', 'branches'));
+}
+
+public function store(Request $request)
+    {
+        // Validate the request data
+        $validated = $request->validate([
+            'service_name' => 'required|string|max:255',
+            'branch_code' => 'required|exists:branches,branch_code',
+            'description' => 'nullable|string',
+            'service_cost' => 'required|numeric|min:0', // Ensures cost is a positive number
+        ]);
+
+        // Create the service
+        Service::create($validated);
+
+        return redirect()->route('service.index')
+            ->with('success', 'Service created successfully!');
+    }
+
+     public function getCost(Request $request)
+{
+    $serviceType = $request->input('service_type');
+    $duration = $request->input('duration');
+    
+    // Calculate cost based on service type and duration
+    $cost = $this->calculateServiceCost($serviceType, $duration);
+    
+    return response()->json(['cost' => $cost]);
 }
 
 }

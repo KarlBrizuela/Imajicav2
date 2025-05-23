@@ -282,10 +282,6 @@
         border-radius: 6px;
       }
 
-
-
-
-
       .btn-sm {
         padding: 0.25rem 0.5rem;
         font-size: 0.875rem;
@@ -388,17 +384,14 @@
                 </div>
 
                 <!-- Filter by -->
-                <div class="d-flex flex-column" style="width: 160px;">
+               <div class="d-flex flex-column" style="width: 160px;">
                     <label class="form-label text-muted small mb-1">Sort By</label>
                     <select class="form-select form-select-sm" id="sortBy">
                         <option value="">Default</option>
-                        <option value="totalSales">Total Sales (High to Low)</option>
-                        <option value="quantity">Quantity (High to Low)</option>
-                        <option value="productService">Product/Service</option>
-                        <option value="client">Client</option>
-                        <option value="name">Employee Name (A to Z)</option>
+                        <option value="amount_high_low">Amount (High to Low)</option>
+                        <option value="amount_low_high">Amount (Low to High)</option>
                     </select>
-                </div>
+               </div>
 
                 <!-- Filter by date -->
                 <div class="d-flex flex-column" style="width: 160px;">
@@ -555,7 +548,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const employeeId = this.dataset.employeeId;
             const employeeName = this.cells[1].textContent;
-            const totalSales = this.cells[7].textContent;
+            const totalSales = this.cells[4].textContent;
             
             // Update modal with employee data
             document.getElementById('employeeId').textContent = 'ID: #EMP' + employeeId;
@@ -636,43 +629,41 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show/hide row based on whether the name contains the search term
             row.style.display = name.includes(searchTerm) ? '' : 'none';
         });
-
-        // Update rankings for visible rows
-        updateRanks();
     });
     
     // Date filter functionality
     dateFilter.addEventListener('change', function() {
         filterRows();
-        updateRanks();
     });
     
     // Sort functionality
     sortBy.addEventListener('change', function() {
         sortRows();
-        updateRanks();
     });
     
-    function filterRows() {
+function filterRows() {
     const selectedFilter = dateFilter.value;
     if (!selectedFilter) {
-        // Show all rows if no filter selected
         Array.from(rows).forEach(row => row.style.display = '');
         return;
     }
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     Array.from(rows).forEach(row => {
-        const dateCell = row.cells[2]; // Date is in the third column
-        // Ensure proper date parsing by handling the format consistently
-        const dateParts = dateCell.textContent.split('-');
+        const dateTimeCell = row.cells[0];
+        const dateText = dateTimeCell.textContent.split('\n')[0].trim(); // Get date part
+
+        // Parse MM/DD/YYYY format
+        const dateParts = dateText.split('/');
         if (dateParts.length === 3) {
-            // Ensure YYYY-MM-DD format
-            const rowDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-            rowDate.setHours(0, 0, 0, 0);
-            let showRow = true;
+            const month = parseInt(dateParts[0]) - 1;
+            const day = parseInt(dateParts[1]);
+            const year = parseInt(dateParts[2]);
+            const rowDate = new Date(year, month, day);
+
+            let showRow = false;
             
             switch(selectedFilter) {
                 case 'today':
@@ -685,13 +676,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'last_week':
                     const lastWeek = new Date(today);
-                    lastWeek.setDate(lastWeek.getDate() - 7);
-                    showRow = rowDate >= lastWeek;
+                    lastWeek.setDate(today.getDate() - 7);
+                    showRow = rowDate >= lastWeek && rowDate <= today;
                     break;
                 case 'last_month':
                     const lastMonth = new Date(today);
-                    lastMonth.setDate(lastMonth.getDate() - 30);
-                    showRow = rowDate >= lastMonth;
+                    lastMonth.setDate(today.getDate() - 30);
+                    showRow = rowDate >= lastMonth && rowDate <= today;
                     break;
                 case 'this_month':
                     showRow = rowDate.getMonth() === today.getMonth() && 
@@ -699,18 +690,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'last_3months':
                     const last3Months = new Date(today);
-                    last3Months.setMonth(last3Months.getMonth() - 3);
-                    showRow = rowDate >= last3Months;
+                    last3Months.setMonth(today.getMonth() - 3);
+                    showRow = rowDate >= last3Months && rowDate <= today;
                     break;
                 default:
                     showRow = true;
             }
             
             row.style.display = showRow ? '' : 'none';
+        } else {
+            row.style.display = 'none';
         }
     });
 }
-    
+    // Sort rows function
     function sortRows() {
         const selectedSort = sortBy.value;
         if (!selectedSort) return;
@@ -721,28 +714,18 @@ document.addEventListener('DOMContentLoaded', function() {
             let aVal, bVal;
             
             switch(selectedSort) {
-                case 'totalSales':
-                    aVal = parseCurrency(a.cells[7].textContent);
-                    bVal = parseCurrency(b.cells[7].textContent);
-                    return bVal - aVal;
-                case 'quantity':
-                    aVal = parseInt(a.cells[5].querySelector('.badge').textContent);
-                    bVal = parseInt(b.cells[5].querySelector('.badge').textContent);
-                    return bVal - aVal;
-                case 'productService':
-                    aVal = a.cells[3].querySelector('.badge').textContent.toLowerCase();
-                    bVal = b.cells[3].querySelector('.badge').textContent.toLowerCase();
-                    return aVal.localeCompare(bVal);
-                case 'client':
-                    aVal = a.cells[6].querySelector('.badge').textContent.toLowerCase();
-                    bVal = b.cells[6].querySelector('.badge').textContent.toLowerCase();
-                    return aVal.localeCompare(bVal);
-                case 'name':
-                    aVal = a.cells[1].textContent.toLowerCase();
-                    bVal = b.cells[1].textContent.toLowerCase();
-                    return aVal.localeCompare(bVal);
+                case 'amount_high_low':
+                    // Payment column is index 4 (5th column: Payment)
+                    aVal = parseCurrency(a.cells[4].textContent);
+                    bVal = parseCurrency(b.cells[4].textContent);
+                    return bVal - aVal; // High to Low
+                case 'amount_low_high':
+                    // Payment column is index 4 (5th column: Payment)
+                    aVal = parseCurrency(a.cells[4].textContent);
+                    bVal = parseCurrency(b.cells[4].textContent);
+                    return aVal - bVal; // Low to High
                 default:
-                    return 0;
+                    return 0; // Default order
             }
         });
         
@@ -756,19 +739,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    function updateRanks() {
-        let rank = 1;
-        Array.from(rows).forEach(row => {
-            if (row.style.display !== 'none') {
-                row.cells[0].textContent = rank++;
-            }
-        });
-    }
-    
     function parseCurrency(value) {
         return parseFloat(value.replace(/[₱,]/g, '')) || 0;
     }
 });
+
 
 // Export row data to Excel
 function downloadRow(button, format) {
@@ -905,38 +880,39 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Update rankings for visible rows
-        updateRanks();
     });
     
     dateFilter.addEventListener('change', function() {
         filterRows();
-        updateRanks();
     });
     
     sortBy.addEventListener('change', function() {
         sortRows();
-        updateRanks();
     });
     
-    function filterRows() {
+function filterRows() {
     const selectedFilter = dateFilter.value;
     if (!selectedFilter) {
-        // Show all rows if no filter selected
         Array.from(rows).forEach(row => row.style.display = '');
         return;
     }
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     Array.from(rows).forEach(row => {
-        const dateCell = row.cells[2]; // Date is in the third column
-        // Parse the date properly
-        const dateParts = dateCell.textContent.split('-');
+        const dateTimeCell = row.cells[0];
+        const dateText = dateTimeCell.textContent.split('\n')[0].trim();
+
+        // Parse MM/DD/YYYY format
+        const dateParts = dateText.split('/');
         if (dateParts.length === 3) {
-            const rowDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-            rowDate.setHours(0, 0, 0, 0);
-            let showRow = true;
+            const month = parseInt(dateParts[0]) - 1;
+            const day = parseInt(dateParts[1]);
+            const year = parseInt(dateParts[2]);
+            const rowDate = new Date(year, month, day);
+
+            let showRow = false;
             
             switch(selectedFilter) {
                 case 'today':
@@ -949,13 +925,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'last_week':
                     const lastWeek = new Date(today);
-                    lastWeek.setDate(lastWeek.getDate() - 7);
-                    showRow = rowDate >= lastWeek;
+                    lastWeek.setDate(today.getDate() - 7);
+                    showRow = rowDate >= lastWeek && rowDate <= today;
                     break;
                 case 'last_month':
                     const lastMonth = new Date(today);
-                    lastMonth.setDate(lastMonth.getDate() - 30);
-                    showRow = rowDate >= lastMonth;
+                    lastMonth.setDate(today.getDate() - 30);
+                    showRow = rowDate >= lastMonth && rowDate <= today;
                     break;
                 case 'this_month':
                     showRow = rowDate.getMonth() === today.getMonth() && 
@@ -963,71 +939,52 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'last_3months':
                     const last3Months = new Date(today);
-                    last3Months.setMonth(last3Months.getMonth() - 3);
-                    showRow = rowDate >= last3Months;
+                    last3Months.setMonth(today.getMonth() - 3);
+                    showRow = rowDate >= last3Months && rowDate <= today;
                     break;
                 default:
                     showRow = true;
             }
             
             row.style.display = showRow ? '' : 'none';
+        } else {
+            row.style.display = 'none';
         }
     });
 }
     
-    function sortRows() {
-        const selectedSort = sortBy.value;
-        if (!selectedSort) return;
+function sortRows() {
+    const selectedSort = sortBy.value;
+    if (!selectedSort) return;
+    
+    const rows = Array.from(tbody.getElementsByTagName('tr'));
+    
+    rows.sort((a, b) => {
+        let aVal, bVal;
         
-        const rows = Array.from(tbody.getElementsByTagName('tr'));
-        
-        rows.sort((a, b) => {
-            let aVal, bVal;
-            
-            switch(selectedSort) {
-                case 'totalSales':
-                    aVal = parseCurrency(a.cells[8].textContent);
-                    bVal = parseCurrency(b.cells[8].textContent);
-                    return bVal - aVal;
-                case 'serviceSales':
-                    aVal = parseCurrency(a.cells[6].textContent);
-                    bVal = parseCurrency(b.cells[6].textContent);
-                    return bVal - aVal;
-                case 'productSales':
-                    aVal = parseCurrency(a.cells[7].textContent);
-                    bVal = parseCurrency(b.cells[7].textContent);
-                    return bVal - aVal;
-                case 'clients':
-                    aVal = parseInt(a.cells[5].querySelector('.badge').textContent);
-                    bVal = parseInt(b.cells[5].querySelector('.badge').textContent);
-                    return bVal - aVal;
-                case 'name':
-                    aVal = a.cells[1].textContent.toLowerCase();
-                    bVal = b.cells[1].textContent.toLowerCase();
-                    return aVal.localeCompare(bVal);
-                default:
-                    return 0;
-            }
-        });
-        
-        // Clear and re-append rows in new order
-        while (tbody.firstChild) {
-            tbody.removeChild(tbody.firstChild);
+        switch(selectedSort) {
+            case 'amount_high_low':
+                aVal = parseCurrency(a.cells[4].textContent); // Payment column
+                bVal = parseCurrency(b.cells[4].textContent);
+                return bVal - aVal;
+            case 'amount_low_high':
+                aVal = parseCurrency(a.cells[4].textContent);
+                bVal = parseCurrency(b.cells[4].textContent);
+                return aVal - bVal;
+            default:
+                return 0;
         }
-        
-        rows.forEach(row => {
-            tbody.appendChild(row);
-        });
+    });
+    
+    // Clear and re-append rows
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
     }
     
-    function updateRanks() {
-        let rank = 1;
-        Array.from(rows).forEach(row => {
-            if (row.style.display !== 'none') {
-                row.cells[0].textContent = rank++;
-            }
-        });
-    }
+    rows.forEach(row => {
+        tbody.appendChild(row);
+    });
+}
     
     function parseCurrency(value) {
         return parseFloat(value.replace(/[₱,]/g, '')) || 0;

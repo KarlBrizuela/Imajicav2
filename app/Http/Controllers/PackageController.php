@@ -8,6 +8,7 @@ use App\Models\branch;
 use App\Models\service;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\PackageController::getCost;
 
 class PackageController extends Controller
 {
@@ -25,6 +26,19 @@ class PackageController extends Controller
         return view('page.packages-list', compact('packages', 'branches', 'services'));
     }
 
+    // In your PackageController.php
+public function getCost(Request $request)
+{
+    $packageIds = $request->input('package_ids');
+    
+    // Calculate total cost (example logic)
+    $totalCost = Package::whereIn('package_id', $packageIds)->sum('price');
+    
+    return response()->json([
+        'success' => true,
+        'total_cost' => $totalCost
+    ]);
+}
     /**
      * Display the package creation page.
      *
@@ -36,6 +50,22 @@ class PackageController extends Controller
         $services = service::all();
 
         return view('page.new-package', compact('branches', 'services'));
+    }
+
+     public function getCost(Request $request)
+    {
+        $packageId = $request->input('package_id');
+        $quantity = $request->input('quantity', 1);
+        
+        // Logic to calculate package cost
+        // Example: fetch package from database and calculate total
+        $package = Package::find($packageId);
+        $cost = $package ? $package->price * $quantity : 0;
+        
+        return response()->json([
+            'cost' => $cost,
+            'package' => $package
+        ]);
     }
 
     /**
@@ -69,6 +99,7 @@ class PackageController extends Controller
                 'description' => $validatedData['description'],
                 'inclusions' => [], // Add empty array for inclusions
                 'free' => $validatedData['free'],
+                'price' => $request->price,
             ]);
             
             Log::info('Package created:', ['id' => $package->package_id]);

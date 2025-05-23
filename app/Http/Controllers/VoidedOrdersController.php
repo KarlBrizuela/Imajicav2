@@ -14,15 +14,6 @@ class VoidedOrdersController extends Controller
      */
     public function index()
     {
-<<<<<<< HEAD
-        // Fetch void logs with staff relationship
-        $voids = VoidLogs::with(['staff'])
-                         ->whereNotNull('booking_id')
-                         ->orderBy('created_at', 'desc')
-                         ->get();
-
-        return view('page.void-logs', compact('voids'));
-=======
         $voidedOrders = DB::table('order_void_logs')
                         ->leftJoin('users', 'order_void_logs.voided_by', '=', 'users.id')
                         ->select(
@@ -33,6 +24,9 @@ class VoidedOrdersController extends Controller
                         ->get();
 
         return view('page.voided-orders', compact('voidedOrders'));
->>>>>>> origin/main
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/main
