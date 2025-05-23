@@ -612,9 +612,7 @@
         <option value="{{$package->package_id}}">{{$package->package_name}}</option>
         @endforeach
     </select>
-    <small class="form-text text-muted">Amount needed to avail services:
-      <span id="amount_needed_to_display"></span>
-    </small>
+    <small class="form-text text-muted">Amount needed to avail services: <span id="amount_needed_display_price"></span></small>
 </div>
                           
                           <div class="mb-5">
@@ -782,7 +780,7 @@
                           <div class="mb-4">
                             <label class="form-label">Booking Summary</label>
                             <div class="form-control bg-light" readonly style="min-height: 110px;">
-                              <div><strong>Service Price:</strong> <span id="summary_service_price">-</span></div>
+                              <div><strong>Service Price:</strong> <span id="summary_total_price_service">-</span></div>
                               <div><strong>Coupon Discount:</strong> <span id="summary_coupon_discount">-</span></div>
                               <div><strong>Referral Points:</strong> <span id="summary_referral_points">-</span></div>
                               <div><strong>Used Points:</strong> <span id="summary_patient_reward">-</span></div>
@@ -3608,6 +3606,50 @@ $(document).ready(function() {
 
     $('#service_id').on('change', function() {
         $('input[name="useReward"]:checked').trigger('change'); // Refresh based on selection
+    });
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    $('#package_id').on('change', function() {
+        const selectedPackageIds = $(this).val();
+
+        if (selectedPackageIds.length > 0) {
+            $.ajax({
+                url: "{{ route('package.get_cost') }}",
+                type: "GET",
+                data: { package_ids: selectedPackageIds },
+                success: function(response) {
+                    console.log("Package Cost API Response:", response); // Debugging output
+
+                    if (response.success && response.total_cost) {
+                        let totalCost = Number(response.total_cost);
+
+                        // Update displayed amount and payment field
+                        $('#amount_needed_display_price').text('₱' + totalCost);
+                        $('#payment_amount').val(totalCost).prop('readonly', true); // Prevent user input
+                        $('#summary_total_price').text('₱' + totalCost);
+                        $('#summary_total_price_service').text('₱' + totalCost);
+                        
+                    } else {
+                        console.error("Response missing total_cost:", response);
+                        $('#amount_needed_display_price').text('-');
+                        $('#payment_amount').val('-');
+                         $('#summary_total_price').text('-');
+                        $('#summary_total_price_service').text('-');
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Error fetching package cost:", xhr.responseText);
+                    $('#amount_needed_display_price').text('-');
+                    $('#payment_amount').val('-');
+                }
+            });
+        } else {
+            $('#amount_needed_display_price').text('-');
+            $('#payment_amount').val('-');
+        }
     });
 });
 </script>
