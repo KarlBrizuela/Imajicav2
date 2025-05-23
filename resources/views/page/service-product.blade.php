@@ -743,4 +743,8 @@
   });
 </script>
     </body>
+<<<<<<< HEAD
     </html>
+=======
+    </html>
+>>>>>>> 94a19b260bee7a506d4c8ffe2b7a77a52ee253bb

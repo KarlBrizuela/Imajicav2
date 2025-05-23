@@ -45,10 +45,10 @@ class BookingController extends Controller
             'discount_type' => 'nullable|in:fixed,percentage',
             'discount_value' => 'nullable|numeric',
         ]);
-
+//
         // Get the patient for calculations
         $patient = patient::find($data['patient_id']);
-        
+
         if (!$patient) {
             return redirect()->route('page.booking')
                 ->with('error', 'Invalid patient selected.');
@@ -56,10 +56,10 @@ class BookingController extends Controller
 
         // Determine if this is a package or service booking
         $isPackageBooking = isset($data['package_id']) && !empty($data['package_id']) && count($data['package_id']) > 0;
-        
+
         // Initialize servicePrice
         $servicePrice = 0;
-        
+
         // Calculate price for services if applicable
         if (isset($data['service_id']) && is_array($data['service_id']) && !$isPackageBooking) {
             foreach ($data['service_id'] as $serviceId) {
@@ -70,7 +70,7 @@ class BookingController extends Controller
                 $servicePrice += $service->service_cost;
             }
         }
-        
+
         // Calculate price for packages if applicable
         if ($isPackageBooking && isset($data['package_id']) && is_array($data['package_id'])) {
             foreach ($data['package_id'] as $packageId) {
@@ -83,7 +83,7 @@ class BookingController extends Controller
         }
 
         $discount = 0;
-        
+
         // Apply coupon discount if provided
         if (!empty($data['coupon_code']) && !empty($data['discount_type']) && !empty($data['discount_value'])) {
             if ($data['discount_type'] === 'percentage') {
@@ -91,19 +91,19 @@ class BookingController extends Controller
             } else {
                 $discount = $data['discount_value'];
             }
-            
+
             // Log the applied discount
             Log::info("Applied coupon discount: Code: {$data['coupon_code']}, Type: {$data['discount_type']}, Value: {$data['discount_value']}, Amount: {$discount}");
         }
-        
+
         $afterCoupon = max(0, $servicePrice - $discount);
-        
+
         // Initialize variables for tracking changes
         $usedPoints = 0;
-        
+
         // We no longer use balance, so skip directly to points
         $afterBalance = $afterCoupon;
-        
+
         // Apply reward points if selected
         $afterReward = $afterBalance;
         if ($data['useReward'] == '1' && $patient->points > 0) {
@@ -111,57 +111,57 @@ class BookingController extends Controller
             $usedPoints = min($patient->points, $afterBalance);
             $afterReward = $afterBalance - $usedPoints;
         }
-        
+
         // Set final price
         $totalPrice = $afterReward;
-        
+
         // Store original values in the booking record
         $data['price'] = $servicePrice; // Original service price
         $data['payment'] = $totalPrice; // Final amount to pay
-        
+
         // Remove service_id and package_id from the data array as we'll handle these separately
         // through the relationship methods
         $serviceIds = $data['service_id'] ?? [];
         $packageIds = $data['package_id'] ?? [];
         unset($data['service_id'], $data['package_id']);
-        
+
         // Create the booking record without service_id and package_id for now
         $newBooking = booking::create($data);
-        
+
         // Attach services to the booking using the pivot table
         if (!empty($serviceIds)) {
             $newBooking->services()->attach($serviceIds);
             Log::info("Attached services to booking ID: {$newBooking->booking_id}, Services: " . implode(', ', $serviceIds));
         }
-        
+
         // Attach packages to the booking using the pivot table
         if (!empty($packageIds)) {
             $newBooking->packages()->attach($packageIds);
             Log::info("Attached packages to booking ID: {$newBooking->booking_id}, Packages: " . implode(', ', $packageIds));
         }
-        
+
         // Update patient's points if used
         if ($usedPoints > 0) {
             $patient->points -= $usedPoints;
             Log::info("Deducted {$usedPoints} points from patient ID: {$patient->patient_id}. New points: {$patient->points}");
         }
-        
+
         // Add points if this is a paid booking
         if ($data['status'] == 'Paid') {
             // Calculate points to be awarded based on service cost
             $pointsToAdd = 0;
-            
+
             // Award 1 point per 50 pesos
             $pointsToAdd = floor($servicePrice / 50);
-            
+
             // Add points and update total cost
             $patient->points += $pointsToAdd;
             $patient->total_cost += $servicePrice;
-            
+
             Log::info("Added {$pointsToAdd} points to Patient ID: {$patient->patient_id}. New total: {$patient->points}");
             Log::info("Added {$servicePrice} to total_cost for Patient ID: {$patient->patient_id}. New total cost: {$patient->total_cost}");
         }
-        
+
         // Save patient changes
         $patient->save();
 
@@ -169,7 +169,7 @@ class BookingController extends Controller
         if ($request->has('referrer_id') && $request->has('is_first_time') && $request->has('add_points')) {
             $referrerId = $request->input('referrer_id');
             $patientId = $request->input('patient_id');
-            
+
             // Make sure referrer and patient are different people
             if ($referrerId != $patientId && !empty($referrerId)) {
                 // Add 100 points to referrer
@@ -177,7 +177,7 @@ class BookingController extends Controller
                 if ($referrer) {
                     $referrer->reward_points += 100;
                     $referrer->save();
-                    
+
                     // Log points transaction for referrer
                     PatientPointsHistory::create([
                         'patient_id' => $referrerId,
@@ -186,13 +186,13 @@ class BookingController extends Controller
                         'description' => 'Received points for referring a new patient'
                     ]);
                 }
-                
+
                 // Add 100 points to referred patient (new patient)
                 $patient = Patient::find($patientId);
                 if ($patient) {
                     $patient->reward_points += 100;
                     $patient->save();
-                    
+
                     // Log points transaction for referred patient
                     PatientPointsHistory::create([
                         'patient_id' => $patientId,
@@ -248,15 +248,15 @@ class BookingController extends Controller
 
             // Find the booking to update
             $booking = Booking::findOrFail($validatedData['booking_id']);
-            
+
             // Extract service_id and package_id for relationship handling
             $serviceIds = $validatedData['service_id'] ?? [];
             $packageIds = $validatedData['package_id'] ?? [];
             unset($validatedData['service_id'], $validatedData['package_id'], $validatedData['edit_booking_type']);
-            
+
             // Update the booking with validated data
             $booking->update($validatedData);
-            
+
             // Sync services and packages based on booking type
             if ($request->input('edit_booking_type') === 'service') {
                 // Detach all packages and sync services
@@ -276,7 +276,7 @@ class BookingController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'request' => $request->all()
             ]);
-            
+
             return response()->json(['error' => 'Failed to update booking: ' . $e->getMessage()], 500);
         }
     }
@@ -304,7 +304,7 @@ class BookingController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error deleting booking: ' . $e->getMessage());
-            
+
             if ($request->wantsJson()) {
                 return response()->json([
                     'status' => false,
@@ -321,11 +321,11 @@ class BookingController extends Controller
     {
         try {
             $bookings = booking::with(['patient', 'staff', 'branch'])->get();
-            
+
             $events = $bookings->map(function($booking) {
                 $statusColors = [
                     'Pending' => 'Business',
-                    'Paid' => 'Personal', 
+                    'Paid' => 'Personal',
                     'Cancelled' => 'Holiday',
                     'Completed' => 'Family',
                     'No Show' => 'ETC'
@@ -333,21 +333,21 @@ class BookingController extends Controller
 
                 // Determine if this is a package booking
                 $isPackageBooking = !empty($booking->package_id);
-                
+
                 // Get all services and packages
                 $services = $booking->services();
                 $packages = $booking->packages();
-                
+
                 // Prepare service names and package names
                 $serviceNames = $services->pluck('service_name')->implode(', ');
                 $packageNames = $packages->pluck('package_name')->implode(', ');
-                
+
                 // Create the description with package information if applicable
                 $description = "";
                 if ($isPackageBooking) {
                     $description .= "Package(s): {$packageNames}\n";
                 }
-                
+
                 $description .= "Service(s): {$serviceNames}\n";
                 $description .= "Staff: " . ($booking->staff ? $booking->staff->firstname . ' ' . $booking->staff->lastname : 'Unassigned') . "\n" .
                                "Branch: " . ($booking->branch ? $booking->branch->branch_name : 'N/A') . "\n" .
@@ -356,7 +356,7 @@ class BookingController extends Controller
                 // Format service_id and package_id for the response
                 $serviceId = $booking->service_id;
                 $packageId = $booking->package_id;
-                
+
                 // Log the data for debugging
                 Log::debug("Calendar event for booking #{$booking->booking_id}", [
                     'service_id' => $serviceId,
@@ -389,7 +389,7 @@ class BookingController extends Controller
                     ]
                 ];
             });
-            
+
             return response()->json($events);
         } catch (\Exception $e) {
             Log::error('Error fetching calendar bookings: ' . $e->getMessage());
@@ -412,7 +412,7 @@ class BookingController extends Controller
 
         // Count patient's existing bookings
         $bookingCount = Booking::where('patient_id', $validated['patient_id'])->count();
-        
+
         // Return true if this is their first booking
         return response()->json([
             'is_first_time' => ($bookingCount === 0),
@@ -423,19 +423,19 @@ class BookingController extends Controller
         try {
             // Load booking with all necessary relationships
             $booking = booking::with([
-                'services', 
-                'patient', 
-                'staff', 
+                'services',
+                'patient',
+                'staff',
                 'staff.position', // Include staff position information
-                'branch', 
+                'branch',
                 'packages',
                 'notes',         // Include booking notes
                 'notes.user'     // Include user who created the note
             ])->findOrFail($bookingId);
-            
+
             // Extract and format necessary data
             $data = $booking->toArray();
-            
+
             return response()->json($data);
         } catch (\Exception $e) {
             Log::error('Error fetching booking details: ' . $e->getMessage());
@@ -462,7 +462,7 @@ class BookingController extends Controller
             $note->note = $validated['note'];
             $note->user_id = auth()->id() ?? 1; // Default to admin if not logged in
             $note->save();
-            
+
             // Reload with user relationship for the response
             $note = \App\Models\BookingNote::with('user')->find($note->id);
 
@@ -494,7 +494,7 @@ class BookingController extends Controller
                 ->where('booking_id', $bookingId)
                 ->orderBy('created_at', 'desc')
                 ->get();
-            
+
             // Format notes for response
             $formattedNotes = $notes->map(function($note) {
                 return [
@@ -504,7 +504,7 @@ class BookingController extends Controller
                     'staff' => $note->user ? $note->user->name : 'System'
                 ];
             });
-            
+
             return response()->json([
                 'success' => true,
                 'notes' => $formattedNotes
