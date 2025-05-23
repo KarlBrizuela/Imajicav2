@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 94a19b260bee7a506d4c8ffe2b7a77a52ee253bb
 <aside id="layout-menu" class="layout-menu menu-vertical menu">
 
 
@@ -290,7 +293,7 @@
             <ul class="menu-sub">
                 <li class="menu-item {{ request()->is('service-product') ? 'active' : '' }}">
                     <a href="/service-product" class="menu-link">
-                        <div data-i18n="Service/Product Report">Product Report</div>
+                        <div data-i18n="Service/Product Report">Service/Product Report</div>
                     </a>
                 </li>
                 <li class="menu-item {{ request()->is('employee-report') ? 'active' : '' }}">
@@ -318,7 +321,11 @@
 
                 <li class="menu-item {{ request()->is('sales-transaction') ? 'active' : '' }}">
                     <a href="/sales-transaction" class="menu-link">
+<<<<<<< HEAD
                         <div data-i18n="Services Transaction">Sale Transaction</div>
+=======
+                        <div data-i18n="Services Transaction">Services Transaction</div>
+>>>>>>> 94a19b260bee7a506d4c8ffe2b7a77a52ee253bb
                     </a>
                 </li>
 
@@ -335,9 +342,9 @@
                     </a>
                 </li>
 
-                <li class="menu-item {{ request()->is('void-logs') ? 'active' : '' }}">
-                    <a href="/void-logs" class="menu-link">
-                        <div data-i18n="Void Logs">Void Logs</div>
+                <li class="menu-item {{ request()->is('voided-orders') ? 'active' : '' }}">
+                    <a href="/voided-orders" class="menu-link">
+                        <div data-i18n="Voided Orders">Voided Orders</div>
                     </a>
                 </li>
                 </ul>

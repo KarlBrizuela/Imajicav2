@@ -46,7 +46,7 @@
     <!-- Vendors CSS -->
     <link  rel="stylesheet"  href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <!-- Page CSS -->
-    <<link  rel="stylesheet"  href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}"  />
+    <link  rel="stylesheet"  href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}"  />
     <link  rel="stylesheet"   href="{{ asset('vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css') }}" />
     <link  rel="stylesheet"  href="{{ asset('vendor/libs/jquery-timepicker/jquery-timepicker.css') }}" />
 

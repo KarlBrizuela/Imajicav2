@@ -27,11 +27,10 @@ use App\Http\Controllers\EmployeeReportController;
 use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\wasteController;
-use App\Http\Controllers\ServiceCostController;
-use App\Http\Controllers\PackageCostController;
 
+use App\Http\Controllers\ServiceProductController;
 
-Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost'])->name('package.get_cost');
+use App\Http\Controllers\VoidedOrdersController;
 
 
 // Route::get('/', function () {
@@ -39,14 +38,6 @@ Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost']
 // });
 
 
-Route::get('/service/get-cost', [ServiceCostController::class, 'getServiceCost'])->name('service.get_cost');
-
-
-
-
-
-
-Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost'])->name('package.get_cost');
 
 Route::get('/', [LoginController::class, 'index'])->name('page.index');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
@@ -55,6 +46,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/expenses-report', [App\Http\Controllers\ExpensesReportController::class, 'index'])->name('page.expenses-report')->middleware(['auth', 'admin']);
 
 Route::get('/employee-report', [App\Http\Controllers\EmployeeReportController::class, 'index'])->name('page.employee-report')->middleware(['auth', 'admin']);
+
 
 
 Route::get('/clear-config', function () {
@@ -100,6 +92,7 @@ Route::get('/purchase', [PurchaseController::class, 'index'])->name('purchase.in
 
 
 Route::get('/void-logs', [DashboardController::class, 'void_logs'])->name('page.void-logs')->middleware(['auth', 'admin']);
+Route::get('/voided-orders', [VoidedOrdersController::class, 'index'])->name('page.voided-orders')->middleware(['auth', 'admin']);
 
 Route::get('/product-list', [DashboardController::class, 'product_list'])->name('page.product-list')->middleware(['auth', 'admin']);
 
@@ -114,7 +107,7 @@ Route::get('/edit-order/{id}', [OrderController::class, 'edit'])->name('page.edi
 Route::put('/order/update', [OrderController::class, 'update'])->name('order.update')->middleware(['auth', 'admin']);
 Route::get('/order-details/{id}', [OrderController::class, 'show'])->name('page.order-details')->middleware(['auth', 'admin']);
 Route::get('/order/order-details/{orderId}', [OrderController::class, 'getOrderDetails'])->name('api.order.details')->middleware(['auth', 'admin']);
-Route::delete('/order/delete', [OrderController::class, 'delete'])->name('order.delete')->middleware(['auth', 'admin']);
+Route::delete('/orders/delete', [OrderController::class, 'delete'])->name('order.delete');
 Route::get('/add-product', [DashboardController::class, 'add_product'])->name('page.add-product')->middleware(['auth', 'admin']);
 Route::post('/product/create', [AddProductController::class, 'create'])->name('product.create')->middleware(['auth', 'admin']);
 Route::get('/edit-product/{sku}', [AddProductController::class, 'edit'])
@@ -300,17 +293,17 @@ Route::prefix('patient')->group(function () {
     Route::get('/allergy/{id}', [PatientController::class, 'getAllergy'])->name('patient.allergy.get')->middleware(['auth', 'admin']);
     Route::put('/allergy/{id}', [PatientController::class, 'updateAllergy'])->name('patient.allergy.update')->middleware(['auth', 'admin']);
     Route::delete('/allergy/{id}', [PatientController::class, 'deleteAllergy'])->name('patient.allergy.delete')->middleware(['auth', 'admin']);
-
+    
     // Medications
     Route::get('/medication/{id}', [PatientController::class, 'getMedication'])->name('patient.medication.get')->middleware(['auth', 'admin']);
     Route::put('/medication/{id}', [PatientController::class, 'updateMedication'])->name('patient.medication.update')->middleware(['auth', 'admin']);
     Route::delete('/medication/{id}', [PatientController::class, 'deleteMedication'])->name('patient.medication.delete')->middleware(['auth', 'admin']);
-
+    
     // Health Concerns
     Route::get('/health-concern/{id}', [PatientController::class, 'getHealthConcern'])->name('patient.health-concern.get')->middleware(['auth', 'admin']);
     Route::put('/health-concern/{id}', [PatientController::class, 'updateHealthConcern'])->name('patient.health-concern.update')->middleware(['auth', 'admin']);
     Route::delete('/health-concern/{id}', [PatientController::class, 'deleteHealthConcern'])->name('patient.health-concern.delete')->middleware(['auth', 'admin']);
-
+    
     // Attachments
     Route::post('/attachment/add', [PatientController::class, 'addAttachment'])->name('patient.attachment.add')->middleware(['auth', 'admin']);
     Route::get('/attachment/{id}', [PatientController::class, 'getAttachment'])->name('patient.attachment.get')->middleware(['auth', 'admin']);
@@ -320,7 +313,7 @@ Route::prefix('patient')->group(function () {
      // Add this new route for prescription updates
     Route::put('/prescription/{id}', [PatientController::class, 'updatePrescription'])
         ->name('patient.prescription.update')->middleware(['auth', 'admin']);
-
+    
     // Add this new route for deleting prescriptions
     Route::delete('/prescription/{id}', [PatientController::class, 'deletePrescription'])
         ->name('patient.prescription.delete')->middleware(['auth', 'admin']);
@@ -338,7 +331,7 @@ Route::post('/user/create', [UserController::class, 'create'])->name('user.creat
 Route::get('/user/edit/{id}', [UserController::class, 'edit'])->name('page.edit-user')->middleware(['auth', 'admin']);
 Route::post('/user/update', [UserController::class, 'update'])->name('user.update')->middleware(['auth', 'admin']);
 Route::post('/user/delete/{id}', [UserController::class, 'delete'])->name('user.delete')->middleware(['auth', 'admin']);
-
+Route::get('/users/create', [UserController::class, 'createForm'])->name('user.create.form');
 
 
 Route::post('/check-first-time-patient', [App\Http\Controllers\BookingController::class, 'checkFirstTimePatient'])->name('check.first.time.patient');
@@ -352,7 +345,6 @@ Route::put('/package/update', [App\Http\Controllers\PackageController::class, 'u
 Route::delete('/package/delete', [App\Http\Controllers\PackageController::class, 'delete'])->name('package.delete');
 Route::get('/package/all', [App\Http\Controllers\PackageController::class, 'index'])->name('get.packages');
 
-use App\Http\Controllers\ServiceProductController;
 
 Route::get('/service-product', [ServiceProductController::class, 'index'])->name('service.product.report');
 Route::get('/services/{id}/details', [ServiceProductController::class, 'getServiceDetails']);
@@ -360,10 +352,41 @@ Route::get('/services/{id}/details', [ServiceProductController::class, 'getServi
 Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionController::class, 'index']);
 Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
 
-Route::get('/void-logs', [VoidLogController::class, 'voidLogs'])->name('void.logs');
+Route::get('/service/get-cost', [ServiceController::class, 'getCost'])->name('service.get_cost');
 
-// routes/web.php
-use App\Http\Controllers\VoidLogController;
+// Or for API routes
+Route::get('/api/service/get-cost', [ServiceController::class, 'getCost'])->name('service.get_cost');
 
-Route::get('/void-logs', [VoidLogController::class, 'voidLogs']);
+// If it's a POST request
+Route::post('/service/get-cost', [ServiceController::class, 'getCost'])->name('service.get_cost');
 
+// In routes/web.php or routes/api.php
+
+
+Route::get('/booking', [BookingController::class, 'index']);
+Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+
+// Should have something like this:
+Route::get('/booking', [BookingController::class, 'index'])->name('page.booking');
+// In routes/web.php
+Route::get('/booking', [BookingController::class, 'index'])->name('page.booking');
+
+Route::get('/booking', function () {return view('page.booking');})->name('page.booking');
+
+Route::get('/booking', [App\Http\Controllers\BookingController::class, 'index'])->name('page.booking');
+
+// Add this to your routes/web.php
+Route::get('/package/get-cost', [PackageController::class, 'getCost'])->name('package.get_cost');
+
+Route::get('/package/get-cost', [App\Http\Controllers\PackageController::class, 'getCost'])->name('package.get_cost');
+
+// Temporary debug route
+Route::get('/debug-coupon/{id}', function($id) {
+    $coupon = App\Models\Coupon::find($id);
+    return response()->json([
+        'start_date' => $coupon->start_date,
+        'end_date' => $coupon->end_date,
+        'now' => now()->format('Y-m-d H:i:s'),
+        'timezone' => config('app.timezone')
+    ]);
+});

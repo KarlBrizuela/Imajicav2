@@ -30,7 +30,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Imajica Booking System</title>
 
     
@@ -45,7 +45,7 @@
       <meta property="og:site_name" content="Pixinvent" />
       <link rel="canonical" href="https://themeforest.net/item/vuexy-vuejs-html-laravel-admin-dashboard-template/23328599" />
     
-    
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <!-- ? PROD Only: Google Tag Manager (Default ThemeSelection: GTM-5DDHKGP, PixInvent: GTM-5J3LMKC) -->
       <script>
         (function (w, d, s, l, i) {
@@ -88,7 +88,7 @@
     
     <!-- endbuild -->
 
-   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
   <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
   <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}" />
 
@@ -272,6 +272,7 @@
     @csrf
     @method('DELETE')
     <input type="hidden" id="delete_order_id" name="order_id">
+    <input type="hidden" id="delete_void_reason" name="void_reason">
 </form>
 
           <!-- / Content -->
@@ -332,7 +333,7 @@
   <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
   <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
-  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+  <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
   <script src="{{ asset('vendor/js/menu.js') }}"></script>
 
        
@@ -343,7 +344,7 @@
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
 
     <!-- Main JS -->
     
@@ -355,164 +356,161 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
 
-    <script>
-      $(document).ready(function () {
-        // Add custom CSS styling for the primary button
-        $('<style>')
-          .prop('type', 'text/css')
-          .html(`
-            .btn-primary {
-              background-color: var(--bs-primary) !important;
-              border-color: var(--bs-primary) !important;
-              color: var(--bs-primary-contrast) !important;
-            }
-            .btn-primary:hover {
-              background-color: color-mix(in sRGB, #000 10%, var(--bs-primary)) !important;
-              border-color: color-mix(in sRGB, #000 10%, var(--bs-primary)) !important;
-            }
-          `)
-          .appendTo('head');
+<script>
+$(document).ready(function () {
+  // Add custom CSS styling for the primary button
+  $('<style>')
+    .prop('type', 'text/css')
+    .html(`
+      .btn-primary {
+        background-color: var(--bs-primary) !important;
+        border-color: var(--bs-primary) !important;
+        color: var(--bs-primary-contrast) !important;
+      }
+      .btn-primary:hover {
+        background-color: color-mix(in sRGB, #000 10%, var(--bs-primary)) !important;
+        border-color: color-mix(in sRGB, #000 10%, var(--bs-primary)) !important;
+      }
+    `)
+    .appendTo('head');
 
-        // Existing DataTable initialization 
-        $('#orderTable').DataTable({
-          layout: {
-            topStart: {
-              rowClass: "card-header d-flex border-top rounded-0 flex-wrap py-0 flex-column flex-md-row align-items-center",
-              features: [{
-                pageLength: { menu: [7, 10, 25, 50, 100] }
-              }]
-            },
-            topEnd: {
-              rowClass: "row m-3 my-0 justify-content-between",
-              features: [{
-                search: {
-                  className: "me-5 ms-n4 pe-5 mb-n6 mb-md-0",
-                  placeholder: "Search Order"
-                },
-                buttons: [{
-                  text: '<span class="d-flex align-items-center gap-1"><i class="ti tabler-plus me-1"></i>Add Order</span>',
-                  className: "btn btn-primary",
-                  action: function() {
-                    window.location.href = "/add-order";
-                  }
-                }]
-              }]
+  // Existing DataTable initialization 
+  $('#orderTable').DataTable({
+    layout: {
+      topStart: {
+        rowClass: "card-header d-flex border-top rounded-0 flex-wrap py-0 flex-column flex-md-row align-items-center",
+        features: [{
+          pageLength: { menu: [7, 10, 25, 50, 100] }
+        }]
+      },
+      topEnd: {
+        rowClass: "row m-3 my-0 justify-content-between",
+        features: [{
+          search: {
+            className: "me-5 ms-n4 pe-5 mb-n6 mb-md-0",
+            placeholder: "Search Order"
+          },
+          buttons: [{
+            text: '<span class="d-flex align-items-center gap-1"><i class="ti tabler-plus me-1"></i>Add Order</span>',
+            className: "btn btn-primary",
+            action: function() {
+              window.location.href = "/add-order";
             }
+          }]
+        }]
+      }
+    }
+  });
+
+  // Enhanced click handler for view buttons
+  $('.view-order').on('click', function(e) {
+    e.preventDefault();
+    const row = $(this).closest('tr');
+    const orderId = row.data('id');
+    const orderItems = row.data('items');
+    
+    // Store all order details in session storage
+    const orderDetails = {
+      id: orderId,
+      items: orderItems,
+      number: row.find('td:eq(1)').text().trim(),
+      date: row.find('td:eq(2)').text().trim(),
+      customer: {
+        name: row.find('td:eq(3) h6').text().trim(),
+        email: row.find('td:eq(3) small').text().trim()
+      },
+      total: row.find('td:eq(4)').text().trim(),
+      status: row.find('td:eq(5)').text().trim(),
+      payment: row.find('td:eq(6)').text().trim()
+    };
+    
+    sessionStorage.setItem('orderDetails', JSON.stringify(orderDetails));
+    sessionStorage.setItem('currentOrderItems', JSON.stringify(orderItems));
+    console.log("Order details from order list:", orderDetails);
+    // Redirect to order details page
+    window.location.href = $(this).attr('href');
+  });
+
+  // Handle delete order button clicks - COMPLETE IMPLEMENTATION
+  $(document).on('click', '.delete-order', function() {
+    const orderId = $(this).closest('tr').data('id');
+    const orderNumber = $(this).closest('tr').find('td:eq(1)').text().trim();
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You want to delete order ${orderNumber}? This action cannot be undone!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Show loading state
+        Swal.fire({
+          title: 'Deleting...',
+          text: 'Please wait while we delete the order',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: false,
+          didOpen: () => {
+            Swal.showLoading()
+            
+            // Set the order ID in the hidden form
+            $('#delete_order_id').val(orderId);
+            $('#delete_void_reason').val('Order deleted by staff');
+            
+            // Submit the form via AJAX
+            $.ajax({
+              type: "POST",
+              url: "{{ route('order.delete') }}",
+              data: $('#deleteOrderForm').serialize(),
+              success: function(response) {
+                if(response.status) {
+                  // Success message
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: `Order ${orderNumber} has been deleted successfully`,
+                    timer: 2000,
+                    showConfirmButton: false
+                  }).then(() => {
+                    // Reload the page to refresh the order list
+                    location.reload();
+                  });
+                } else {
+                  // Error message
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: response.message || 'Something went wrong!'
+                  });
+                }
+              },
+              error: function(xhr) {
+                let errorMessage = 'Failed to delete order';
+                if(xhr.responseJSON && xhr.responseJSON.message) {
+                  errorMessage = xhr.responseJSON.message;
+                }
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: errorMessage
+                });
+              }
+            });
           }
         });
-
-        // Enhanced click handler for view buttons
-        $('.view-order').on('click', function(e) {
-          e.preventDefault();
-          const row = $(this).closest('tr');
-          const orderId = row.data('id');
-          const orderItems = row.data('items');
-          
-          // Store all order details in session storage
-          const orderDetails = {
-            id: orderId,
-            items: orderItems,
-            number: row.find('td:eq(1)').text().trim(),
-            date: row.find('td:eq(2)').text().trim(),
-            customer: {
-              name: row.find('td:eq(3) h6').text().trim(),
-              email: row.find('td:eq(3) small').text().trim()
-            },
-            total: row.find('td:eq(4)').text().trim(),
-            status: row.find('td:eq(5)').text().trim(),
-            payment: row.find('td:eq(6)').text().trim()
-          };
-          
-          sessionStorage.setItem('orderDetails', JSON.stringify(orderDetails));
-          sessionStorage.setItem('currentOrderItems', JSON.stringify(orderItems));
-          console.log("Order details from order list:", orderDetails);
-          // Redirect to order details page
-          window.location.href = $(this).attr('href');
-        });
-
-        // Handle delete order button clicks
-        $(document).on('click', '.delete-order', function() {
-            try {
-                const orderId = $(this).closest('tr').data('id');
-                const orderNumber = $(this).closest('tr').find('td:eq(1)').text().trim();
-                
-                if (!orderId) {
-                    throw new Error("Order ID not found in data attributes");
-                }
-                
-                $('#delete_order_id').val(orderId);
-                
-                Swal.fire({
-                    customClass: {
-                        confirmButton: 'btn btn-danger me-3',
-                        cancelButton: 'btn btn-secondary'
-                    },
-                    buttonsStyling: false,
-                    title: 'Confirm Delete',
-                    html: `Are you sure you want to delete order <strong>${orderNumber}</strong>?<br>This action cannot be undone.`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'Cancel',
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $('#deleteOrderForm').submit();
-                        
-                        // Show success message
-                        Swal.fire({
-                            customClass: {
-                                confirmButton: 'btn btn-success'
-                            },
-                            buttonsStyling: false,
-                            title: 'Deleted!', 
-                            text: 'Order has been deleted successfully.',
-                            icon: 'success',
-                            timer: 2000
-                        }).then(() => {
-                            // Reload the page after successful deletion
-                            window.location.reload();
-                        });
-                    }
-                });
-            } catch (e) {
-                // ...existing error handling code...
-            }
-        });
-
-        // Display success/error messages from session
-        @if(session('success'))
-            Swal.fire({
-                customClass: {
-                    confirmButton: 'btn btn-success'
-                },
-                buttonsStyling: false,
-                icon: 'success',
-                title: 'Success',
-                text: "{{ session('success') }}",
-                timer: 1500,
-                showConfirmButton: false
-            });
-        @endif
-
-        @if(session('error'))
-            Swal.fire({
-                customClass: {
-                    confirmButton: 'btn btn-danger'
-                },
-                buttonsStyling: false,
-                icon: 'error',
-                title: 'Error',
-                text: "{{ session('error') }}"
-            });
-        @endif
-      });
-    </script>
+      }
+    });
+  });
+});
+</script>
   </body>
 
 <!-- Mirrored from demos.pixinvent.com/vuexy-html-admin-template/html/vertical-menu-template/app-ecommerce-order-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 22 Feb 2025 08:26:18 GMT -->
 </html>
 
   <!-- beautify ignore:end -->
-
