@@ -58,11 +58,7 @@ public function update(Request $request) {
         'service_name' => 'required',
         'branch_code' => 'required',
         'description' => 'required',
-<<<<<<< HEAD
         'service_cost' => 'nullable|numeric|min:0',
-=======
-        'service_cost' => 'required|numeric|min:0',
->>>>>>> origin/main
     ]);
 
     // Find the service by ID

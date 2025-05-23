@@ -37,6 +37,10 @@ use App\Http\Controllers\ServiceProductController;
 use App\Http\Controllers\VoidLogController;
 
 
+use App\Http\Controllers\VoidLogController;
+
+
+
 use App\Http\Controllers\VoidedOrdersController;
 
 
@@ -363,6 +367,8 @@ Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionC
 
 Route::get('/void-logs', [VoidLogController::class, 'voidLogs'])->name('void.logs');
 
+Route::get('/void-logs', [VoidLogController::class, 'voidLogs'])->name('void.logs');
+
 Route::get('/service/get-cost', [serviceController::class, 'getCost'])->name('service.get_cost');
 
 // Or for API routes
@@ -411,3 +417,6 @@ use App\Http\Controllers\ServiceCostController;
 Route::post('/services/cost', [ServiceCostController::class, 'getServiceCost']);
 
 Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('services.destroy');
+
+
+  
