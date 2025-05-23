@@ -17,11 +17,13 @@ class serviceController extends Controller
                 'service_name' => 'required',
                 'branch_code' => 'required',
                 'description' => 'required',
-                'service_cost',
-
+                'service_cost' => 'nullable|numeric|min:0',
             ]);
 
-  
+            // Ensure service_cost is properly set (defaults to 0 if empty)
+            if (empty($data['service_cost'])) {
+                $data['service_cost'] = 0;
+            }
 
             $service = service::create($data);
 
@@ -56,7 +58,11 @@ public function update(Request $request) {
         'service_name' => 'required',
         'branch_code' => 'required',
         'description' => 'required',
+<<<<<<< HEAD
+        'service_cost' => 'nullable|numeric|min:0',
+=======
         'service_cost' => 'required|numeric|min:0',
+>>>>>>> origin/main
     ]);
 
     // Find the service by ID
@@ -65,13 +71,11 @@ public function update(Request $request) {
         return redirect()->back()->with('error', 'Service not found');
     }
 
-  
-
     // Update service details
     $service->service_name = $request->service_name;
     $service->branch_code = $request->branch_code;
     $service->description = $request->description;
-    $service->service_cost = $request->service_cost;
+    $service->service_cost = !empty($request->service_cost) ? $request->service_cost : 0;
 
     $service->save();
 
