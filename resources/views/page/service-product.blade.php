@@ -605,146 +605,134 @@
     const filterBy = document.getElementById('filterBy');
     const filterByPayment = document.getElementById('filterByPayment');
     const filterByDate = document.getElementById('filterByDate');
-    const tableBody = document.querySelector('#servicesTable tbody');
-    const tableRows = Array.from(tableBody.querySelectorAll('tr'));
+    const tableRows = document.querySelectorAll('table tbody tr');
 
-    // Apply filters on input/change
-    [searchInput, filterBy, filterByPayment, filterByDate].forEach(el => {
-      el.addEventListener('input', applyFilters);
-      el.addEventListener('change', applyFilters);
-    });
+    // Function to calculate sales from visible rows
+    function calculateSalesFromVisibleRows() {
+        let dailySales = 0;
+        let monthlySales = 0;
+        let totalSales = 0;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
 
-    function applyFilters() {
-      const searchText = searchInput.value.trim().toLowerCase();
-      const filterValue = filterBy.value.toLowerCase();
-      const paymentFilter = filterByPayment.value.toLowerCase();
-      const dateFilter = filterByDate.value;
+        tableRows.forEach(row => {
+            if (row.style.display !== 'none') {
+                const amountText = row.querySelector('td:nth-child(5)').textContent;
+                const amount = parseFloat(amountText.replace('₱', '').replace(/,/g, ''));
+                const dateStr = row.querySelector('td:nth-child(2)').textContent;
+                const rowDate = new Date(dateStr);
 
-      tableRows.forEach(row => {
-        let showRow = true;
+                if (!isNaN(amount)) {
+                    totalSales += amount;
 
-        // Search Text Filter
-        if (searchText) {
-          const searchableColumns = [
-            row.cells[0].textContent.toLowerCase(), // Service Name
-            row.cells[2].textContent.toLowerCase(), // Branch Name
-            row.cells[3].textContent.toLowerCase()  // Payment Category
-          ];
-          showRow = searchableColumns.some(text => text.includes(searchText));
-        }
+                    if (rowDate.toDateString() === today.toDateString()) {
+                        dailySales += amount;
+                    }
 
-        // Payment Status Filter
-        if (showRow && paymentFilter) {
-          const paymentStatus = row.cells[5].querySelector('.badge').textContent.trim().toLowerCase();
-          showRow = paymentStatus === paymentFilter;
-        }
-
-        // Order Status Filter
-        if (showRow && filterValue && !['price_high', 'price_low'].includes(filterValue)) {
-          const orderStatus = row.cells[6].querySelector('.badge').textContent.trim().toLowerCase();
-          const normalizedFilterValue = filterValue.replace(/_/g, ' ');
-          showRow = orderStatus === normalizedFilterValue;
-        }
-
-        // Date Filter
-        if (showRow && dateFilter) {
-          const rowDate = new Date(row.cells[1].textContent.trim());
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-
-          if (!isValidDate(rowDate)) {
-            showRow = false;
-          } else {
-            switch (dateFilter) {
-              case 'today':
-                showRow = isSameDay(rowDate, today);
-                break;
-              case 'yesterday':
-                const yesterday = new Date(today);
-                yesterday.setDate(yesterday.getDate() - 1);
-                showRow = isSameDay(rowDate, yesterday);
-                break;
-              case 'last_week':
-                const weekAgo = new Date(today);
-                weekAgo.setDate(weekAgo.getDate() - 7);
-                showRow = rowDate >= weekAgo && rowDate <= today;
-                break;
-              case 'last_month':
-                const monthAgo = new Date(today);
-                monthAgo.setDate(monthAgo.getDate() - 30);
-                showRow = rowDate >= monthAgo && rowDate <= today;
-                break;
-              case 'this_month':
-                showRow = rowDate.getMonth() === today.getMonth() &&
-                         rowDate.getFullYear() === today.getFullYear();
-                break;
-              case 'last_3months':
-                const threeMonthsAgo = new Date(today);
-                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-                showRow = rowDate >= threeMonthsAgo && rowDate <= today;
-                break;
+                    if (rowDate.getMonth() === currentMonth && rowDate.getFullYear() === currentYear) {
+                        monthlySales += amount;
+                    }
+                }
             }
-          }
-        }
+        });
 
-        // Apply price sorting if selected
-        if (showRow && (filterValue === 'price_high' || filterValue === 'price_low')) {
-          const visibleRows = tableRows.filter(r => r.style.display !== 'none');
-          visibleRows.sort((a, b) => {
-            const priceA = extractPrice(a.cells[4].textContent);
-            const priceB = extractPrice(b.cells[4].textContent);
-            return filterValue === 'price_high' ? priceB - priceA : priceA - priceB;
-          });
-          visibleRows.forEach(row => tableBody.appendChild(row));
-        }
-
-        row.style.display = showRow ? '' : 'none';
-      });
-
-      updateNoResultsMessage();
+        document.querySelector('.metric-card:nth-child(1) h4').textContent = '₱' + dailySales.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        document.querySelector('.metric-card:nth-child(2) h4').textContent = '₱' + monthlySales.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        document.querySelector('.metric-card:nth-child(3) h4').textContent = '₱' + totalSales.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
-    function extractPrice(priceText) {
-      return parseFloat(priceText.replace(/[₱,]/g, '')) || 0;
+    // Function to apply filters
+    function applyFilters() {
+        const searchText = searchInput.value.toLowerCase();
+        const filterValue = filterBy.value;
+        const paymentFilter = filterByPayment.value;
+        const dateFilter = filterByDate.value;
+
+        tableRows.forEach(row => {
+            let showRow = true;
+
+            // Search Text Filter
+            if (searchText) {
+                const searchableColumns = [
+                    row.cells[0].textContent.toLowerCase(), // Service Name
+                    row.cells[2].textContent.toLowerCase(), // Branch Name
+                    row.cells[3].textContent.toLowerCase()  // Payment Category
+                ];
+                showRow = searchableColumns.some(text => text.includes(searchText));
+            }
+
+            // Payment Status Filter
+            if (showRow && paymentFilter) {
+                const paymentStatus = row.cells[5].querySelector('.badge').textContent.trim().toLowerCase();
+                showRow = paymentStatus === paymentFilter;
+            }
+
+            // Order Status Filter
+            if (showRow && filterValue && !['price_high', 'price_low'].includes(filterValue)) {
+                const orderStatus = row.cells[6].querySelector('.badge').textContent.trim().toLowerCase();
+                const normalizedFilterValue = filterValue.replace(/_/g, ' ');
+                showRow = orderStatus === normalizedFilterValue;
+            }
+
+            // Date Filter
+            if (showRow && dateFilter) {
+                const rowDate = new Date(row.cells[1].textContent.trim());
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                switch (dateFilter) {
+                    case 'today':
+                        showRow = isSameDay(rowDate, today);
+                        break;
+                    case 'yesterday':
+                        const yesterday = new Date(today);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        showRow = isSameDay(rowDate, yesterday);
+                        break;
+                    case 'last_week':
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        showRow = rowDate >= weekAgo && rowDate <= today;
+                        break;
+                    case 'last_month':
+                        const monthAgo = new Date(today);
+                        monthAgo.setDate(monthAgo.getDate() - 30);
+                        showRow = rowDate >= monthAgo && rowDate <= today;
+                        break;
+                    case 'this_month':
+                        showRow = rowDate.getMonth() === today.getMonth() &&
+                                rowDate.getFullYear() === today.getFullYear();
+                        break;
+                    case 'last_3months':
+                        const threeMonthsAgo = new Date(today);
+                        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                        showRow = rowDate >= threeMonthsAgo && rowDate <= today;
+                        break;
+                }
+            }
+
+            row.style.display = showRow ? '' : 'none';
+        });
+
+        // Update sales metrics after applying filters
+        calculateSalesFromVisibleRows();
     }
 
-    function isValidDate(date) {
-      return date instanceof Date && !isNaN(date);
-    }
-
+    // Helper function to compare dates
     function isSameDay(date1, date2) {
-      return date1.getFullYear() === date2.getFullYear() &&
-             date1.getMonth() === date2.getMonth() &&
-             date1.getDate() === date2.getDate();
+        return date1.getFullYear() === date2.getFullYear() &&
+               date1.getMonth() === date2.getMonth() &&
+               date1.getDate() === date2.getDate();
     }
 
-    function updateNoResultsMessage() {
-      const visibleRowsCount = tableRows.filter(row => row.style.display !== 'none').length;
-      const existingNoResults = document.getElementById('noResultsRow');
-
-      if (visibleRowsCount === 0) {
-        if (!existingNoResults) {
-          const newRow = document.createElement('tr');
-          newRow.id = 'noResultsRow';
-          const cell = document.createElement('td');
-          cell.colSpan = 8;
-          cell.textContent = 'No matching records found';
-          cell.style.textAlign = 'center';
-          newRow.appendChild(cell);
-          tableBody.appendChild(newRow);
-        }
-      } else if (existingNoResults) {
-        existingNoResults.remove();
-      }
-    }
-
-    // Initial filter application
-    applyFilters();
+    // Add event listeners
+    searchInput.addEventListener('input', applyFilters);
+    filterBy.addEventListener('change', applyFilters);
+    filterByPayment.addEventListener('change', applyFilters);
+    filterByDate.addEventListener('change', applyFilters);
   });
 </script>
     </body>
-<<<<<<< HEAD
     </html>
-=======
-    </html>
->>>>>>> 94a19b260bee7a506d4c8ffe2b7a77a52ee253bb

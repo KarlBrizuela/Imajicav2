@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 94a19b260bee7a506d4c8ffe2b7a77a52ee253bb
 <aside id="layout-menu" class="layout-menu menu-vertical menu">
 
 
@@ -321,11 +317,7 @@
 
                 <li class="menu-item {{ request()->is('sales-transaction') ? 'active' : '' }}">
                     <a href="/sales-transaction" class="menu-link">
-<<<<<<< HEAD
-                        <div data-i18n="Services Transaction">Sale Transaction</div>
-=======
                         <div data-i18n="Services Transaction">Services Transaction</div>
->>>>>>> 94a19b260bee7a506d4c8ffe2b7a77a52ee253bb
                     </a>
                 </li>
 
