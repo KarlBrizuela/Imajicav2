@@ -352,13 +352,13 @@ Route::get('/services/{id}/details', [ServiceProductController::class, 'getServi
 Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionController::class, 'index']);
 Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
 
-Route::get('/service/get-cost', [ServiceController::class, 'getCost'])->name('service.get_cost');
+Route::get('/service/get-cost', [serviceController::class, 'getCost'])->name('service.get_cost');
 
 // Or for API routes
-Route::get('/api/service/get-cost', [ServiceController::class, 'getCost'])->name('service.get_cost');
+Route::get('/api/service/get-cost', [serviceController::class, 'getCost'])->name('service.get_cost');
 
 // If it's a POST request
-Route::post('/service/get-cost', [ServiceController::class, 'getCost'])->name('service.get_cost');
+Route::post('/service/get-cost', [serviceController::class, 'getCost'])->name('service.get_cost');
 
 // In routes/web.php or routes/api.php
 
@@ -390,3 +390,13 @@ Route::get('/debug-coupon/{id}', function($id) {
         'timezone' => config('app.timezone')
     ]);
 });
+
+// For Option 1:
+Route::post('/services/cost', [serviceController::class, 'getServiceCost']);
+
+// For Option 2:
+
+use App\Http\Controllers\ServiceCostController;
+Route::post('/services/cost', [ServiceCostController::class, 'getServiceCost']);
+
+Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('services.destroy');

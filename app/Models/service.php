@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Service extends Model  // Changed to uppercase 'S' for PSR compliance
 {
     use HasFactory;
-
+    
     protected $table = 'services';
     protected $primaryKey = 'service_id';
     public $incrementing = true;
