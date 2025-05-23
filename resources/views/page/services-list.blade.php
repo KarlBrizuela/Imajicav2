@@ -24,7 +24,7 @@
   <link rel="canonical" href="Imajica Booking System" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
+  <link rel="icon" type="image/x-icon" href="{{ asset('logo/logo.png') }}" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com/" />
@@ -169,10 +169,7 @@
                     <th>Services Name</th>
                     <th>Branch Name</th>
                     <th>Description</th>
-                    <th class="text-center">Duration</th>
-            
-                 
-                    
+                    <th class="text-center">Service Cost</th>
                     <th class="text-center">Actions</th>
                   </tr>
                 </thead>
@@ -182,15 +179,17 @@
                     <td>{{ $service->service_name }}</td>
                     <td>{{ $service->branch ? $service->branch->branch_name : $service->branch_code }}</td>
                     <td>{{ $service->description }}</td>
-
-                 
                     <td>₱{{ number_format($service->service_cost, 2) }}</td>
-                   
                     <td class="text-center">
                       <div class="d-flex gap-2 justify-content-center">
-                        <a href="{{ route('service.edit', $service->service_id) }}" class="btn btn-sm btn-info">
+                        <button type="button" class="btn btn-sm btn-info edit-service" 
+                          data-service-id="{{ $service->service_id }}"
+                          data-service-name="{{ $service->service_name }}"
+                          data-service-branch="{{ $service->branch_code }}"
+                          data-service-description="{{ $service->description }}"
+                          data-service-cost="{{ $service->service_cost }}">
                           <i class="ti tabler-edit me-1"></i> Edit
-                        </a>
+                        </button>
                         <button class="btn btn-sm btn-danger delete-service" 
                           data-service-id="{{ $service->service_id }}"
                           data-service-name="{{ $service->service_name }}">
@@ -274,48 +273,16 @@
                 <h5 class="modal-title text-white" id="serviceModalLabel">Edit Service</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-
               <div class="modal-body">
-                <form id="editServiceForm" method="POST" action="{{ route('service.update') }}" enctype="multipart/form-data">
+                <form id="editServiceForm" method="POST" action="{{ route('service.update') }}">
                   @csrf
                   @method('PUT')
                   <input type="hidden" id="edit_service_id" name="service_id">
-                  <div class="row g-6">
-                    <div class="col-12 text-center mb-4">
-                      <div class="profile-upload-container mx-auto">
-                        <div class="avatar-upload">
-                          <div class="avatar-preview">
-                            <div class="rounded bg-label-secondary" style="width: 200px; height: 200px; overflow: hidden;">
-                              <img
-                                id="edit_imagePreview"
-                                src="../../assets/img/services/default-service.png"
-                                alt="Service Preview"
-                                style="width: 100%; height: 100%; object-fit: cover;"
-                              />
-                            </div>
-                          </div>
-                          <div class="avatar-edit text-center">
-                            <input
-                              type="file"
-                              id="edit_service_image" 
-                              name="service_image"
-                              accept=".png, .jpg, .jpeg"
-                              class="d-none"
-                              onchange="previewImage(this)"
-                            />
-                            <label for="edit_service_image" class="btn btn-primary mt-3">
-                              <i class="ti tabler-upload me-1"></i>Change Photo
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
+                  <div class="row g-3">
                     <div class="col-md-6">
                       <label class="form-label" for="edit_service_name">Services Name</label>
                       <input type="text" id="edit_service_name" name="service_name" class="form-control" required>
                     </div>
-
                     <div class="col-md-6">
                       <label class="form-label">Branch</label>
                       <select class="select2 form-select" name="branch_code" id="edit_branch_code" required>
@@ -325,33 +292,18 @@
                         @endforeach
                       </select>
                     </div>
-
                     <div class="col-12">
                       <label class="form-label" for="edit_description">Description</label>
-                      <textarea name="description" class="form-control" id="edit_description" rows="4"></textarea>
+                      <textarea id="edit_description" name="description" class="form-control" rows="4"></textarea>
                     </div>
-
-                    <div class="col-md-6">
-                      <label class="form-label" for="edit_duration">Duration (minutes)</label>
-                      <input type="number" id="edit_duration" name="duration" class="form-control" required>
-                    </div>
-
-
-
                     <div class="col-md-6">
                       <label class="form-label" for="edit_service_cost">Service Cost</label>
-                      <input type="number" step="0.01" id="edit_service_cost" name="service_cost" class="form-control" required>
+                      <input type="number" step="0.01" min="0" id="edit_service_cost" name="service_cost" class="form-control" required>
                     </div>
-
-                    <div class="col-md-6">
-                      <label class="form-label" for="edit_loyalty_pts">Loyalty Reward Points</label>
-                      <input type="number" id="edit_loyalty_pts" name="loyalty_pts" class="form-control">
-                    </div>
-
-                    <div class="col-12 text-end mt-4">
-                      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                      <button type="submit" class="btn btn-primary ms-2" id="updateServiceBtn">Update Service</button>
-                    </div>
+                  </div>
+                  <div class="text-end mt-4">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary ms-2">Update Service</button>
                   </div>
                 </form>
               </div>
@@ -375,121 +327,69 @@
   <!-- / Layout wrapper -->
 
   <!-- Core JS -->
-  <!-- build:js assets/vendor/js/theme.js -->
-
- <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
-
-   <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
   <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+  <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
   <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
-     <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
-
-  <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
-
- <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-
   <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
-<script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
+  <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
+  <script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
   <script src="{{ asset('vendor/js/menu.js') }}"></script>
-
-  <!-- endbuild -->
-
-  <!-- Vendors JS -->
-<script src="{{ asset('vendor/libs/cleave-zen/cleave-zen.js') }}"></script>
- <script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
-
-  <!-- Main JS -->
-
-  <script src="../../assets/js/main.js"></script>
-
-  <!-- Page JS -->
-  <script src="../../assets/js/form-layouts.js"></script>
-
-  <!-- Vendors JS -->
-  <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
-  <!-- Flat Picker -->
-  <script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
-<script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
-  <!-- Form Validation -->
-   <script src="{{ asset('vendor/libs/@form-validation/popular.js') }}"></script>
-   <script src="{{ asset('vendor/libs/@form-validation/bootstrap5.js') }}"></script>
-  <script src="{{ asset('vendor/libs/@form-validation/auto-focus.js') }}"></script>
-
-
-  <script src="../../assets/js/service-management.js"></script>
-  <script src="{{ asset('assets/js/service-management.js') }}" defer></script>
-  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <script>
-    $(document).ready(function () {
-      $('#servicesTable').DataTable();
-      });
-
-      // Add this to your existing script section
-      document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".view-service").forEach((button) => {
-          button.addEventListener("click", function () {
-            // Format duration
-            const duration = parseInt(this.dataset.serviceDuration);
-            const hours = Math.floor(duration / 60);
-            const minutes = duration % 60;
-            let durationText = "";
-            if (hours > 0) durationText += hours + "h ";
-            if (minutes > 0) durationText += minutes + "m";
-            
-            // Format cost
-            const cost = parseFloat(this.dataset.serviceCost).toLocaleString('en-PH', {
-              style: 'currency',
-              currency: 'PHP'
-            });
-            
-            // Update modal content
-            document.getElementById("modalServiceName").textContent = this.dataset.serviceName;
-            document.getElementById("modalBranch").textContent = this.dataset.serviceBranch;
-            document.getElementById("modalCategory").textContent = this.dataset.serviceCategory;
-            document.getElementById("modalDuration").textContent = durationText;
-            document.getElementById("modalCost").textContent = cost;
-            document.getElementById("modalPoints").textContent = this.dataset.servicePoints + ' pts';
-            document.getElementById("modalDescription").textContent = this.dataset.serviceDescription;
-           // Set the image source
-      const modalImage = document.getElementById('modalServiceImage');
-      if (this.dataset.serviceImage && this.dataset.serviceImage.trim() !== '') {
-        modalImage.src = this.dataset.serviceImage;
-      } else {
-        modalImage.src = "{{ asset('assets/img/services/default-service.png') }}";
-// fallback image
-      }
-         
-
-            // Show modal
-            $('#serviceModal').modal('show');
-          });
+  <script type="text/javascript">
+    $(document).ready(function() {
+      console.log('Document ready fired');
+      
+      // Debug click event
+      $('.edit-service').on('click', function(e) {
+        e.preventDefault();
+        console.log('Edit button clicked');
+        
+        var serviceId = $(this).data('service-id');
+        var serviceName = $(this).data('service-name');
+        var serviceBranch = $(this).data('service-branch');
+        var serviceDescription = $(this).data('service-description');
+        var serviceCost = $(this).data('service-cost');
+        
+        console.log('Service Data:', {
+          id: serviceId,
+          name: serviceName,
+          branch: serviceBranch,
+          description: serviceDescription,
+          cost: serviceCost
         });
-      });
-
-      // Handle Edit button
-      $('.edit-service').on('click', function() {
-        $('#edit_service_id').val($(this).data('service-id'));
-        $('#edit_service_name').val($(this).data('service-name'));
-        $('#edit_branch_code').val($(this).data('service-branch'));
-        $('#edit_description').val($(this).data('service-description'));
-        $('#edit_duration').val($(this).data('service-duration'));
-        $('#edit_service_cost').val($(this).data('service_cost'));
-        $('#edit_loyalty_pts').val($(this).data('service-points'));
-
-        // For debugging - add this temporarily
-        console.log('Service ID:', $(this).data('service-id'));
-
+        
+        // Populate the form fields
+        $('#edit_service_id').val(serviceId);
+        $('#edit_service_name').val(serviceName);
+        $('#edit_description').val(serviceDescription);
+        $('#edit_service_cost').val(serviceCost);
+        
+        // Set the branch value and trigger Select2 update
+        if (serviceBranch) {
+          $('#edit_branch_code').val(serviceBranch).trigger('change');
+        }
+        
+        // Show the modal
         $('#editServiceModal').modal('show');
       });
 
-      // Confirm update with SweetAlert
+      // Initialize Select2
+      $('.select2').select2({
+        dropdownParent: $('#editServiceModal'),
+        width: '100%'
+      });
+
+      // Initialize DataTable
+      $('#servicesTable').DataTable();
+
+      // Form submission handling
       $('#editServiceForm').on('submit', function(e) {
         e.preventDefault();
-        let form = this;
-        $('#editServiceModal').modal('hide');
-
+        console.log('Form submitted');
+        
         Swal.fire({
           title: 'Confirm Update',
           text: "Are you sure you want to update this service?",
@@ -500,87 +400,12 @@
           confirmButtonText: 'Yes, update it!'
         }).then((result) => {
           if (result.isConfirmed) {
-            form.submit();
-          } else {
-            $('#editServiceModal').modal('show');
+            this.submit();
           }
         });
       });
-
-      // Handle Delete button with SweetAlert
-      $('.delete-service').on('click', function() {
-          const serviceID = $(this).data('service-id');
-
-          Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#0a3622',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // Perform AJAX request to delete service
-              $.ajax({
-                url: "{{ route('service.delete') }}",
-                type: "DELETE",
-                data: {
-                  _token: "{{ csrf_token() }}",
-                  id: serviceID
-                },
-                success: function(response) {
-                  Swal.fire({
-                    icon: 'success',
-                    title: 'Deleted!',
-                    text: response.message,
-                    confirmButtonColor: '#0a3622'
-                  }).then(() => {
-                    location.reload();
-                  });
-                },
-                error: function(xhr) {
-                  Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while deleting the service',
-                    confirmButtonColor: '#d33'
-                  });
-                }
-              });
-            }
-          });
-      });
-
-      // Flash messages for success/error using SweetAlert
-      @if(session('success'))
-        Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: "{{ session('success') }}",
-          confirmButtonColor: '#0a3622'
-        });
-      @endif
-
-      @if(session('error'))
-        Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: "{{ session('error') }}",
-          confirmButtonColor: '#d33'
-        });
-      @endif
-  </script>
-<script>
-  $(document).ready(function () {
-    $('#tableService').DataTable({
-       dom: 'Bfrtip',
-       searching: true,
-        paging: true,
-        searchPlaceholder: 'Search...',
     });
-});
-</script>
+  </script>
 </body>
 
 </html>

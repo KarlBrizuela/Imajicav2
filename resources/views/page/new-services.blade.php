@@ -240,13 +240,15 @@
                               <div class="col-md-6">
                                 <label class="form-label" for="service_cost">Service Cost <span style="color: gray; font-style: italic;">(optional)</label>
                                 <input
-                                  type="text"
+                                  type="number"
                                   step="0.01"
+                                  min="0"
                                   id="service_cost"
                                   name="service_cost"
                                   class="form-control"
                                   placeholder="Amount"
-                                  
+                                  min="0"
+                                 required
                                 />
                               </div>
 

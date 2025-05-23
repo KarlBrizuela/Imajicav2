@@ -27,6 +27,7 @@ class Package extends Model
         'description',
         'inclusions',
         'free',
+        'price',
     ];
     
     /**
