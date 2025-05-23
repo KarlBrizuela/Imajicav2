@@ -169,10 +169,14 @@
                     <th>Services Name</th>
                     <th>Branch Name</th>
                     <th>Description</th>
+<<<<<<< HEAD
                     <th class="text-center">Price</th>
             
                  
                     
+=======
+                    <th class="text-center">Service</th>  
+>>>>>>> origin/main
                     <th class="text-center">Actions</th>
                   </tr>
                 </thead>
@@ -182,9 +186,26 @@
                     <td>{{ $service->service_name }}</td>
                     <td>{{ $service->branch ? $service->branch->branch_name : $service->branch_code }}</td>
                     <td>{{ $service->description }}</td>
+<<<<<<< HEAD
 
                  
                     <td>₱{{ number_format($service->service_cost, 2) }}</td>                    <td class="text-center">                      <div class="d-flex gap-2 justify-content-center">                        <button class="btn btn-sm btn-info edit-service"                          data-service-id="{{ $service->service_id }}"                          data-service-name="{{ $service->service_name }}"                          data-service-branch="{{ $service->branch_code }}"                          data-service-description="{{ $service->description }}"                          data-service-duration="{{ $service->duration }}"                          data-service-cost="{{ $service->service_cost }}"                          data-service-points="{{ $service->loyalty_pts }}">                          <i class="ti tabler-edit me-1"></i> Edit                        </button>                        <button class="btn btn-sm btn-danger delete-service"                           data-service-id="{{ $service->service_id }}"                          data-service-name="{{ $service->service_name }}">                          <i class="ti tabler-trash me-1"></i> Delete                        </button>                      </div>                    </td>
+=======
+                    <td>₱{{ number_format($service->service_cost, 2) }}</td>
+                   
+                    <td class="text-center">
+                      <div class="d-flex gap-2 justify-content-center">
+                        <a href="{{ route('service.edit', $service->service_id) }}" class="btn btn-sm btn-info">
+                          <i class="ti tabler-edit me-1"></i> Edit
+                        </a>
+                        <button class="btn btn-sm btn-danger delete-service" 
+                          data-service-id="{{ $service->service_id }}"
+                          data-service-name="{{ $service->service_name }}">
+                          <i class="ti tabler-trash me-1"></i> Delete
+                        </button>
+                      </div>
+                    </td>
+>>>>>>> origin/main
                   </tr>
                   @endforeach
                 </tbody>
@@ -324,7 +345,7 @@
   <!-- Core JS -->
   <!-- build:js assets/vendor/js/theme.js -->
 
- <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+<script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
 
    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
   <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
@@ -415,6 +436,7 @@
         });
       });
 
+<<<<<<< HEAD
       // Handle Edit Service button clicks
       $(document).on('click', '.edit-service', function() {
         var serviceId = $(this).data('service-id');
@@ -434,6 +456,21 @@
         $('#edit_service_cost').val(serviceCost);
         
         // Show the modal
+=======
+      // Handle Edit button
+      $('.edit-service').on('click', function() {
+        $('#edit_service_id').val($(this).data('service-id'));
+        $('#edit_service_name').val($(this).data('service-name'));
+        $('#edit_branch_code').val($(this).data('service-branch'));
+        $('#edit_description').val($(this).data('service-description'));
+        $('#edit_duration').val($(this).data('service-duration'));
+        $('#edit_service_cost').val($(this).data('service_cost'));
+        $('#edit_loyalty_pts').val($(this).data('service-points'));
+
+        // For debugging - add this temporarily
+        console.log('Service ID:', $(this).data('service-id'));
+
+>>>>>>> origin/main
         $('#editServiceModal').modal('show');
       });
 

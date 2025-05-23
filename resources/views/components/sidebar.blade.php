@@ -1,14 +1,13 @@
- 
 <aside id="layout-menu" class="layout-menu menu-vertical menu">
 
 
-    
+
     <br />
     <br />
     <div class="app-brand demo">
         <a href="/dashboard" class="app-brand-link">
             <img src="{{ asset('/logo/logo.png') }}" alt="Logo" width="100%" height="30%">
-            
+
 
         </a>
     </div>
@@ -55,7 +54,7 @@
                         <div data-i18n="Services List">Services List</div>
                     </a>
                 </li>
-                
+
                 <li class="menu-item {{ request()->is('new-package') ? 'active' : '' }}">
                     <a href="/new-package" class="menu-link">
                         <div data-i18n="New Package">New Package</div>
@@ -117,7 +116,7 @@
                                 <div data-i18n="Add Order">Add Order</div>
                             </a>
                         </li>
-                        
+
                     </ul>
                 </li>
             </ul>
@@ -142,7 +141,7 @@
                 </li>
             </ul>
         </li>
-        
+
         <li class="menu-item {{ request()->is('new-coupon') || request()->is('coupon-list') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon icon-base ti tabler-layout-board"></i>
@@ -260,7 +259,7 @@
             </ul>
         </li>
 
-      
+
 
         <li class="menu-item {{ request()->is('department*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -312,8 +311,8 @@
 
             <ul class="menu-sub">
 
-                
-                
+
+
 
 
                 <li class="menu-item {{ request()->is('sales-transaction') ? 'active' : '' }}">
@@ -322,7 +321,7 @@
                     </a>
                 </li>
 
-                
+
                 <li class="menu-item {{ request()->is('employee-sales') ? 'active' : '' }}">
                     <a href="/employee-sales" class="menu-link">
                         <div data-i18n="Employee Sales">Employee Sales</div>
@@ -393,21 +392,21 @@
             const clonedToggle = toggle.cloneNode(true);
             toggle.parentNode.replaceChild(clonedToggle, toggle);
         });
-        
+
         // Reattach event listeners with improved handling
         document.querySelectorAll('.menu-toggle').forEach(toggle => {
             toggle.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 // Find the parent menu item
                 const menuItem = this.closest('.menu-item');
-                
+
                 // Handle nested menu items properly
                 if (this.closest('.menu-sub')) {
                     // If this is a nested submenu toggle, only toggle this specific item
                     menuItem.classList.toggle('open');
-                    
+
                     const subMenu = menuItem.querySelector('.menu-sub');
                     if (subMenu) {
                         if (menuItem.classList.contains('open')) {
@@ -420,29 +419,29 @@
                     // For top-level menu items, we need to handle sibling closures
                     // First check if we need to close other open top-level items
                     const isOpen = menuItem.classList.contains('open');
-                    
+
                     // Toggle this menu item's state
                     menuItem.classList.toggle('open');
-                    
+
                     // Show/hide the submenu
                     const subMenu = menuItem.querySelector('.menu-sub');
                     if (subMenu) {
                         subMenu.style.display = !isOpen ? 'block' : 'none';
                     }
                 }
-                
+
                 // Force a repaint to ensure proper display
                 document.body.offsetHeight;
             });
         });
-        
+
         // Force visibility of all menu labels
         document.querySelectorAll('.menu-link div[data-i18n]').forEach(label => {
             label.style.display = 'block';
             label.style.visibility = 'visible';
             label.style.opacity = '1';
         });
-        
+
         // Set active menu items properly
         document.querySelectorAll('.menu-item.active').forEach(item => {
             // Open all parent menu items
@@ -456,12 +455,12 @@
                 parent = parent.parentElement.closest('.menu-item');
             }
         });
-        
+
         // Make sure all open menu items have their sub-menus visible
         document.querySelectorAll('.menu-item.open > .menu-sub').forEach(subMenu => {
             subMenu.style.display = 'block';
         });
-        
+
         // Add CSS to fix menu transitions and styling
         const style = document.createElement('style');
         style.textContent = `
@@ -470,7 +469,7 @@
                 overflow-y: auto !important;
                 height: 100vh;
             }
-            
+
             .menu-item .menu-sub {
                 display: none;
                 max-height: none !important;
@@ -482,38 +481,38 @@
                 visibility: visible !important;
                 opacity: 1 !important;
             }
-            
+
             /* Fix menu toggle clicks */
             .menu-toggle {
                 cursor: pointer !important;
                 user-select: none;
                 pointer-events: auto !important;
             }
-            
+
             /* Fix menu item text visibility */
             .menu-link div[data-i18n] {
                 visibility: visible !important;
                 display: block !important;
                 opacity: 1 !important;
             }
-            
+
             /* Fix pointer events for all menu items */
             .menu-link, .menu-toggle, .menu-sub, .menu-item {
                 pointer-events: auto !important;
             }
-            
+
             /* Fix z-index of menu items */
             .menu-sub {
                 z-index: 10 !important;
                 position: relative !important;
             }
-            
+
             /* Fix nested submenu handling */
             .menu-sub .menu-sub {
                 margin-left: 1rem !important;
                 border-left: 1px solid rgba(0,0,0,0.05) !important;
             }
-            
+
             /* Make the menu links clearly clickable */
             .menu-toggle, .menu-link {
                 position: relative !important;

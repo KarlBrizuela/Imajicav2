@@ -358,73 +358,96 @@
                 <div id="responseMessage" style="display: none;" class="alert mx-3 mt-0 mb-3"></div>
 
                 <!-- Table -->
-                <div class="table-responsive">
-                  <table class="table table-striped" id="couponTable">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Coupon Code</th>
-                        <th>Coupon Name</th>
-                        <th>Branch Name</th>
-                        <th>Discount Value</th> 
-                        <th>Discount Type</th>
-                        <th>Validity Period</th>
-                        <th>Applicable Service</th>
-                        <th>Status</th>
-                        <th style="min-width: 250px; text-align: center">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($coupons as $coupon)
-                      <tr>
-                        <td>{{ $coupon->coupon_code }}</td>
-                        <td>{{ $coupon->discount_name }}</td>
-                        <td>{{ $coupon->branch ? $coupon->branch->branch_name : $coupon->branch_code }}</td>
-                        <td>
-                          @if($coupon->discount_type == 'percentage')
-                            {{ $coupon->discount_value }}%
-                          @else
-                            ₱{{ number_format($coupon->discount_value, 2) }}
-                          @endif
-                        </td>
-                        <td><span class="badge bg-label-info">{{ ucfirst($coupon->discount_type) }}</span></td>
-                        <td>
-                            @php
-                                $dates = explode(' to ', $coupon->start_end_date);
-                                $startDate = \Carbon\Carbon::parse($dates[0])->format('F d, Y');
-                                $endDate = isset($dates[1]) ? \Carbon\Carbon::parse($dates[1])->format('F d, Y') : '';
-                            @endphp
-                            {{ $startDate }} to {{ $endDate }}
-                        </td>
-                        <td>{{ $coupon->service ? $coupon->service->service_name : $coupon->service_id }}</td>
-                        <td>
-                          @php
-                            $now = \Carbon\Carbon::now();
-                            $startDate = \Carbon\Carbon::parse($coupon->start_date);
-                            $endDate = \Carbon\Carbon::parse($coupon->end_date);
-                          @endphp
-                          @if($now->between($startDate, $endDate))
-                            <span class="badge bg-label-success">Active</span>
-                          @else
-                            <span class="badge bg-label-danger">Expired</span>
-                          @endif
-                        </td>
-                        <td>
-                          <div class="d-flex justify-content-center gap-2">
-                            <button class="btn btn-sm btn-info" onclick="window.location.href='{{ route('coupon.edit', $coupon->coupon_code) }}'">
-                              <i class="ti tabler-edit me-1"></i> Edit
-                            </button>
-                            <button class="btn btn-sm btn-danger delete-coupon" 
-                              data-coupon-code="{{ $coupon->coupon_code }}"
-                              data-discount-name="{{ $coupon->discount_name }}">
-                              <i class="ti tabler-trash me-1"></i> Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
-                </div>
+             <div class="table-responsive">
+    <table class="table table-striped" id="couponTable">
+        <thead class="table-light">
+            <tr>
+                <th>Coupon Code</th>
+                <th>Coupon Name</th>
+                <th>Branch Name</th>
+                <th>Discount Value</th> 
+                <th>Discount Type</th>
+                <th>Validity Period</th>
+                <th>Status</th>
+                <th>Applicable Service</th>
+                <th style="min-width: 250px; text-align: center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($coupons as $coupon)
+            @php
+                // Get current time in the same timezone as your application
+                $now = now();
+                
+                // Parse dates with timezone consideration
+                $startDate = \Carbon\Carbon::parse($coupon->start_date, config('app.timezone'));
+                $endDate = \Carbon\Carbon::parse($coupon->end_date, config('app.timezone'));
+                
+                // Check if dates are valid (start before end)
+                $isValidDateRange = $startDate->lte($endDate);
+                
+                // Determine status
+                if (!$isValidDateRange) {
+                    $status = 'invalid';
+                    $statusClass = 'bg-label-warning';
+                    $statusText = 'Invalid Dates';
+                } elseif ($now->between($startDate, $endDate)) {
+                    $status = 'active';
+                    $statusClass = 'bg-label-success';
+                    $statusText = 'Active';
+                } else {
+                    $status = 'expired';
+                    $statusClass = 'bg-label-danger';
+                    $statusText = 'Expired';
+                }
+                
+                // Format dates for display
+                $formattedStart = $startDate->format('M d, Y');
+                $formattedEnd = $endDate->format('M d, Y');
+            @endphp
+            <tr>
+                <td>{{ $coupon->coupon_code }}</td>
+                <td>{{ $coupon->discount_name }}</td>
+                <td>{{ $coupon->branch ? $coupon->branch->branch_name : $coupon->branch_code }}</td>
+                <td>
+                    @if($coupon->discount_type == 'percentage')
+                        {{ $coupon->discount_value }}%
+                    @else
+                        ₱{{ number_format($coupon->discount_value, 2) }}
+                    @endif
+                </td>
+                <td><span class="badge bg-label-info">{{ ucfirst($coupon->discount_type) }}</span></td>
+                <td>
+                    {{ $formattedStart }} to {{ $formattedEnd }}
+                    @if(!$isValidDateRange)
+                        <small class="d-block text-danger">(Start date after end date)</small>
+                    @elseif($now->lt($startDate))
+                        <small class="d-block text-info">(Starts in {{ $now->diffInDays($startDate) }} days)</small>
+                    @elseif($now->gt($endDate))
+                        <small class="d-block text-muted">(Ended {{ $now->diffInDays($endDate) }} days ago)</small>
+                    @endif
+                </td>
+                <td>
+                    <span class="badge {{ $statusClass }}">{{ $statusText }}</span>
+                </td>
+                <td>{{ $coupon->service ? $coupon->service->service_name : $coupon->service_id }}</td>
+                <td>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-sm btn-info" onclick="window.location.href='{{ route('coupon.edit', $coupon->coupon_code) }}'">
+                            <i class="ti tabler-edit me-1"></i> Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-coupon" 
+                            data-coupon-code="{{ $coupon->coupon_code }}"
+                            data-discount-name="{{ $coupon->discount_name }}">
+                            <i class="ti tabler-trash me-1"></i> Delete
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
               </div>
             </div>
           </div>

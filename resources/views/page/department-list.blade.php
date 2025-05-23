@@ -41,11 +41,12 @@
     <link  rel="stylesheet"  href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
-
+    <!-- Add this to your <head> section -->
+<link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}">
     <!-- Vendors CSS -->
     <link  rel="stylesheet"  href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <!-- Page CSS -->
-    <<link  rel="stylesheet"  href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}"  />
+    <link  rel="stylesheet"  href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}"  />
     <link  rel="stylesheet"   href="{{ asset('vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css') }}" />
     <link  rel="stylesheet"  href="{{ asset('vendor/libs/jquery-timepicker/jquery-timepicker.css') }}" />
 

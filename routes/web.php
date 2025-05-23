@@ -29,7 +29,11 @@ use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\wasteController;
 
 use App\Http\Controllers\ServiceProductController;
+<<<<<<< HEAD
 use App\Http\Controllers\VoidLogController;
+=======
+
+>>>>>>> origin/main
 use App\Http\Controllers\VoidedOrdersController;
 
 
@@ -331,7 +335,7 @@ Route::post('/user/create', [UserController::class, 'create'])->name('user.creat
 Route::get('/user/edit/{id}', [UserController::class, 'edit'])->name('page.edit-user')->middleware(['auth', 'admin']);
 Route::post('/user/update', [UserController::class, 'update'])->name('user.update')->middleware(['auth', 'admin']);
 Route::post('/user/delete/{id}', [UserController::class, 'delete'])->name('user.delete')->middleware(['auth', 'admin']);
-
+Route::get('/users/create', [UserController::class, 'createForm'])->name('user.create.form');
 
 
 Route::post('/check-first-time-patient', [App\Http\Controllers\BookingController::class, 'checkFirstTimePatient'])->name('check.first.time.patient');
@@ -352,4 +356,55 @@ Route::get('/services/{id}/details', [ServiceProductController::class, 'getServi
 Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionController::class, 'index']);
 Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
 
+<<<<<<< HEAD
 Route::get('/void-logs', [VoidLogController::class, 'voidLogs'])->name('void.logs');
+=======
+Route::get('/service/get-cost', [serviceController::class, 'getCost'])->name('service.get_cost');
+
+// Or for API routes
+Route::get('/api/service/get-cost', [serviceController::class, 'getCost'])->name('service.get_cost');
+
+// If it's a POST request
+Route::post('/service/get-cost', [serviceController::class, 'getCost'])->name('service.get_cost');
+
+// In routes/web.php or routes/api.php
+
+
+Route::get('/booking', [BookingController::class, 'index']);
+Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+
+// Should have something like this:
+Route::get('/booking', [BookingController::class, 'index'])->name('page.booking');
+// In routes/web.php
+Route::get('/booking', [BookingController::class, 'index'])->name('page.booking');
+
+Route::get('/booking', function () {return view('page.booking');})->name('page.booking');
+
+Route::get('/booking', [App\Http\Controllers\BookingController::class, 'index'])->name('page.booking');
+
+// Add this to your routes/web.php
+Route::get('/package/get-cost', [PackageController::class, 'getCost'])->name('package.get_cost');
+
+Route::get('/package/get-cost', [App\Http\Controllers\PackageController::class, 'getCost'])->name('package.get_cost');
+
+// Temporary debug route
+Route::get('/debug-coupon/{id}', function($id) {
+    $coupon = App\Models\Coupon::find($id);
+    return response()->json([
+        'start_date' => $coupon->start_date,
+        'end_date' => $coupon->end_date,
+        'now' => now()->format('Y-m-d H:i:s'),
+        'timezone' => config('app.timezone')
+    ]);
+});
+
+// For Option 1:
+Route::post('/services/cost', [serviceController::class, 'getServiceCost']);
+
+// For Option 2:
+
+use App\Http\Controllers\ServiceCostController;
+Route::post('/services/cost', [ServiceCostController::class, 'getServiceCost']);
+
+Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('services.destroy');
+>>>>>>> origin/main

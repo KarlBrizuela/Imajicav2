@@ -58,7 +58,11 @@ public function update(Request $request) {
         'service_name' => 'required',
         'branch_code' => 'required',
         'description' => 'required',
+<<<<<<< HEAD
         'service_cost' => 'nullable|numeric|min:0',
+=======
+        'service_cost' => 'required|numeric|min:0',
+>>>>>>> origin/main
     ]);
 
     // Find the service by ID
@@ -134,4 +138,34 @@ public function delete(Request $request)
     return view('page.edit-service', compact('service', 'branches'));
 }
 
+public function store(Request $request)
+    {
+        // Validate the request data
+        $validated = $request->validate([
+            'service_name' => 'required|string|max:255',
+            'branch_code' => 'required|exists:branches,branch_code',
+            'description' => 'nullable|string',
+            'service_cost' => 'required|numeric|min:0', // Ensures cost is a positive number
+        ]);
+
+        // Create the service
+        Service::create($validated);
+
+        return redirect()->route('service.index')
+            ->with('success', 'Service created successfully!');
+    }
+
+     public function getCost(Request $request)
+{
+    $serviceType = $request->input('service_type');
+    $duration = $request->input('duration');
+    
+    // Calculate cost based on service type and duration
+    $cost = $this->calculateServiceCost($serviceType, $duration);
+    
+    return response()->json(['cost' => $cost]);
 }
+
+}
+
+

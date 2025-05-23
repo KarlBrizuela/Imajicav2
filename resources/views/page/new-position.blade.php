@@ -24,15 +24,15 @@
     <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
 
     <!-- Include CSS -->
-    <link rel="stylesheet" href="../../assets/vendor/fonts/iconify-icons.css" />
-    <link rel="stylesheet" href="../../assets/vendor/css/core.css" />
-    <link rel="stylesheet" href="../../assets/css/demo.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/select2/select2.css" />
-    <link rel="stylesheet" href="../../assets/vendor/libs/flatpickr/flatpickr.css" />
+   <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
+     <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}">
+  <link rel="stylesheet" href="{{ asset('/css/demo.css') }}" />
+      <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+       <link  rel="stylesheet"  href="{{ asset('vendor/libs/select2/select2.css') }}"  />
+     <link rel="stylesheet"  href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}" />
 
     <!-- Helpers -->
-    <script src="../../assets/vendor/js/helpers.js"></script>
+     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <script src="../../assets/js/config.js"></script>
   </head>
 
@@ -158,10 +158,10 @@
     </div>
 
     <!-- Include Scripts -->
-    <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="../../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../../assets/vendor/js/bootstrap.js"></script>
-    <script src="../../assets/vendor/js/menu.js"></script>
+     <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+   <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+       <script src="{{ asset('vendor/js/menu.js') }}"></script>
     <script src="../../assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

@@ -247,7 +247,8 @@
                                   name="service_cost"
                                   class="form-control"
                                   placeholder="Amount"
-                                  
+                                  min="0"
+                                 required
                                 />
                               </div>
 

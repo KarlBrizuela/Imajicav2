@@ -26,6 +26,8 @@ class CreateNewProductTable extends Migration
             $table->foreignId('supplier_id')->constrained('suppliers', 'suppler_id');
             // Pricing
             $table->decimal('base_price', 10, 2);
+            // In your migration
+             $table->decimal('price', 10, 2)->nullable();
             
             // Stock management  
             $table->integer('quantity')->default(0);

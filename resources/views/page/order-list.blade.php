@@ -8,13 +8,13 @@
 * Created by: Pixinvent
 
       * License: You must have a valid license purchased in order to legally use the theme for your project.
-    
+
 * Copyright Pixinvent (https://pixinvent.com)
 
 =========================================================
  -->
     <!-- beautify ignore:start -->
-  
+
 
 
 <html
@@ -25,7 +25,7 @@
   data-assets-path="../../assets/"
   data-template="vertical-menu-template"
   data-bs-theme="light">
-  
+
 <!-- Mirrored from demos.pixinvent.com/vuexy-html-admin-template/html/vertical-menu-template/app-ecommerce-order-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 22 Feb 2025 08:26:18 GMT -->
 <head>
     <meta charset="utf-8" />
@@ -33,7 +33,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Imajica Booking System</title>
 
-    
+
       <meta name="description" content="Vuexy is the best bootstrap 5 dashboard for responsive web apps. Streamline your app development process with ease." />
       <!-- Canonical SEO -->
       <meta name="keywords" content="Vuexy bootstrap dashboard, vuexy bootstrap 5 dashboard, themeselection, html dashboard, web dashboard, frontend dashboard, responsive bootstrap theme" />
@@ -44,7 +44,11 @@
       <meta property="og:description" content="Vuexy is the best bootstrap 5 dashboard for responsive web apps. Streamline your app development process with ease." />
       <meta property="og:site_name" content="Pixinvent" />
       <link rel="canonical" href="https://themeforest.net/item/vuexy-vuejs-html-laravel-admin-dashboard-template/23328599" />
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/main
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <!-- ? PROD Only: Google Tag Manager (Default ThemeSelection: GTM-5DDHKGP, PixInvent: GTM-5J3LMKC) -->
       <script>
@@ -60,7 +64,7 @@
         })(window, document, 'script', 'dataLayer', 'GTM-5J3LMKC');
       </script>
       <!-- End Google Tag Manager -->
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('logo/logo.png') }}" />
 
@@ -73,19 +77,19 @@
 
     <!-- Core CSS -->
     <!-- build:css assets/vendor/css/theme.css  -->
-    
-     
+
+
    <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.js') }}" />
 
     <link rel="stylesheet" href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}">
   <link rel="stylesheet" href="{{ asset('/css/demo.css') }}" />
 
-    
+
     <!-- Vendors CSS -->
-    
+
       <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    
+
     <!-- endbuild -->
 
     <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
@@ -93,31 +97,31 @@
   <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}" />
 
     <!-- Page CSS -->
-    
+
 
     <!-- Helpers -->
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    
-  
-    
+
+
+
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    
+
       <script src="../../assets/js/config.js"></script>
-    
+
   </head>
 
   <body>
-    
+
       <!-- ?PROD Only: Google Tag Manager (noscript) (Default ThemeSelection: GTM-5DDHKGP, PixInvent: GTM-5J3LMKC) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5J3LMKC" height="0" width="0" style="display: none; visibility: hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
-    
+
     <!-- Layout wrapper -->
   <div class="layout-wrapper layout-content-navbar  ">
     <div class="layout-container">
       @include('components.sidebar')
-        
+
 
 <div class="menu-mobile-toggler d-xl-none rounded-1">
   <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large text-bg-secondary p-2 rounded-1">
@@ -127,12 +131,12 @@
 </div>
 <!-- / Menu -->
 
-      
+
 
       <!-- Layout container -->
       <div class="layout-page">
 
-        
+
 
         <!-- Content wrapper -->
         <div class="content-wrapper">
@@ -213,7 +217,7 @@
         </tr>
         <tbody>
          @foreach ($orders as $order)
-          <tr 
+          <tr
             data-id="{{ $order->order_id }}"
             data-items='@json($order->orderItems)'>
             <td></td>
@@ -226,34 +230,34 @@
               <h6 class="mb-0">{{ $order->customer_name }}</h6>
               <small class="text-muted">{{ $order->customer_email ?? 'No email available' }}</small>
             </div>
-      
+
           </td>
 
-            <td>${{ $order->total }}</td>
+            <td>₱{{ $order->total }}</td>
             <td>
-              <span class="badge bg-label-{{ 
-                $order->payment_status == 'Paid' ? 'success' : 
-                ($order->payment_status == 'Pending' ? 'warning' : 
-                ($order->payment_status == 'Failed' ? 'danger' : 
-                ($order->payment_status == 'Cancelled' ? 'secondary' : 'info'))) 
+              <span class="badge bg-label-{{
+                $order->payment_status == 'Paid' ? 'success' :
+                ($order->payment_status == 'Pending' ? 'warning' :
+                ($order->payment_status == 'Failed' ? 'danger' :
+                ($order->payment_status == 'Cancelled' ? 'secondary' : 'info')))
             }} me-1">
                 {{ ucfirst($order->payment_status) }}
             </span>
-            
+
             </td>
             <td>{{ $order->payment_method }}</td>
             <td>
               <div class="d-flex gap-2">
-                <a href="{{ route('page.order-details', $order->order_id) }}" 
+                <a href="{{ route('page.order-details', $order->order_id) }}"
                    class="btn btn-sm btn-success view-order">
                   <i class="ti tabler-eye me-1"></i> View
                 </a>
-                
-                <a href="{{ route('page.edit-order', $order->order_id) }}" 
+
+                <a href="{{ route('page.edit-order', $order->order_id) }}"
                    class="btn btn-sm btn-primary edit-order">
                   <i class="ti tabler-edit me-1"></i> Edit
                 </a>
-            
+
                 <button class="btn btn-sm btn-danger delete-order">
                   <i class="ti tabler-trash me-1"></i> Delete
                 </button>
@@ -277,8 +281,8 @@
 
           <!-- / Content -->
 
-          
-            
+
+
 
 <!-- Footer -->
 <footer class="content-footer footer bg-footer-theme">
@@ -291,13 +295,13 @@
           </script>
            Developed by <a href="https://intra-code.com/" target="_blank" class="footer-link">Intracode IT Solutions</a>
         </div>
-       
+
       </div>
     </div>
   </footer>
 <!-- / Footer -->
 
-          
+
           <div class="content-backdrop fade"></div>
         </div>
         <!-- Content wrapper -->
@@ -305,28 +309,28 @@
       <!-- / Layout page -->
     </div>
 
-    
-      
+
+
       <!-- Overlay -->
       <div class="layout-overlay layout-menu-toggle"></div>
-    
-    
+
+
       <!-- Drag Target Area To SlideIn Menu On Small Screens -->
       <div class="drag-target"></div>
-    
+
   </div>
   <!-- / Layout wrapper -->
 
-    
-    
-    
 
-    
+
+
+
+
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/theme.js -->
-    
-    
+
+
      <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
  <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
@@ -336,20 +340,20 @@
   <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
   <script src="{{ asset('vendor/js/menu.js') }}"></script>
 
-       
+
 <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
 
      <script src="{{ asset('vendor/js/menu.js') }}"></script>
-    
+
     <!-- endbuild -->
 
     <!-- Vendors JS -->
     <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
 
     <!-- Main JS -->
-    
+
       <script src="../../assets/js/main.js"></script>
-    
+
 
     <!-- Page JS -->
     <script src="../../assets/js/order-list.js"></script>
@@ -374,7 +378,11 @@ $(document).ready(function () {
     `)
     .appendTo('head');
 
+<<<<<<< HEAD
   // Existing DataTable initialization 
+=======
+  // Existing DataTable initialization
+>>>>>>> origin/main
   $('#orderTable').DataTable({
     layout: {
       topStart: {
@@ -408,7 +416,11 @@ $(document).ready(function () {
     const row = $(this).closest('tr');
     const orderId = row.data('id');
     const orderItems = row.data('items');
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/main
     // Store all order details in session storage
     const orderDetails = {
       id: orderId,
@@ -423,7 +435,11 @@ $(document).ready(function () {
       status: row.find('td:eq(5)').text().trim(),
       payment: row.find('td:eq(6)').text().trim()
     };
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/main
     sessionStorage.setItem('orderDetails', JSON.stringify(orderDetails));
     sessionStorage.setItem('currentOrderItems', JSON.stringify(orderItems));
     console.log("Order details from order list:", orderDetails);
@@ -457,11 +473,19 @@ $(document).ready(function () {
           showConfirmButton: false,
           didOpen: () => {
             Swal.showLoading()
+<<<<<<< HEAD
             
             // Set the order ID in the hidden form
             $('#delete_order_id').val(orderId);
             $('#delete_void_reason').val('Order deleted by staff');
             
+=======
+
+            // Set the order ID in the hidden form
+            $('#delete_order_id').val(orderId);
+            $('#delete_void_reason').val('Order deleted by staff');
+
+>>>>>>> origin/main
             // Submit the form via AJAX
             $.ajax({
               type: "POST",
@@ -514,4 +538,3 @@ $(document).ready(function () {
 </html>
 
   <!-- beautify ignore:end -->
-

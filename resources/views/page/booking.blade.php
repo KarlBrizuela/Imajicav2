@@ -591,21 +591,31 @@
                             <label class="form-label" for="service_id">Select Services</label>
                             <select class="select2 form-select" name="service_id[]" id="service_id" multiple>
                               @foreach ($services as $service)
-                              <option value="{{$service->service_id}}">{{$service->service_name}}</option>
+                              <option value="{{$service->service_id}}", value= "{{$service->loyalty_pts}}">{{$service->service_name}} {{$service->loyalty_pts}}pts</option>
                               @endforeach
                             </select>
-                            <small class="form-text text-muted">You can select multiple services</small>
+<small id="points_needed_section" class="form-text text-muted">
+    Points needed to avail services:
+    <span id="points_needed_display" class="fw-semibold text-success"></span>
+</small>
+
+<small id="amount_needed_section" class="form-text text-muted" style="display: none;">
+    Amount needed to avail services:
+    <span id="amount_needed_display" class="fw-semibold text-primary"></span>
+</small>
                           </div>
 
-                          <div class="mb-5" id="package_section" style="display:none;">
-                            <label class="form-label" for="package_id">Select Package</label>
-                            <select class="select2 form-select" name="package_id[]" id="package_id" multiple>
-                              @foreach ($packages as $package)
-                              <option value="{{$package->package_id}}">{{$package->package_name}}</option>
-                              @endforeach
-                            </select>
-                            <small class="form-text text-muted">You can select multiple packages</small>
-                          </div>
+<div class="mb-5" id="package_section" style="display:none;">
+    <label class="form-label" for="package_id">Select Package</label>
+    <select class="select2 form-select" name="package_id[]" id="package_id" multiple>
+        @foreach ($packages as $package)
+        <option value="{{$package->package_id}}">{{$package->package_name}}</option>
+        @endforeach
+    </select>
+    <small class="form-text text-muted">Amount needed to avail services:
+      <span id="amount_needed_to_display"></span>
+    </small>
+</div>
                           
                           <div class="mb-5">
                             <label class="form-label" for="status">Status</label>
@@ -617,13 +627,13 @@
                               <option>No Show</option>
                             </select>
                           </div>
-                          <div class="mb-5">
-                            <label class="form-label" for="payment_amount">Payment Amount</label>
-                            <div class="input-group">
-                              <span class="input-group-text">P</span>
-                              <input type="number" class="form-control" id="payment_amount" name="payment_amount" placeholder="0.00" min="0" step="0.01">
-                            </div>
-                          </div>
+      <div class="mb-5">
+        <label class="form-label" for="payment_amount">Payment Amount</label>
+          <div class="input-group">
+            <span class="input-group-text">P</span>
+            <input type="number" class="form-control" id="payment_amount" name="payment_amount" placeholder="0.00" min="0" step="0.01" readonly>
+          </div>
+      </div>
                           <div class="mb-5 form-control-validation">
                             <label class="form-label" for="start_date">Start Date and Time</label>
                             <input type="text" class="form-control flatpickr-input" id="start_date" name="start_date" placeholder="YYYY-MM-DD HH:MM" />
@@ -777,7 +787,7 @@
                               <div><strong>Referral Points:</strong> <span id="summary_referral_points">-</span></div>
                               <div><strong>Used Points:</strong> <span id="summary_patient_reward">-</span></div>
                               <div><strong>Points to Earn:</strong> <span id="summary_points_to_earn">-</span></div>
-                              <div class="mt-2"><strong>Total Price:</strong> <span id="summary_total_price">-</span></div>
+                              <div class="mt-2"><strong>Total Price:<span id="summary_total_price"></span></strong></div>
                             </div>
                           </div>
                           <div class="d-flex justify-content-sm-between justify-content-start mt-6 gap-2">
@@ -3470,6 +3480,113 @@ $(document).ready(function() {
     // This section has been removed as the client doesn't want the add note feature
   });
   </script>
+
+  <script>
+$(document).ready(function() {
+    $('#service_id').on('change', function() {
+        const selectedServiceId = $(this).val(); // Get selected service ID(s)
+
+        if (selectedServiceId.length > 0) {
+            $.ajax({
+                url: "{{ route('loyalty.get_service_points') }}", // New route
+                type: "GET",
+                data: { service_ids: selectedServiceId },
+                success: function(response) {
+                    console.log("API Response:", response); // Debug API response
+                    
+                    if (response.success) {
+                      
+                        $('#points_needed_display').text(response.loyalty_pts); // Update points display
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Error fetching service points:", xhr);
+                    $('#points_needed_display').text('-'); // Fallback display
+                }
+            });
+        } else {
+            $('#points_needed_display').text('-'); // Reset display when no service is selected
+        }
+    });
+});
+  </script>
+
+  <script>
+$(document).ready(function() {
+    $('input[name="useReward"]').on('change', function() {
+        const useReward = $('input[name="useReward"]:checked').val();
+        const selectedServiceId = $('#service_id').val(); // Get selected service(s)
+
+        if (useReward === '1') {  // If "Yes" is selected
+            $('#points_needed_section').show();
+            $('#amount_needed_section').hide();
+        } else {  // If "No" is selected, fetch service cost
+            $('#points_needed_section').hide();
+            $('#amount_needed_section').show();
+
+            if (selectedServiceId.length > 0) {
+                $.ajax({
+                    url: "{{ route('service.get_cost') }}", // Fetch cost from database
+                    type: "GET",
+                    data: { service_ids: selectedServiceId },
+                    success: function(response) {
+                        console.log("Service Cost API Response:", response); // Debugging
+                        $('#amount_needed_display').text('₱' + response.total_cost);
+                    },
+                    error: function(xhr) {
+                        console.error("Error fetching service cost:", xhr);
+                        $('#amount_needed_display').text('-'); // Fallback display
+                    }
+                });
+            } else {
+                $('#amount_needed_display').text('-'); // Reset display if no service is selected
+            }
+        }
+    });
+
+    $('#service_id').on('change', function() {
+        $('input[name="useReward"]:checked').trigger('change'); // Refresh based on selection
+    });
+});
+
+  </script>
+
+
+<script>
+$(document).ready(function() {
+    $('#package_id').on('change', function() {
+        const selectedPackageIds = $(this).val(); // Get selected package ID(s)
+
+        if (selectedPackageIds.length > 0) {
+            $.ajax({
+                url: "{{ route('package.get_cost') }}", // New route for package cost
+                type: "GET",
+                data: { package_ids: selectedPackageIds },
+                success: function(response) {
+                    console.log("Package Cost API Response:", response); // Debugging
+                    
+                    if (response.success && response.total_cost) {
+                      let totalCost = Number(response.total_cost);
+                        $('#amount_needed_to_display').text('₱' + totalCost); // Update amount display
+                        $('#payment_amount').val(totalCost); // Automatically set payment amount
+                        $('#summary_total_price').text('₱' + totalCost);
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Error fetching package cost:", xhr);
+                    $('#amount_needed_to_display').text('-'); // Fallback display
+                    $('#payment_amount').val('-'); // Fallback display
+                    $('#summary_total_price').text('-');
+                }
+            });
+        } else {
+            $('#amount_needed_to_display').text('-'); // Reset display when no package is selected
+        }
+    });
+});
+</script>
+
+
 </body>
 
 </html>
