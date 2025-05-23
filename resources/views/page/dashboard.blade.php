@@ -95,12 +95,12 @@
       <!-- / Menu -->
 
        @include('components.sidebar')
-      
-      
+
+
 
       <!-- Layout container -->
       <div class="layout-page">
-        
+
 
         <!-- / Navbar -->
 
@@ -253,14 +253,14 @@
 
                       <!-- Decorative Elements -->
                       <div class="d-none d-md-block">
-                        <img src="{{ asset('logo/imajica.png') }}" 
+                        <img src="{{ asset('logo/imajica.png') }}"
                           alt="Imajica Aesthetics"
                           style="max-height: 180px; border-radius: 10px;">
                       </div>
 
                       <!-- Background Decoration -->
                       <div class="position-absolute top-0 end-0 opacity-25">
-                      
+
                       </div>
                     </div>
                   </div>
@@ -296,7 +296,7 @@
     }
   `;
               document.head.appendChild(style);
-              
+
             </script>
 
 
@@ -734,24 +734,24 @@
                   @php
                     $currentYear = date('Y');
                     $monthlyRevenue = [];
-                    
+
                     // Initialize monthly revenue array with zeros
                     for ($i = 1; $i <= 12; $i++) {
                       $monthlyRevenue[$i] = 0;
                     }
-                    
+
                     // Calculate revenue for each month
                     foreach ($bookings as $booking) {
                       if ($booking->status === 'Completed' || $booking->status === 'Paid') {
                         $month = Carbon\Carbon::parse($booking->booking_date)->month;
                         $year = Carbon\Carbon::parse($booking->booking_date)->year;
-                        
+
                         if ($year == $currentYear) {
                           $monthlyRevenue[$month] += $booking->services->sum('service_cost');
                         }
                       }
                     }
-                    
+
                     // Output the monthly revenue data
                     echo implode(', ', $monthlyRevenue);
                   @endphp
@@ -782,24 +782,24 @@
                   @php
                     $lastYear = date('Y') - 1;
                     $lastYearMonthlyRevenue = [];
-                    
+
                     // Initialize last year's monthly revenue array with zeros
                     for ($i = 1; $i <= 12; $i++) {
                       $lastYearMonthlyRevenue[$i] = 0;
                     }
-                    
+
                     // Calculate revenue for each month of last year
                     foreach ($bookings as $booking) {
                       if ($booking->status === 'Completed' || $booking->status === 'Paid') {
                         $month = Carbon\Carbon::parse($booking->booking_date)->month;
                         $year = Carbon\Carbon::parse($booking->booking_date)->year;
-                        
+
                         if ($year == $lastYear) {
                           $lastYearMonthlyRevenue[$month] += $booking->services->sum('service_cost');
                         }
                       }
                     }
-                    
+
                     // Output the last year's monthly revenue data
                     echo implode(', ', $lastYearMonthlyRevenue);
                   @endphp
@@ -856,7 +856,7 @@
         if (popularServicesCtx) {
           const services = @json($services);
           const totalBookings = services.reduce((sum, service) => sum + service.booking_count, 0);
-          
+
           new Chart(popularServicesCtx, {
             type: 'pie',
             data: {
@@ -894,10 +894,10 @@
         const servicesGanttCtx = document.getElementById('servicesGanttChart');
         if (servicesGanttCtx) {
           const services = @json($services);
-          
+
           // Sort services by booking count
           const sortedServices = [...services].sort((a, b) => b.booking_count - a.booking_count);
-          
+
           // Get the last 6 months
           const months = [];
           for (let i = 5; i >= 0; i--) {
@@ -910,7 +910,7 @@
           const datasets = sortedServices.slice(0, 5).map((service, index) => {
             // Use the monthly_data from the service if available, otherwise use booking_count
             const data = service.monthly_data || Array(6).fill(service.booking_count / 6);
-            
+
             return {
               label: service.service_name,
               data: data,
@@ -1620,7 +1620,7 @@ The Imajica Team</textarea>
                 <option value="past">Past Birthdays</option>
               </select>
             </div>
-           
+
           </div>
 
           <!-- Birthday Calendar View -->
@@ -1694,11 +1694,11 @@ The Imajica Team</textarea>
       const viewAllButton = document.querySelector(
         "button[data-bs-toggle='modal'][data-bs-target='#allBirthdaysModal']"
       );
-      
+
       // Function to apply birthday filters
       function applyBirthdayFilter(filterValue = 'all') {
         const monthCards = document.querySelectorAll(".month-card");
-        
+
         // Get current date information
         const today = new Date();
         const currentMonth = today.getMonth(); // 0-11
@@ -1796,7 +1796,7 @@ The Imajica Team</textarea>
 
           // Hide empty month cards
           if (card.style.display === "block") {
-            const visibleItems = Array.from(birthdayItems).filter(item => 
+            const visibleItems = Array.from(birthdayItems).filter(item =>
               item.style.display === "flex"
             ).length;
             if (visibleItems === 0) {
@@ -1805,7 +1805,7 @@ The Imajica Team</textarea>
           }
         });
       }
-      
+
       // Apply filter when modal is shown
       const birthdayModal = document.getElementById('allBirthdaysModal');
       if (birthdayModal) {
@@ -1813,7 +1813,7 @@ The Imajica Team</textarea>
           const filterSelect = document.getElementById("birthdayFilter");
           // Apply default filter (all)
           applyBirthdayFilter();
-          
+
           // When filter changes, apply the new filter
           if (filterSelect) {
             filterSelect.value = 'all'; // Reset to "All" when modal opens
@@ -1823,7 +1823,7 @@ The Imajica Team</textarea>
           }
         });
       }
-      
+
       // Other existing code...
     });
   </script>
@@ -1848,7 +1848,7 @@ The Imajica Team</textarea>
                 <option value="pending">Pending</option>
                 <option value="cancelled">Cancelled</option>
                 <option value="paid">Paid</option>
-                <option value="unpaid">No Show</option>  
+                <option value="unpaid">No Show</option>
               </select>
             </div>
             <div class="col-md-4">
@@ -1954,17 +1954,17 @@ The Imajica Team</textarea>
       // Get filter elements
       const statusFilter = document.getElementById("statusFilter");
       const dateFilter = document.getElementById("dateFilter");
-      
+
       // Function to apply both filters simultaneously
       function applyFilters() {
         const selectedStatus = statusFilter.value.toLowerCase();
         const selectedDate = dateFilter.value ? new Date(dateFilter.value) : null;
-        
+
         const rows = document.querySelectorAll(".booking-table tbody tr");
-        
+
         rows.forEach((row) => {
           let showRow = true;
-          
+
           // Status filter
           if (selectedStatus !== 'all') {
             const statusCell = row.querySelector(".badge").textContent.toLowerCase().trim();
@@ -1972,12 +1972,12 @@ The Imajica Team</textarea>
               showRow = false;
             }
           }
-          
+
           // Date filter
           if (selectedDate) {
             const dateCell = row.querySelector("td:nth-child(4)").textContent; // Get the date cell
             const bookingDate = new Date(dateCell.split(" at")[0]); // Split to remove time and convert to date
-            
+
             // Compare only the date parts (ignore time)
             if (
               bookingDate.getFullYear() !== selectedDate.getFullYear() ||
@@ -1987,39 +1987,39 @@ The Imajica Team</textarea>
               showRow = false;
             }
           }
-          
+
           // Show/hide row based on combined filter results
           row.style.display = showRow ? "" : "none";
         });
       }
-      
+
       // Add event listeners to both filters
       if (statusFilter) {
         statusFilter.addEventListener("change", applyFilters);
       }
-      
+
       if (dateFilter) {
         dateFilter.addEventListener("change", applyFilters);
       }
-      
+
       // Clear filters function
       function clearFilters() {
         statusFilter.value = "all";
         dateFilter.value = "";
         applyFilters();
       }
-      
+
       // Add clear filters button to the filter section
       const filterSection = document.querySelector(".modal-body .row.mb-4");
       if (filterSection) {
         const clearButton = document.createElement("div");
         clearButton.className = "col-12 mt-2";
         clearButton.innerHTML = `
-      
+
         `;
         filterSection.appendChild(clearButton);
       }
-      
+
       // Make clearFilters function globally available
       window.clearFilters = clearFilters;
     });
