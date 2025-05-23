@@ -24,7 +24,7 @@
   <link rel="canonical" href="Imajica Booking System" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
+  <link rel="icon" type="image/x-icon" href="{{ asset('logo/logo.png') }}" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com/" />
@@ -169,7 +169,7 @@
                     <th>Services Name</th>
                     <th>Branch Name</th>
                     <th>Description</th>
-                    <th class="text-center">Duration</th>
+                    <th class="text-center">Price</th>
             
                  
                     
@@ -184,20 +184,7 @@
                     <td>{{ $service->description }}</td>
 
                  
-                    <td>₱{{ number_format($service->service_cost, 2) }}</td>
-                   
-                    <td class="text-center">
-                      <div class="d-flex gap-2 justify-content-center">
-                        <a href="{{ route('service.edit', $service->service_id) }}" class="btn btn-sm btn-info">
-                          <i class="ti tabler-edit me-1"></i> Edit
-                        </a>
-                        <button class="btn btn-sm btn-danger delete-service" 
-                          data-service-id="{{ $service->service_id }}"
-                          data-service-name="{{ $service->service_name }}">
-                          <i class="ti tabler-trash me-1"></i> Delete
-                        </button>
-                      </div>
-                    </td>
+                    <td>₱{{ number_format($service->service_cost, 2) }}</td>                    <td class="text-center">                      <div class="d-flex gap-2 justify-content-center">                        <button class="btn btn-sm btn-info edit-service"                          data-service-id="{{ $service->service_id }}"                          data-service-name="{{ $service->service_name }}"                          data-service-branch="{{ $service->branch_code }}"                          data-service-description="{{ $service->description }}"                          data-service-duration="{{ $service->duration }}"                          data-service-cost="{{ $service->service_cost }}"                          data-service-points="{{ $service->loyalty_pts }}">                          <i class="ti tabler-edit me-1"></i> Edit                        </button>                        <button class="btn btn-sm btn-danger delete-service"                           data-service-id="{{ $service->service_id }}"                          data-service-name="{{ $service->service_name }}">                          <i class="ti tabler-trash me-1"></i> Delete                        </button>                      </div>                    </td>
                   </tr>
                   @endforeach
                 </tbody>
@@ -281,35 +268,7 @@
                   @method('PUT')
                   <input type="hidden" id="edit_service_id" name="service_id">
                   <div class="row g-6">
-                    <div class="col-12 text-center mb-4">
-                      <div class="profile-upload-container mx-auto">
-                        <div class="avatar-upload">
-                          <div class="avatar-preview">
-                            <div class="rounded bg-label-secondary" style="width: 200px; height: 200px; overflow: hidden;">
-                              <img
-                                id="edit_imagePreview"
-                                src="../../assets/img/services/default-service.png"
-                                alt="Service Preview"
-                                style="width: 100%; height: 100%; object-fit: cover;"
-                              />
-                            </div>
-                          </div>
-                          <div class="avatar-edit text-center">
-                            <input
-                              type="file"
-                              id="edit_service_image" 
-                              name="service_image"
-                              accept=".png, .jpg, .jpeg"
-                              class="d-none"
-                              onchange="previewImage(this)"
-                            />
-                            <label for="edit_service_image" class="btn btn-primary mt-3">
-                              <i class="ti tabler-upload me-1"></i>Change Photo
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    
 
                     <div class="col-md-6">
                       <label class="form-label" for="edit_service_name">Services Name</label>
@@ -332,20 +291,8 @@
                     </div>
 
                     <div class="col-md-6">
-                      <label class="form-label" for="edit_duration">Duration (minutes)</label>
-                      <input type="number" id="edit_duration" name="duration" class="form-control" required>
-                    </div>
-
-
-
-                    <div class="col-md-6">
                       <label class="form-label" for="edit_service_cost">Service Cost</label>
                       <input type="number" step="0.01" id="edit_service_cost" name="service_cost" class="form-control" required>
-                    </div>
-
-                    <div class="col-md-6">
-                      <label class="form-label" for="edit_loyalty_pts">Loyalty Reward Points</label>
-                      <input type="number" id="edit_loyalty_pts" name="loyalty_pts" class="form-control">
                     </div>
 
                     <div class="col-12 text-end mt-4">
@@ -468,19 +415,25 @@
         });
       });
 
-      // Handle Edit button
-      $('.edit-service').on('click', function() {
-        $('#edit_service_id').val($(this).data('service-id'));
-        $('#edit_service_name').val($(this).data('service-name'));
-        $('#edit_branch_code').val($(this).data('service-branch'));
-        $('#edit_description').val($(this).data('service-description'));
-        $('#edit_duration').val($(this).data('service-duration'));
-        $('#edit_service_cost').val($(this).data('service-cost'));
-        $('#edit_loyalty_pts').val($(this).data('service-points'));
-
-        // For debugging - add this temporarily
-        console.log('Service ID:', $(this).data('service-id'));
-
+      // Handle Edit Service button clicks
+      $(document).on('click', '.edit-service', function() {
+        var serviceId = $(this).data('service-id');
+        var serviceName = $(this).data('service-name');
+        var serviceBranch = $(this).data('service-branch');
+        var serviceDescription = $(this).data('service-description');
+        var serviceCost = $(this).data('service-cost');
+        
+        console.log('Edit clicked - Service ID:', serviceId);
+        console.log('Service Branch:', serviceBranch);
+        
+        // Populate the form fields
+        $('#edit_service_id').val(serviceId);
+        $('#edit_service_name').val(serviceName);
+        $('#edit_branch_code').val(serviceBranch).trigger('change');
+        $('#edit_description').val(serviceDescription);
+        $('#edit_service_cost').val(serviceCost);
+        
+        // Show the modal
         $('#editServiceModal').modal('show');
       });
 
@@ -571,16 +524,69 @@
         });
       @endif
   </script>
-<script>
-  $(document).ready(function () {
-    $('#tableService').DataTable({
-       dom: 'Bfrtip',
-       searching: true,
+  
+  <!-- Replace with improved jQuery functionality -->
+  <script>
+    $(document).ready(function () {
+      // Initialize DataTable
+      $('#servicesTable').DataTable();
+      
+      // Handle Edit Service button clicks
+      $(document).on('click', '.edit-service', function() {
+        var serviceId = $(this).data('service-id');
+        var serviceName = $(this).data('service-name');
+        var serviceBranch = $(this).data('service-branch');
+        var serviceDescription = $(this).data('service-description');
+        var serviceCost = $(this).data('service-cost');
+        
+        console.log('Edit clicked - Service ID:', serviceId);
+        console.log('Service Branch:', serviceBranch);
+        
+        // Populate the form fields
+        $('#edit_service_id').val(serviceId);
+        $('#edit_service_name').val(serviceName);
+        $('#edit_branch_code').val(serviceBranch).trigger('change');
+        $('#edit_description').val(serviceDescription);
+        $('#edit_service_cost').val(serviceCost);
+        
+        // Show the modal
+        $('#editServiceModal').modal('show');
+      });
+      
+      // Handle form submission
+      $('#editServiceForm').on('submit', function(e) {
+        e.preventDefault();
+        let form = this;
+        
+        Swal.fire({
+          title: 'Confirm Update',
+          text: "Are you sure you want to update this service?",
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#0a3622',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, update it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            form.submit();
+          }
+        });
+      });
+      
+      // Initialize Select2
+      $('.select2').select2();
+        });
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('#tableService').DataTable({
+        dom: 'Bfrtip',
+        searching: true,
         paging: true,
-        searchPlaceholder: 'Search...',
+        searchPlaceholder: 'Search...'
+      });
     });
-});
-</script>
+  </script>
 </body>
 
 </html>
