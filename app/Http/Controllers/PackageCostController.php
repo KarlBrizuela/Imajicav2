@@ -16,7 +16,7 @@ class PackageCostController extends Controller {
             ], 400);
         }
 
-       $totalCost = Package::whereIn('package_id', $packageIds)->sum('price');
+        $totalCost = Package::whereIn('package_id', $packageIds)->sum('price');
 
         return response()->json([
             'success' => true,
