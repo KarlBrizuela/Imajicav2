@@ -28,13 +28,17 @@ use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\wasteController;
 
-use App\Http\Controllers\ServiceProductController;
-<<<<<<< HEAD
-use App\Http\Controllers\VoidLogController;
-=======
+ 
+Route::get('/service/get-cost', [ServiceCostController::class, 'getServiceCost'])->name('service.get_cost');
+Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost'])->name('package.get_cost');
 
->>>>>>> origin/main
+use App\Http\Controllers\ServiceProductController;
+
+use App\Http\Controllers\VoidLogController;
+
+
 use App\Http\Controllers\VoidedOrdersController;
+
 
 
 // Route::get('/', function () {
@@ -356,9 +360,9 @@ Route::get('/services/{id}/details', [ServiceProductController::class, 'getServi
 Route::get('/sales-transaction', [App\Http\Controllers\SalesTransactionController::class, 'index']);
 Route::post('/sales-transaction/filter', [App\Http\Controllers\SalesTransactionController::class, 'filter']);
 
-<<<<<<< HEAD
+
 Route::get('/void-logs', [VoidLogController::class, 'voidLogs'])->name('void.logs');
-=======
+
 Route::get('/service/get-cost', [serviceController::class, 'getCost'])->name('service.get_cost');
 
 // Or for API routes
@@ -407,4 +411,3 @@ use App\Http\Controllers\ServiceCostController;
 Route::post('/services/cost', [ServiceCostController::class, 'getServiceCost']);
 
 Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('services.destroy');
->>>>>>> origin/main

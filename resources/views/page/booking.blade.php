@@ -786,7 +786,7 @@
                               <div><strong>Coupon Discount:</strong> <span id="summary_coupon_discount">-</span></div>
                               <div><strong>Referral Points:</strong> <span id="summary_referral_points">-</span></div>
                               <div><strong>Used Points:</strong> <span id="summary_patient_reward">-</span></div>
-                              <div><strong>Points to Earn:</strong> <span id="summary_points_to_earn">-</span></div>
+                              <div class="mt-2"><strong>Points to Earn: <span id="points_to_earn_display"></span></strong> </div>
                               <div class="mt-2"><strong>Total Price:<span id="summary_total_price"></span></strong></div>
                             </div>
                           </div>
@@ -3517,29 +3517,38 @@ $(document).ready(function() {
         const useReward = $('input[name="useReward"]:checked').val();
         const selectedServiceId = $('#service_id').val(); // Get selected service(s)
 
-        if (useReward === '1') {  // If "Yes" is selected
+        if (useReward === '1') { // If "Yes" is selected
             $('#points_needed_section').show();
             $('#amount_needed_section').hide();
-        } else {  // If "No" is selected, fetch service cost
+        } else { // If "No" is selected, fetch service cost and points
             $('#points_needed_section').hide();
             $('#amount_needed_section').show();
 
             if (selectedServiceId.length > 0) {
                 $.ajax({
-                    url: "{{ route('service.get_cost') }}", // Fetch cost from database
+                    url: "{{ route('service.get_cost') }}", // Fetch cost & points from database
                     type: "GET",
                     data: { service_ids: selectedServiceId },
                     success: function(response) {
                         console.log("Service Cost API Response:", response); // Debugging
-                        $('#amount_needed_display').text('₱' + response.total_cost);
+
+                        if (response.success) {
+                            $('#amount_needed_display').text('₱' + response.total_cost);
+                            $('#points_to_earn_display').text(response.total_points + " pts"); // Display points
+                        } else {
+                            $('#amount_needed_display').text('-');
+                            $('#points_to_earn_display').text('-');
+                        }
                     },
                     error: function(xhr) {
                         console.error("Error fetching service cost:", xhr);
-                        $('#amount_needed_display').text('-'); // Fallback display
+                        $('#amount_needed_display').text('-');
+                        $('#points_to_earn_display').text('-');
                     }
                 });
             } else {
                 $('#amount_needed_display').text('-'); // Reset display if no service is selected
+                $('#points_to_earn_display').text('-');
             }
         }
     });
@@ -3554,37 +3563,56 @@ $(document).ready(function() {
 
 <script>
 $(document).ready(function() {
-    $('#package_id').on('change', function() {
-        const selectedPackageIds = $(this).val(); // Get selected package ID(s)
+    $('input[name="useReward"]').on('change', function() {
+        const useReward = $('input[name="useReward"]:checked').val();
+        const selectedServiceId = $('#service_id').val(); // Get selected service(s)
 
-        if (selectedPackageIds.length > 0) {
-            $.ajax({
-                url: "{{ route('package.get_cost') }}", // New route for package cost
-                type: "GET",
-                data: { package_ids: selectedPackageIds },
-                success: function(response) {
-                    console.log("Package Cost API Response:", response); // Debugging
-                    
-                    if (response.success && response.total_cost) {
-                      let totalCost = Number(response.total_cost);
-                        $('#amount_needed_to_display').text('₱' + totalCost); // Update amount display
-                        $('#payment_amount').val(totalCost); // Automatically set payment amount
-                        $('#summary_total_price').text('₱' + totalCost);
+        if (useReward === '1') {  // If "Yes" is selected
+            $('#points_needed_section').show();
+            $('#amount_needed_section').hide();
+        } else {  // If "No" is selected, fetch service cost and points
+            $('#points_needed_section').hide();
+            $('#amount_needed_section').show();
+
+            if (selectedServiceId.length > 0) {
+                $.ajax({
+                    url: "{{ route('service.get_cost') }}", // Fetch cost & points from database
+                    type: "GET",
+                    data: { service_ids: selectedServiceId },
+                    success: function(response) {
+                        console.log("Service Cost API Response:", response); // Debugging
+
+                        if (response.success) {
+                            $('#amount_needed_display').text('₱' + response.total_cost);
+                            $('#summary_total_price').text('₱' + response.total_cost);
+                            $('#points_to_earn_display').text(response.total_points + " Points"); // Display points
+                            
+                        } else {
+                            $('#amount_needed_display').text('-');
+                            $('#summary_total_price').text('₱');
+                            $('#points_to_earn_display').text('-');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error("Error fetching service cost:", xhr);
+                        $('#amount_needed_display').text('-');
+                        $('#points_to_earn_display').text('-');
                     }
-                },
-                error: function(xhr) {
-                    console.error("Error fetching package cost:", xhr);
-                    $('#amount_needed_to_display').text('-'); // Fallback display
-                    $('#payment_amount').val('-'); // Fallback display
-                    $('#summary_total_price').text('-');
-                }
-            });
-        } else {
-            $('#amount_needed_to_display').text('-'); // Reset display when no package is selected
+                });
+            } else {
+                $('#amount_needed_display').text('-'); // Reset display if no service is selected
+                $('#points_to_earn_display').text('-'); 
+            }
         }
+    });
+
+    $('#service_id').on('change', function() {
+        $('input[name="useReward"]:checked').trigger('change'); // Refresh based on selection
     });
 });
 </script>
+
+
 
 
 </body>
