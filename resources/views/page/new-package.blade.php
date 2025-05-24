@@ -233,16 +233,22 @@
                               </div>
 
                               <div class="col-md-12">
-                                <label class="form-label" for="free">Free</label>
+                                <label class="form-label" for="free">Free
+                                </label>
                                 <input
                                   type="text"
                                   id="free"
                                   name="free"
                                   class="form-control"
-                                  placeholder="Free items or services included"
+                                  placeholder="Free items or services included (Optional)"
                                 />
                               </div>
                             </div>
+                            <div class="col-md-6">
+    <label class="form-label" for="price">Price (₱)</label>
+    <input type="number" id="price" name="price"  class="form-control"  placeholder="0.00"  step="0.01"  min="0"  required />
+  </div>
+
 
                             <br />
                             <div class="col-sm-2 col-4 d-grid">

@@ -418,5 +418,6 @@ Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('se
 
 Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 
-use App\Http\Controllers\PackageController;
-Route::put('/package/update', [App\Http\Controllers\PackageController::class, 'update'])->name('package.update');
+// Should have both edit and update routes
+Route::get('/packages/{package}/edit', [PackageController::class, 'edit'])->name('package.edit');
+Route::put('/packages/{package}', [PackageController::class, 'update'])->name('package.update');

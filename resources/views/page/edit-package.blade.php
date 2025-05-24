@@ -185,6 +185,24 @@
                               </div>
                             </div>
 
+                            <div class="col-md-12">
+                           <label class="form-label" for="price">Price</label>
+                             <div class="input-group">
+                           <span class="input-group-text">₱</span>
+                          <input
+                           type="number"
+                          id="price"
+                          name="price"
+                          class="form-control"
+                          placeholder="0.00"
+                          step="0.01"
+                          min="0"
+                          value="{{ number_format($package->price, 2, '.', '') }}"
+                          required
+        />
+    </div>
+</div>
+
                             <br />
                             <div class="row">
                               <div class="col-sm-2 col-4 d-grid">
@@ -278,95 +296,120 @@
     <script>
       $(document).ready(function() {
         // Initialize Select2 components
-        if ($.fn.select2) {
-          $('.select2').select2();
-        }
+        $('.select2').each(function() {
+        $(this).select2({
+            width: '100%',
+            dropdownParent: $(this).parent()
+        });
+    });
 
+    // Modify your AJAX data preparation
+const formData = new FormData();
+formData.append('package_id', $('#package_id').val());
+formData.append('package_name', $('#package_name').val());
+// Add other fields...
+
+// Handle inclusions array properly
+const inclusions = $('#inclusions').val() || [];
+inclusions.forEach((value, index) => {
+    formData.append(`inclusions[${index}]`, value);
+});
         // AJAX form submission
-        $('#updatePackageBtn').on('click', function(e) {
-          e.preventDefault();
-          
-          Swal.fire({
-            title: 'Confirm Update',
-            text: "Are you sure you want to update this package?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#0a3622',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, update it!'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // Create FormData object for file uploads
-              const form = document.getElementById('updatePackageForm');
-              const formData = new FormData(form);
-              
-              // Display loading state
-              Swal.fire({
+       $('#updatePackageBtn').on('click', function(e) {
+    e.preventDefault();
+    
+    Swal.fire({
+        title: 'Confirm Update',
+        text: "Are you sure you want to update this package?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#0a3622',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.getElementById('updatePackageForm');
+            const formData = new FormData(form);
+            
+            // Get inclusions as array
+            const inclusions = $('#inclusions').val();
+            formData.append('inclusions', JSON.stringify(inclusions));
+            
+            // Show loading state
+            const swalInstance = Swal.fire({
                 title: 'Processing...',
-                text: 'Updating package information',
+                html: 'Please wait while we update the package',
                 allowOutsideClick: false,
                 didOpen: () => {
-                  Swal.showLoading();
+                    Swal.showLoading();
                 }
-              });
-              
-              // Send AJAX request
-              $.ajax({
-                url: "{{ route('package.update') }}",
-                type: "POST",
+            });
+            
+            // AJAX request
+            $.ajax({
+                url: form.action,
+                type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
                 headers: {
-                  'X-HTTP-Method-Override': 'PUT', // Override method to PUT
-                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'X-HTTP-Method-Override': 'PUT'
                 },
                 success: function(response) {
-                  Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Package updated successfully',
-                  }).then(() => {
-                    window.location.href = "{{ route('page.packages-list') }}";
-                  });
-                },
-                error: function(xhr, status, error) {
-                  console.error(xhr.responseText);
-                  let errorMessage = 'An error occurred while updating the package';
-                  
-                  if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMessage = xhr.responseJSON.message;
-                  }
-                  
-                  Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: errorMessage,
-                  });
-                  
-                  // Display validation errors if any
-                  if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    const errors = xhr.responseJSON.errors;
-                    let errorHtml = '<ul>';
-                    for (const field in errors) {
-                      errors[field].forEach(error => {
-                        errorHtml += `<li>${error}</li>`;
-                      });
-                    }
-                    errorHtml += '</ul>';
+                    swalInstance.close();
                     
-                    $('#responseMessage')
-                      .removeClass()
-                      .addClass('alert alert-danger')
-                      .html(errorHtml)
-                      .show();
-                  }
+                    if (response.redirect) {
+                        window.location.href = response.redirect;
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message || 'Package updated successfully',
+                        }).then(() => {
+                            window.location.href = "{{ route('page.packages-list') }}";
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    swalInstance.close();
+                    
+                    let errorMessage = 'An error occurred while updating the package';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    
+                    // Handle validation errors
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        let errorList = '';
+                        
+                        $.each(errors, function(key, value) {
+                            errorList += '<li>' + value[0] + '</li>';
+                        });
+                        
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validation Error',
+                            html: '<ul>' + errorList + '</ul>'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMessage
+                        });
+                    }
                 }
-              });
-            }
-          });
-        });
+            });
+        }
+    });
+});
+
+
       });
+
+    
     </script>
   </body>
 </html> 

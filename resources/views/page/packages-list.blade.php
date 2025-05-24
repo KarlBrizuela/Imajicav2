@@ -188,6 +188,7 @@
                     <th>Description</th>
                     <th>Services</th>
                     <th>Free Items</th>
+                    <th>price</th>
                     <th class="text-center">Actions</th>
                   </tr>
                 </thead>
@@ -218,6 +219,7 @@
                       @endif
                     </td>
                     <td>{{ $package->free ?? 'None' }}</td>
+                     <td class="text-end">₱{{ number_format($package->price, 2) }}</td>
                     <td class="text-center">
                       <div class="d-flex gap-2 justify-content-center">
                         {{-- <button 
@@ -291,7 +293,7 @@
                           <small class="text-muted d-block">Free Items</small>
                           <span id="modalFreeItems" class="fw-medium"></span>
                         </div>
-                      </div>
+
                     </div>
                   </div>
                   

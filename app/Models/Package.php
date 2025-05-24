@@ -22,7 +22,7 @@ class Package extends Model
      * @var array
      */
     protected $fillable = [
-        'package_name',
+        'package_id',
         'branch_code',
         'description',
         'inclusions',
@@ -38,6 +38,9 @@ class Package extends Model
     protected $casts = [
         'inclusions' => 'array',
     ];
+
+    // In Package model
+
     
     /**
      * Prepare a date for array / JSON serialization.
@@ -71,6 +74,8 @@ class Package extends Model
     {
         return is_string($value) ? json_decode($value, true) : $value;
     }
+    // In Package.php model
+
     
     /**
      * Get the branch that owns the package.
