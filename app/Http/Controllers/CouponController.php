@@ -203,6 +203,25 @@ class CouponController extends Controller
         }
     }
 
+    // In your controller where you handle coupon creation
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        // other fields...
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after:start_date',
+    ]);
+    
+    // Convert dates to proper format
+    $validated['start_date'] = Carbon::parse($validated['start_date'])->setTimezone(config('app.timezone'));
+    $validated['end_date'] = Carbon::parse($validated['end_date'])->setTimezone(config('app.timezone'));
+    
+    // Save the coupon
+    Coupon::create($validated);
+    
+    return redirect()->back()->with('success', 'Coupon created successfully');
+}
+
     /**
      * Verify a coupon code via AJAX request
      *
