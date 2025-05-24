@@ -23,6 +23,7 @@ class Package extends Model
      */
     protected $fillable = [
         'package_id',
+        'package_name',
         'branch_code',
         'description',
         'inclusions',

@@ -349,7 +349,7 @@ inclusions.forEach((value, index) => {
             $.ajax({
                 url: form.action,
                 type: 'POST',
-                data: formData,
+                data: new FormData(form),
                 processData: false,
                 contentType: false,
                 headers: {
