@@ -197,48 +197,95 @@ public function services()
     public function delete(Request $request)
     {
         try {
+            // Log incoming request data
+            Log::info('Package deletion request received:', [
+                'request_data' => $request->all(),
+                'headers' => $request->headers->all()
+            ]);
+            
+            // Get and decode JSON data if content-type is application/json
+            $data = $request->isJson() ? $request->json()->all() : $request->all();
+            
             // Validate package ID
-            $validatedData = $request->validate([
+            $validatedData = validator($data, [
                 'package_id' => 'required|exists:packages,package_id'
+            ])->validate();
+
+            Log::info('Package ID validated:', [
+                'package_id' => $validatedData['package_id']
             ]);
 
-            $package = Package::findOrFail($validatedData['package_id']);
+            // Find the package with its relationships
+            $package = Package::with(['services'])->findOrFail($validatedData['package_id']);
+            Log::info('Package found:', [
+                'package_data' => $package->toArray()
+            ]);
             
-            // Delete the package (this will also delete the related pivot records due to onDelete('cascade'))
-            $package->delete();
-
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Package deleted successfully'
+            try {
+                // First detach all services
+                $package->services()->detach();
+                Log::info('Services detached from package');
+            } catch (\Exception $e) {
+                Log::error('Error detaching services:', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
                 ]);
+                throw $e;
             }
-
-            return redirect()->route('page.packages-list')
-                ->with('success', 'Package deleted successfully');
-        } catch (\Exception $e) {
-            Log::error('Error deleting package: ' . $e->getMessage());
             
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Error deleting package: ' . $e->getMessage()
-                ], 500);
+            try {
+                // Then delete the package
+                $deleted = $package->delete();
+                Log::info('Package delete operation result:', ['deleted' => $deleted]);
+            } catch (\Exception $e) {
+                Log::error('Error deleting package:', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                throw $e;
             }
 
-            return redirect()->back()
-                ->with('error', 'Error deleting package: ' . $e->getMessage());
+            return response()->json([
+                'status' => true,
+                'message' => 'Package deleted successfully'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation error in delete method:', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all()
+            ]);
+            
+            return response()->json([
+                'status' => false,
+                'message' => 'The given data was invalid.',
+                'errors' => $e->errors()
+            ], 422);
+            
+        } catch (\Exception $e) {
+            Log::error('Error in delete method:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            
+            return response()->json([
+                'status' => false,
+                'message' => 'Error deleting package: ' . $e->getMessage()
+            ], 500);
         }
     }
 
    public function update(Request $request)
 {
-    \Log::debug('Package Update - Form Data Received:', $request->all());
-    
-    // Debug: Specifically log inclusions array
-    
+    Log::debug('Package Update - Form Data Received:', $request->all());
     
     try {
+        // Log the incoming request data
+        Log::info('Attempting to update package with data:', [
+            'request_data' => $request->all()
+        ]);
+        
         // Validate request data
         $validated = $request->validate([
             'package_id' => 'required|exists:packages,package_id',
@@ -251,8 +298,16 @@ public function services()
             'price' => 'required|numeric|min:0'
         ]);
 
+        Log::info('Validation passed. Validated data:', [
+            'validated_data' => $validated
+        ]);
+
         // Find the package
         $package = Package::findOrFail($validated['package_id']);
+        Log::info('Found package:', [
+            'package_id' => $package->package_id,
+            'current_data' => $package->toArray()
+        ]);
 
         // Update package
         $package->update([
@@ -263,9 +318,14 @@ public function services()
             'price' => $validated['price']
         ]);
 
+        Log::info('Package basic info updated');
+
         // Sync services (convert to integers first)
         $serviceIds = array_map('intval', $validated['inclusions']);
+        Log::info('Syncing services:', ['service_ids' => $serviceIds]);
+        
         $package->services()->sync($serviceIds);
+        Log::info('Services synced successfully');
 
         return response()->json([
             'success' => true,
@@ -273,8 +333,23 @@ public function services()
             'redirect' => route('page.packages-list')
         ]);
 
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Log::error('Package update validation failed:', [
+            'errors' => $e->errors(),
+            'request_data' => $request->all()
+        ]);
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation error',
+            'errors' => $e->errors()
+        ], 422);
     } catch (\Exception $e) {
-        \Log::error('Package update failed: ' . $e->getMessage());
+        Log::error('Package update failed:', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'request_data' => $request->all()
+        ]);
         
         return response()->json([
             'success' => false,
