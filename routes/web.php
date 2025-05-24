@@ -28,6 +28,7 @@ use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\wasteController;
 
+use App\Http\Controllers\PackageController;
  
 Route::get('/service/get-cost', [ServiceCostController::class, 'getServiceCost'])->name('service.get_cost');
 Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost'])->name('package.get_cost');
@@ -418,5 +419,5 @@ Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('se
 
 Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 
-use App\Http\Controllers\PackageController;
+
 Route::put('/package/update', [App\Http\Controllers\PackageController::class, 'update'])->name('package.update');

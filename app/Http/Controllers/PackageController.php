@@ -42,6 +42,22 @@ public function getCost(Request $request)
         'price' => $request->price,
     ]);
 }
+
+public function get_cost(Request $request)
+    {
+        $packageId = $request->input('package_id');
+        $quantity = $request->input('quantity', 1);
+        
+        // Logic to calculate package cost
+        // Example: fetch package from database and calculate total
+        $package = Package::find($packageId);
+        $cost = $package ? $package->price * $quantity : 0;
+        
+        return response()->json([
+            'cost' => $cost,
+            'package' => $package
+        ]);
+    }
     /**
      * Display the package creation page.
      *
