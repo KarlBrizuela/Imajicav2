@@ -33,7 +33,7 @@ use App\Http\Controllers\wasteController;
 
 Route::get('/package/get-cost', [PackageController::class, 'get_cost'])->name('service.get_cost');
 
-use App\Http\Controllers\PackageController;
+
  
 
 Route::get('/service/get-cost', [ServiceCostController::class, 'getServiceCost'])->name('service.get_cost');
@@ -416,7 +416,7 @@ Route::post('/services/cost', [serviceController::class, 'getServiceCost']);
 
 // For Option 2:
 
-use App\Http\Controllers\ServiceCostController;
+
 Route::post('/services/cost', [ServiceCostController::class, 'getServiceCost']);
 
 Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('services.destroy');
