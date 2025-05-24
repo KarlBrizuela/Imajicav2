@@ -20,9 +20,7 @@ use App\Http\Controllers\orderController;
 use App\Http\Controllers\AddProductController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\PackageController;
-use App\Http\Controllers\PackageCostController;
-use App\Http\Controllers\ServiceCostController;
+
 use App\Http\Controllers\category_expenseController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeReportController;
@@ -30,21 +28,13 @@ use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\wasteController;
 
-
-Route::get('/package/get-cost', [PackageController::class, 'get_cost'])->name('service.get_cost');
-
-use App\Http\Controllers\PackageController;
  
-
 Route::get('/service/get-cost', [ServiceCostController::class, 'getServiceCost'])->name('service.get_cost');
 Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost'])->name('package.get_cost');
 
 use App\Http\Controllers\ServiceProductController;
 
 use App\Http\Controllers\VoidLogController;
-
-
-
 
 
 
@@ -69,6 +59,17 @@ Route::get('/expenses-report', [App\Http\Controllers\ExpensesReportController::c
 
 Route::get('/employee-report', [App\Http\Controllers\EmployeeReportController::class, 'index'])->name('page.employee-report')->middleware(['auth', 'admin']);
 
+
+
+Route::get('/clear-config', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+Artisan::call('storage:link');
+    return 'Config cleared';
+});
 
 
 Route::delete('/bookings/delete', [BookingController::class, 'delete'])->name('booking.delete');
@@ -394,12 +395,6 @@ Route::get('/booking', [App\Http\Controllers\BookingController::class, 'index'])
 // Add this to your routes/web.php
 Route::get('/package/get-cost', [PackageController::class, 'getCost'])->name('package.get_cost');
 
-
-Route::get('/package/get-cost', [PackageController::class, 'getCost'])->name('package.get_cost');
-
-Route::get('/package/get-cost', [App\Http\Controllers\PackageController::class, 'getCost'])->name('package.get_cost');
-
-
 // Temporary debug route
 Route::get('/debug-coupon/{id}', function($id) {
     $coupon = App\Models\Coupon::find($id);
@@ -423,5 +418,6 @@ Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('se
 
 Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 
-
-Route::put('/package/update', [App\Http\Controllers\PackageController::class, 'update'])->name('package.update');
+// Should have both edit and update routes
+Route::get('/packages/{package}/edit', [PackageController::class, 'edit'])->name('package.edit');
+Route::put('/packages/{package}', [PackageController::class, 'update'])->name('package.update');

@@ -238,6 +238,20 @@
                               </div> --}}
 
                               <div class="col-md-6">
+                          <label class="form-label" for="acq_pts">Acquisition Points</label>
+                    <input
+                     type="number"
+                     id="acq_pts"
+                     name="acq_pts"
+                     class="form-control"
+                     placeholder="Points earned"
+                     value="0"
+                     min="0
+                       required
+                        />
+                           </div>
+
+                              <div class="col-md-6">
                                 <label class="form-label" for="service_cost">Service Cost <span style="color: gray; font-style: italic;">(optional)</label>
                                 <input
                                   type="number"
@@ -588,6 +602,17 @@
           defaultAvatar.style.display = 'flex';
         }
       });
+
+      $('#editServiceForm').on('submit', function(e) {
+  e.preventDefault();
+  
+  // Ensure acq_pts has a value
+  if (!$('#edit_acq_pts').val()) {
+    $('#edit_acq_pts').val(0);
+  }
+
+  // Rest of your submission code...
+});
     </script>
   </body>
 </html>

@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-
 <!DOCTYPE html>
 <html lang="en" class="layout-navbar-fixed layout-menu-fixed layout-compact" dir="ltr" data-skin="default"
   data-assets-path="../../assets/" data-template="vertical-menu-template" data-bs-theme="light">
@@ -70,9 +69,6 @@
 
   <script src="../../assets/js/config.js"></script>
 
-
-  </script>
-
   <style>
     /* Add to your existing styles */
     .client-detail-card {
@@ -135,6 +131,11 @@
     .gap-2 {
       gap: 0.5rem !important;
     }
+    
+    /* Fix for SweetAlert z-index */
+    .swal2-container {
+      z-index: 99999 !important;
+    }
   </style>
 </head>
 
@@ -163,44 +164,73 @@
 
             <!-- Table -->
             <div class="table-responsive text-nowrap px-3">
-              <table class="table table-striped" id="servicesTable">
-                <thead class="table-light">
-                  <tr>
-                    <th>Services Name</th>
-                    <th>Branch Name</th>
-                    <th>Description</th>
-                    <th class="text-center">Service Cost</th>
-                    <th class="text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($services as $service)
-                  <tr>
-                    <td>{{ $service->service_name }}</td>
-                    <td>{{ $service->branch ? $service->branch->branch_name : $service->branch_code }}</td>
-                    <td>{{ $service->description }}</td>
-                    <td>₱{{ number_format($service->service_cost, 2) }}</td>
-                    <td class="text-center">
-                      <div class="d-flex gap-2 justify-content-center">
-                        <button type="button" class="btn btn-sm btn-info edit-service" 
-                          data-service-id="{{ $service->service_id }}"
-                          data-service-name="{{ $service->service_name }}"
-                          data-service-branch="{{ $service->branch_code }}"
-                          data-service-description="{{ $service->description }}"
-                          data-service-cost="{{ $service->service_cost }}">
-                          <i class="ti tabler-edit me-1"></i> Edit
-                        </button>
-                        <button class="btn btn-sm btn-danger delete-service" 
-                          data-service-id="{{ $service->service_id }}"
-                          data-service-name="{{ $service->service_name }}">
-                          <i class="ti tabler-trash me-1"></i> Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  @endforeach
-                </tbody>
-              </table>
+  <table class="table table-striped" id="servicesTable">
+    <thead class="table-light">
+      <tr>
+        <th>Services Name</th>
+        <th>Branch Name</th>
+        <th>Description</th>
+        <th class="text-center">Service Cost</th>
+        <th class="text-center">Points</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach ($services as $service)
+      <tr>
+        <td>{{ $service->service_name }}</td>
+        <td>{{ $service->branch ? $service->branch->branch_name : $service->branch_code }}</td>
+        <td>{{ $service->description }}</td>
+        <td>₱{{ number_format($service->service_cost, 2) }}</td>
+        <td class="text-center">{{ $service->acq_pts }}</td>
+        <td class="text-center">
+          <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-sm btn-info edit-service" 
+              data-service-id="{{ $service->service_id }}"
+              data-service-name="{{ $service->service_name }}"
+              data-service-branch="{{ $service->branch_code }}"
+              data-service-description="{{ $service->description }}"
+              data-service-cost="{{ $service->service_cost }}"
+              data-acq-pts="{{ $service->acq_pts }}">
+              <i class="ti tabler-edit me-1"></i> Edit
+            </button>
+            
+            <button type="button" class="btn btn-sm btn-danger delete-service" 
+              data-service-id="{{ $service->service_id }}"
+              data-service-name="{{ $service->service_name }}">
+              <i class="ti tabler-trash me-1"></i> Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+      @endforeach
+    </tbody>
+  </table>
+</div>
+
+<div class="modal fade" id="deleteServiceModal" tabindex="-1" aria-labelledby="deleteServiceModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteServiceModalLabel">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete the service "<span id="serviceNameToDelete"></span>"?</p>
+        <p class="text-muted small">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="deleteServiceForm" method="POST" style="display: inline;" action="">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="btn btn-danger" onclick="return confirm('Are you really sure you want to delete this service?')">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
               <br />
             </div>
           </div>
@@ -259,6 +289,7 @@
                       <p id="modalDescription" class="form-control-static"></p>
                     </div>
                   </div>
+                  
                 </div>
               </div>
             </div>
@@ -300,6 +331,10 @@
                       <label class="form-label" for="edit_service_cost">Service Cost</label>
                       <input type="number" step="0.01" min="0" id="edit_service_cost" name="service_cost" class="form-control" required>
                     </div>
+                    <div class="col-md-6">
+                      <label class="form-label" for="edit_acq_pts">Acquisition Points</label>
+                      <input type="number" id="edit_acq_pts" name="acq_pts" class="form-control" min="0" required>
+                    </div>
                   </div>
                   <div class="text-end mt-4">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -310,12 +345,7 @@
             </div>
           </div>
         </div>
-
-        <!-- Content wrapper -->
-
-        <!-- Content wrapper -->
       </div>
-      <!-- / Layout page -->
     </div>
 
     <!-- Overlay -->
@@ -324,7 +354,6 @@
     <!-- Drag Target Area To SlideIn Menu On Small Screens -->
     <div class="drag-target"></div>
   </div>
-  <!-- / Layout wrapper -->
 
   <!-- Core JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -337,59 +366,69 @@
   <script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
   <script src="{{ asset('vendor/js/menu.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+
+ <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle delete button click
+    document.querySelectorAll('.delete-service').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const serviceId = this.getAttribute('data-service-id');
+            const serviceName = this.getAttribute('data-service-name');
+            
+            // Update modal content
+            document.getElementById('serviceNameToDelete').textContent = serviceName;
+            document.getElementById('deleteServiceForm').action = `/services/${serviceId}`;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('deleteServiceModal'));
+            modal.show();
+        });
+    });
+});
+</script>
+
 
   <script type="text/javascript">
     $(document).ready(function() {
-      console.log('Document ready fired');
+      // Initialize Select2
+      $('.select2').select2();
       
-      // Debug click event
-      $('.edit-service').on('click', function(e) {
+      // Edit Service Button Click Handler
+      $(document).on('click', '.edit-service', function(e) {
         e.preventDefault();
-        console.log('Edit button clicked');
         
         var serviceId = $(this).data('service-id');
         var serviceName = $(this).data('service-name');
         var serviceBranch = $(this).data('service-branch');
         var serviceDescription = $(this).data('service-description');
         var serviceCost = $(this).data('service-cost');
+        var acqPts = $(this).data('acq-pts');
         
-        console.log('Service Data:', {
-          id: serviceId,
-          name: serviceName,
-          branch: serviceBranch,
-          description: serviceDescription,
-          cost: serviceCost
-        });
-        
-        // Populate the form fields
+        // Populate form fields
         $('#edit_service_id').val(serviceId);
         $('#edit_service_name').val(serviceName);
         $('#edit_description').val(serviceDescription);
         $('#edit_service_cost').val(serviceCost);
+        $('#edit_acq_pts').val(acqPts || 0);
         
-        // Set the branch value and trigger Select2 update
+        // Set the branch value
         if (serviceBranch) {
           $('#edit_branch_code').val(serviceBranch).trigger('change');
         }
         
-        // Show the modal
         $('#editServiceModal').modal('show');
       });
 
-      // Initialize Select2
-      $('.select2').select2({
-        dropdownParent: $('#editServiceModal'),
-        width: '100%'
-      });
-
-      // Initialize DataTable
-      $('#servicesTable').DataTable();
-
-      // Form submission handling
+      // Form Submission Handler
       $('#editServiceForm').on('submit', function(e) {
         e.preventDefault();
-        console.log('Form submitted');
         
+        // Ensure points has a value
+        if (!$('#edit_acq_pts').val()) {
+          $('#edit_acq_pts').val(0);
+        }
+
         Swal.fire({
           title: 'Confirm Update',
           text: "Are you sure you want to update this service?",
@@ -400,12 +439,41 @@
           confirmButtonText: 'Yes, update it!'
         }).then((result) => {
           if (result.isConfirmed) {
-            this.submit();
+            $.ajax({
+              url: $(this).attr('action'),
+              method: 'POST',
+              data: $(this).serialize(),
+              success: function(response) {
+                // Close the modal
+                $('#editServiceModal').modal('hide');
+                
+                Swal.fire({
+                  title: 'Updated!',
+                  text: 'Service has been updated.',
+                  icon: 'success',
+                  confirmButtonColor: '#0a3622'
+                }).then(() => {
+                  // Reload the page to see changes
+                  location.reload();
+                });
+              },
+              error: function(xhr) {
+                let errors = xhr.responseJSON?.errors || {};
+                let errorMsg = Object.values(errors).flat().join('<br>') || 
+                               'An error occurred while updating the service';
+                
+                Swal.fire({
+                  title: 'Error!',
+                  html: errorMsg,
+                  icon: 'error',
+                  confirmButtonColor: '#0a3622'
+                });
+              }
+            });
           }
         });
       });
     });
   </script>
 </body>
-
 </html>

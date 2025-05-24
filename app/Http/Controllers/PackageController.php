@@ -17,6 +17,8 @@ class PackageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     
     public function index()
     {
         $packages = Package::with(['branch'])->get();
@@ -36,23 +38,16 @@ public function getCost(Request $request)
     
     return response()->json([
         'success' => true,
-        'total_cost' => $totalCost
+        'total_cost' => $totalCost,
+        'price' => $request->price,
     ]);
 }
-    /**
-     * Display the package creation page.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function showCreateForm()
-    {
-        $branches = branch::all();
-        $services = service::all();
 
-        return view('page.new-package', compact('branches', 'services'));
-    }
 
      public function get_cost(Request $request)
+
+
+
     {
         $packageId = $request->input('package_id');
         $quantity = $request->input('quantity', 1);
@@ -67,6 +62,20 @@ public function getCost(Request $request)
             'package' => $package
         ]);
     }
+    /**
+     * Display the package creation page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showCreateForm()
+    {
+        $branches = branch::all();
+        $services = service::all();
+
+        return view('page.new-package', compact('branches', 'services'));
+    }
+
+     
 
     /**
      * Store a newly created package in storage.
@@ -87,6 +96,7 @@ public function getCost(Request $request)
                 'description' => 'nullable|string',
                 'inclusions' => 'required|array',
                 'inclusions.*' => 'exists:services,service_id',
+                'free' => 'nullable|string|max:255',
                 'free' => 'nullable|string|max:255',
             ]);
             
@@ -167,75 +177,16 @@ public function getCost(Request $request)
 
     /**
      * Update the specified package in storage.
+     
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
-    {
-        try {
-            // Validate request data
-            $validatedData = $request->validate([
-                'package_id' => 'required|exists:packages,package_id',
-                'package_name' => 'required|string|max:255',
-                'branch_code' => 'required|exists:branches,branch_code',
-                'description' => 'nullable|string',
-                'inclusions' => 'required|array',
-                'inclusions.*' => 'exists:services,service_id',
-                'free' => 'nullable|string|max:255',
-            ]);
-
-            Log::info('Update package validatedData:', $validatedData);
-            $package = Package::findOrFail($validatedData['package_id']);
-
-            // Update the package with inclusions field
-            $package->update([
-                'package_name' => $validatedData['package_name'],
-                'branch_code' => $validatedData['branch_code'],
-                'description' => $validatedData['description'],
-                'inclusions' => $validatedData['inclusions'], // Keep inclusions field
-                'free' => $validatedData['free'],
-            ]);
-
-            // Sync services
-            if (isset($validatedData['inclusions']) && !empty($validatedData['inclusions'])) {
-                try {
-                    $package->services()->sync($validatedData['inclusions']);
-                    Log::info('Services synced with package', ['services' => $validatedData['inclusions']]);
-                } catch (\Exception $e) {
-                    Log::error('Error syncing services: ' . $e->getMessage());
-                    Log::error('Stack trace: ' . $e->getTraceAsString());
-                }
-            } else {
-                Log::warning('No inclusions were provided to sync with the package');
-                $package->services()->detach();
-            }
-
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Package updated successfully',
-                    'package' => $package->load('services')
-                ]);
-            }
-
-            return redirect()->route('page.packages-list')
-                ->with('success', 'Package updated successfully');
-        } catch (\Exception $e) {
-            Log::error('Error updating package: ' . $e->getMessage());
-            
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Error updating package: ' . $e->getMessage()
-                ], 500);
-            }
-            
-            return redirect()->back()
-                ->with('error', 'Error updating package: ' . $e->getMessage())
-                ->withInput();
-        }
-    }
+  // In Package model
+public function services()
+{
+    return $this->belongsToMany(Service::class, 'package_service', 'package_id', 'service_id');
+}
 
     /**
      * Remove the specified package from storage.
@@ -280,6 +231,58 @@ public function getCost(Request $request)
         }
     }
 
+   public function update(Request $request)
+{
+    \Log::debug('Package Update - Form Data Received:', $request->all());
+    
+    // Debug: Specifically log inclusions array
+    
+    
+    try {
+        // Validate request data
+        $validated = $request->validate([
+            'package_id' => 'required|exists:packages,package_id',
+            'package_name' => 'required|string|max:255',
+            'branch_code' => 'required|exists:branches,branch_code',
+            'description' => 'nullable|string',
+            'inclusions' => 'required|array',
+            'inclusions.*' => 'exists:services,service_id',
+            'free' => 'nullable|string|max:255',
+            'price' => 'required|numeric|min:0'
+        ]);
+
+        // Find the package
+        $package = Package::findOrFail($validated['package_id']);
+
+        // Update package
+        $package->update([
+            'package_name' => $validated['package_name'],
+            'branch_code' => $validated['branch_code'],
+            'description' => $validated['description'],
+            'free' => $validated['free'],
+            'price' => $validated['price']
+        ]);
+
+        // Sync services (convert to integers first)
+        $serviceIds = array_map('intval', $validated['inclusions']);
+        $package->services()->sync($serviceIds);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Package updated successfully',
+            'redirect' => route('page.packages-list')
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Package update failed: ' . $e->getMessage());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Error updating package: ' . $e->getMessage(),
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
     /**
      * Get the total price of all services in a package
      *

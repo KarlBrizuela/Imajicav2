@@ -7,51 +7,72 @@ use App\Models\service;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Models\branch;
-
+use Symfony\Contracts\Service\Attribute\Required;
 
 class serviceController extends Controller
 {
-   public function create(Request $request) {
-        try {
-            $data = $request->validate([
-                'service_name' => 'required',
-                'branch_code' => 'required',
-                'description' => 'required',
-                'service_cost' => 'nullable|numeric|min:0',
-            ]);
+   public function create(Request $request)
+{
+    // Force-set default values before validation
+    $request->merge([
+        'acq_pts' => $request->has('acq_pts') ? (int)$request->acq_pts : 0,
+        'service_cost' => $request->service_cost ?? 0
+    ]);
 
-            // Ensure service_cost is properly set (defaults to 0 if empty)
-            if (empty($data['service_cost'])) {
-                $data['service_cost'] = 0;
-            }
+    $validated = $request->validate([
+        'service_name' => 'required|string|max:255',
+        'branch_code' => 'required|exists:branches,branch_code',
+        'description' => 'required|string',
+        'service_cost' => 'numeric|min:0',
+        'acq_pts' => 'required|integer|min:0'
+    ]);
 
-            $service = service::create($data);
 
-            if ($request->ajax()) {
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Service created successfully',
-                    'data' => $service
-                ]);
-            }
+    
+    // Final safety check
+    $validated['acq_pts'] = $validated['acq_pts'] ?? 0;
 
-            return redirect()->route('page.services-list')->with('success', 'Service created successfully');
-
-        } catch (\Exception $e) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Failed to create service: ' . $e->getMessage()
-                ], 500);
-            }
-            return redirect()->back()->with('error', 'Failed to create service: ' . $e->getMessage());
-        }
+    try {
+        $service = Service::create($validated);
+        
+        return response()->json([
+            'status' => true,
+            'message' => 'Service created successfully',
+            'data' => $service
+        ]);
+        
+    } catch (\Exception $e) {
+        Log::error('Service creation failed', [
+            'error' => $e->getMessage(),
+            'data' => $validated
+        ]);
+        
+        return response()->json([
+            'status' => false,
+            'message' => 'Service creation failed',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
+public function destroy($id)
+{
+    try {
+        $service = Service::findOrFail($id);
+        $service->delete();
+        
+        return redirect()->back()->with('success', 'Service deleted successfully!');
+        
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Error deleting service: ' . $e->getMessage());
+    }
+}
 public function update(Request $request) {
     // For debugging
     Log::info('Update service request method:', ['method' => $request->method()]);
     Log::info('Update service request data:', $request->all());
+
+    
 
     // Validate the basic fields
     $validatedData = $request->validate([
@@ -59,7 +80,19 @@ public function update(Request $request) {
         'branch_code' => 'required',
         'description' => 'required',
         'service_cost' => 'nullable|numeric|min:0',
+        'acq_pts' => 'nullable|integer|min:0',
     ]);
+
+    $validatedData['acq_pts'] = $validatedData['acq_pts'] ?? 0;
+
+    Service::create($validatedData);
+
+    // In your controller
+$serviceData = $request->all();
+$serviceData['acq_pts'] = $request->acq_pts ?? 0;
+Service::create($serviceData);
+
+ 
 
     // Find the service by ID
     $service = service::find($request->input('service_id'));
@@ -77,6 +110,8 @@ public function update(Request $request) {
 
     return redirect()->route('page.services-list')->with('success', 'Service updated successfully');
 }
+
+// In your controller
 
 
 public function delete(Request $request)
@@ -132,6 +167,21 @@ public function delete(Request $request)
     
     // Return the edit view with service data
     return view('page.edit-service', compact('service', 'branches'));
+}
+
+
+public function index()
+{
+    // Change from this:
+    // $services = Service::all();
+    
+    // To this (newest first):
+    $services = Service::orderBy('created_at', 'desc')->get();
+    
+    // Or if you want to order by the primary key (service_id) in descending order:
+    // $services = Service::orderBy('service_id', 'desc')->get();
+    
+    return view('your-view-name', compact('services'));
 }
 
 public function store(Request $request)
