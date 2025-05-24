@@ -37,7 +37,7 @@ use App\Http\Controllers\ServiceProductController;
 use App\Http\Controllers\VoidLogController;
 
 
-use App\Http\Controllers\VoidLogController;
+
 
 
 
@@ -395,8 +395,6 @@ Route::get('/booking', [App\Http\Controllers\BookingController::class, 'index'])
 // Add this to your routes/web.php
 Route::get('/package/get-cost', [PackageController::class, 'getCost'])->name('package.get_cost');
 
-Route::get('/package/get-cost', [App\Http\Controllers\PackageController::class, 'getCost'])->name('package.get_cost');
-
 // Temporary debug route
 Route::get('/debug-coupon/{id}', function($id) {
     $coupon = App\Models\Coupon::find($id);
@@ -417,6 +415,8 @@ use App\Http\Controllers\ServiceCostController;
 Route::post('/services/cost', [ServiceCostController::class, 'getServiceCost']);
 
 Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('services.destroy');
+
+Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 
 
   

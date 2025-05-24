@@ -23,6 +23,7 @@ class CreateServicesTable extends Migration
             $table->bigInteger('duration');
             $table->string('service_category');
             $table->decimal('service_cost', 10, 2); // Instead of bigInteger()
+            $table->integer('acq_pts')->default(0);
             $table->bigInteger('loyalty_pts');
             $table->timestamps();
         });
