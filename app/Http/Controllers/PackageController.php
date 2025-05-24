@@ -43,7 +43,11 @@ public function getCost(Request $request)
     ]);
 }
 
-public function get_cost(Request $request)
+
+     public function get_cost(Request $request)
+
+
+
     {
         $packageId = $request->input('package_id');
         $quantity = $request->input('quantity', 1);
