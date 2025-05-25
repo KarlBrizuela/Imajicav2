@@ -143,9 +143,7 @@
                         </span>
                       </div>
                       <div>
-                        <h4 class="mb-0">₱{{ number_format($bookings->where('status', 'Completed')->sum(function($booking) {
-                            return $booking->services->sum('service_cost');
-                        }), 2) }}</h4>
+                        <h4 class="mb-0">₱{{ number_format($totalSales, 2) }}</h4>
                         <!-- <span class="badge bg-label-success">+8.4%</span> -->
                       </div>
                     </div>
@@ -428,22 +426,11 @@
               <div class="col-12 col-lg-13">
                 <div class="card">
                   <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Revenue Overview</h5>
+                    <h5 class="card-title mb-0">Revenue</h5>
                     <div class="d-flex gap-2">
                       <button class="btn btn-sm btn-outline-primary" onclick="exportChartData('revenueChart')">
                         <i class="ti tabler-download me-1"></i>Export Data
                       </button>
-                      <!-- <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                          data-bs-toggle="dropdown">
-                          2024
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li><a class="dropdown-item" href="#">2024</a></li>
-                          <li><a class="dropdown-item" href="#">2023</a></li>
-                          <li><a class="dropdown-item" href="#">2022</a></li>
-                        </ul>
-                      </div> -->
                     </div>
                   </div>
                   <div class="card-body">
@@ -515,30 +502,6 @@
                         onclick="exportChartData('branchPerformanceChart')">
                         <i class="ti tabler-download me-1"></i>Export Data
                       </button>
-                      <!-- <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                          data-bs-toggle="dropdown">
-                          This Month
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li>
-                            <a class="dropdown-item" href="#">This Month</a>
-                          </li>
-                          <li>
-                          <li>
-                            <a class="dropdown-item" href="#">This Month</a>
-                          </li>
-                          <li>
-                            <a class="dropdown-item" href="#">Last Month</a>
-                          </li>
-                          <li>
-                            <a class="dropdown-item" href="#">This Quarter</a>
-                          </li>
-                          <li>
-                            <a class="dropdown-item" href="#">This Year</a>
-                          </li>
-                        </ul>
-                      </div> -->
                     </div>
                   </div>
                   <div class="card-body">
@@ -795,7 +758,7 @@
                         $year = Carbon\Carbon::parse($booking->booking_date)->year;
 
                         if ($year == $lastYear) {
-                          $lastYearMonthlyRevenue[$month] += $booking->services->sum('service_cost');
+                          $lastYearMonthlyRevenue[$month] += $booking->services->sum('payment');
                         }
                       }
                     }
@@ -980,11 +943,13 @@
                   label: "Bookings",
                   data: {!! json_encode($branchData->pluck('bookings')) !!},
                   backgroundColor: "#696cff",
+                  order: 2
                 },
                 {
                   label: "Revenue",
                   data: {!! json_encode($branchData->pluck('revenue')) !!},
                   backgroundColor: "#28c76f",
+                  order: 1
                 },
               ],
             },
@@ -999,20 +964,38 @@
                   display: true,
                   text: "Branch Performance Overview",
                 },
+                tooltip: {
+                  callbacks: {
+                    label: function(context) {
+                      const label = context.dataset.label;
+                      const value = context.raw;
+                      if (label === "Revenue") {
+                        return `${label}: ₱${value.toLocaleString()}`;
+                      }
+                      return `${label}: ${value}`;
+                    }
+                  }
+                }
               },
               scales: {
+                x: {
+                  grid: {
+                    display: false
+                  }
+                },
                 y: {
                   beginAtZero: true,
-                  position: "left",
                   ticks: {
-                    callback: function (value) {
-                      return this.chart.data.datasets[1].label === "Revenue"
-                        ? "₱" + value.toLocaleString()
-                        : value;
-                    },
-                  },
-                },
-              },
+                    callback: function(value) {
+                      const datasetLabel = this.chart.data.datasets[1].label;
+                      if (datasetLabel === "Revenue") {
+                        return '₱' + value.toLocaleString();
+                      }
+                      return value;
+                    }
+                  }
+                }
+              }
             },
           }
         );

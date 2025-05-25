@@ -28,9 +28,9 @@ class DashboardController extends Controller
     public function dashboard()
     {
         $patients = Patient::all();
-        $bookings = Booking::with(['patient', 'services'])->get();
+        $bookings = Booking::with(['patients', 'services'])->where('status', 'Paid')->get();
         
-        // Get services with booking counts and monthly data
+        // Get services with booking counts and monthly data for paid bookings only
         $services = DB::table('services')
             ->select(
                 'services.service_id',
@@ -39,17 +39,20 @@ class DashboardController extends Controller
                 DB::raw('COUNT(DISTINCT booking_service.booking_id) as booking_count')
             )
             ->leftJoin('booking_service', 'services.service_id', '=', 'booking_service.service_id')
+            ->leftJoin('bookings', 'booking_service.booking_id', '=', 'bookings.booking_id')
+            ->where('bookings.status', 'Paid')
             ->groupBy('services.service_id', 'services.service_name', 'services.service_cost')
             ->orderBy('booking_count', 'desc')
             ->get()
             ->map(function($service) {
-                // Get monthly booking counts for the last 6 months
+                // Get monthly booking counts for the last 6 months (paid only)
                 $monthlyData = [];
                 for ($i = 5; $i >= 0; $i--) {
                     $month = now()->subMonths($i)->format('Y-m');
                     $count = DB::table('booking_service')
                         ->join('bookings', 'booking_service.booking_id', '=', 'bookings.booking_id')
                         ->where('booking_service.service_id', $service->service_id)
+                        ->where('bookings.status', 'Paid')
                         ->whereYear('bookings.booking_date', now()->subMonths($i)->year)
                         ->whereMonth('bookings.booking_date', now()->subMonths($i)->month)
                         ->count();
@@ -66,10 +69,12 @@ class DashboardController extends Controller
             $patientGrowth = $lastMonthPatients > 0 ? (($patients->count() - $lastMonthPatients) / $lastMonthPatients) * 100 : 0;
         }
 
-        // Calculate booking growth
+        // Calculate booking growth (for paid bookings only)
         $bookingGrowth = 0;
         if ($bookings->count() > 0) {
-            $lastMonthBookings = Booking::whereMonth('created_at', now()->subMonth()->month)->count();
+            $lastMonthBookings = Booking::where('status', 'Paid')
+                ->whereMonth('created_at', now()->subMonth()->month)
+                ->count();
             $bookingGrowth = $lastMonthBookings > 0 ? (($bookings->count() - $lastMonthBookings) / $lastMonthBookings) * 100 : 0;
         }
 
@@ -105,28 +110,51 @@ class DashboardController extends Controller
                 return Carbon::parse($patient->birthdate)->format('F');
             });
 
-        // Get branch data with proper relationships
+        // Get branch data with proper relationships (paid bookings only)
         $branchData = Branch::with(['bookings' => function($query) {
-            $query->with(['services' => function($q) {
-                $q->select('services.service_id', 'services.service_name', 'services.service_cost');
-            }]);
+            $query->where('status', 'Paid')
+                  ->with(['services' => function($q) {
+                    $q->select('services.service_id', 'services.service_name');
+                }]);
         }])
         ->get()
         ->map(function ($branch) {
-            $totalBookings = $branch->bookings->count();
-            $totalRevenue = $branch->bookings->sum(function ($booking) {
-                return $booking->services->sum('service_cost');
+            // Get monthly bookings
+            $monthlyBookings = $branch->bookings
+                ->where('status', 'Paid')
+                ->filter(function($booking) {
+                    return Carbon::parse($booking->start_date)->month === now()->month
+                        && Carbon::parse($booking->start_date)->year === now()->year;
+                });
+
+            // Get yearly bookings
+            $yearlyBookings = $branch->bookings
+                ->where('status', 'Paid')
+                ->filter(function($booking) {
+                    return Carbon::parse($booking->start_date)->year === now()->year;
+                });
+
+            // Count services availed this month
+            $servicesAvailed = $monthlyBookings->flatMap(function ($booking) {
+                return $booking->services;
+            })->groupBy('service_name')
+            ->map(function ($services) {
+                return $services->count();
             });
             
             return [
                 'name' => $branch->branch_name,
-                'bookings' => $totalBookings,
-                'revenue' => $totalRevenue
+                'bookings' => $monthlyBookings->count(),
+                'yearly_bookings' => $yearlyBookings->count(),
+                'payment' => $monthlyBookings->sum('payment'),
+                'yearly_payment' => $yearlyBookings->sum('payment'),
+                'services_availed' => $servicesAvailed
             ];
         });
 
-        // Calculate total expenses from the expenses table
-        $totalExpenses = \App\Models\expenses::sum('expense_cost');
+        // Calculate total payments for both monthly and yearly
+        $totalMonthlyPayments = $branchData->sum('payment');
+        $totalYearlyPayments = $branchData->sum('yearly_payment');
 
         return view('page.dashboard', compact(
             'patients', 
@@ -138,14 +166,15 @@ class DashboardController extends Controller
             'upcomingBirthdays', 
             'allBirthdays',
             'branchData',
-            'totalExpenses'
+            'totalMonthlyPayments',
+            'totalYearlyPayments'
         ));
     }
     
     public function index()
     {
         // Get all patients for count
-        $patients = patient::all();
+        $patients = Patient::all();
         $bookings = booking::all();
         
         // Get services with booking counts
@@ -170,26 +199,32 @@ class DashboardController extends Controller
         
         // Updated branch data fetching
         $branchData = branch::with(['bookings' => function($query) {
-                $query->with(['services' => function($q) {
-                    $q->select('services.service_id', 'services.service_name', 'services.service_cost');
-                }]);
-            }])
-            ->get()
-            ->map(function ($branch) {
-                $totalBookings = $branch->bookings->count();
-                $totalRevenue = $branch->bookings->sum(function ($booking) {
-                    return $booking->services->sum('service_cost');
-                });
-                
-                return [
-                    'name' => $branch->branch_name,
-                    'bookings' => $totalBookings,
-                    'revenue' => $totalRevenue
-                ];
+            $query->where('status', 'Paid')
+                  ->orWhere('status', 'Completed')
+                  ->with(['services']);
+        }])
+        ->get()
+        ->map(function ($branch) {
+            // Get total bookings
+            $totalBookings = $branch->bookings->count();
+            
+            // Calculate total revenue from services
+            $totalRevenue = $branch->bookings->sum(function($booking) {
+                return $booking->services->sum('service_cost');
             });
+            
+            return [
+                'name' => $branch->branch_name,
+                'bookings' => $totalBookings,
+                'revenue' => $totalRevenue
+            ];
+        });
 
         // Calculate total expenses from the expenses table
         $totalExpenses = \App\Models\expenses::sum('expense_cost');
+
+        // Calculate total sales from orders and bookings
+        $totalSales = $this->calculateTotalSales();
 
         return view('page.dashboard', compact(
             'patients', 
@@ -201,7 +236,8 @@ class DashboardController extends Controller
             'upcomingBirthdays', 
             'allBirthdays',
             'branchData',
-            'totalExpenses'
+            'totalExpenses',
+            'totalSales'
         ));
     }
     
@@ -713,6 +749,22 @@ class DashboardController extends Controller
     {
         $packages = \App\Models\Package::with(['branch', 'services'])->get();
         return view('page.packages-list', compact('packages'));
+    }
+
+    private function calculateTotalSales()
+    {
+        // Get order sales (product sales)
+        $orderSales = Order::sum('total');
+
+        // Get service sales (from bookings)
+        $serviceSales = DB::table('bookings')
+            ->join('booking_service', 'bookings.booking_id', '=', 'booking_service.booking_id')
+            ->join('services', 'booking_service.service_id', '=', 'services.service_id')
+            ->where('bookings.status', 'Completed')
+            ->orWhere('bookings.status', 'Paid')
+            ->sum('services.service_cost');
+
+        return $orderSales + $serviceSales;
     }
 
 }
