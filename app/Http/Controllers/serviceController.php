@@ -72,10 +72,9 @@ public function update(Request $request) {
     Log::info('Update service request method:', ['method' => $request->method()]);
     Log::info('Update service request data:', $request->all());
 
-    
-
     // Validate the basic fields
     $validatedData = $request->validate([
+        'service_id' => 'required|exists:services,service_id',
         'service_name' => 'required',
         'branch_code' => 'required',
         'description' => 'required',
@@ -83,32 +82,28 @@ public function update(Request $request) {
         'acq_pts' => 'nullable|integer|min:0',
     ]);
 
-    $validatedData['acq_pts'] = $validatedData['acq_pts'] ?? 0;
+    try {
+        // Find the service by ID
+        $service = Service::findOrFail($validatedData['service_id']);
 
-    Service::create($validatedData);
+        // Update service details
+        $service->service_name = $validatedData['service_name'];
+        $service->branch_code = $validatedData['branch_code'];
+        $service->description = $validatedData['description'];
+        $service->service_cost = $validatedData['service_cost'] ?? 0;
+        $service->acq_pts = $validatedData['acq_pts'] ?? 0;
 
-    // In your controller
-$serviceData = $request->all();
-$serviceData['acq_pts'] = $request->acq_pts ?? 0;
-Service::create($serviceData);
+        $service->save();
 
- 
-
-    // Find the service by ID
-    $service = service::find($request->input('service_id'));
-    if (!$service) {
-        return redirect()->back()->with('error', 'Service not found');
+        return redirect()->route('page.services-list')->with('success', 'Service updated successfully');
+    } catch (\Exception $e) {
+        Log::error('Service update failed', [
+            'error' => $e->getMessage(),
+            'data' => $validatedData
+        ]);
+        
+        return redirect()->back()->with('error', 'Failed to update service: ' . $e->getMessage());
     }
-
-    // Update service details
-    $service->service_name = $request->service_name;
-    $service->branch_code = $request->branch_code;
-    $service->description = $request->description;
-    $service->service_cost = !empty($request->service_cost) ? $request->service_cost : 0;
-
-    $service->save();
-
-    return redirect()->route('page.services-list')->with('success', 'Service updated successfully');
 }
 
 // In your controller

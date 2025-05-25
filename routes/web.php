@@ -429,3 +429,4 @@ Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->nam
 
 
 Route::put('/package/update', [App\Http\Controllers\PackageController::class, 'update'])->name('package.update');
+

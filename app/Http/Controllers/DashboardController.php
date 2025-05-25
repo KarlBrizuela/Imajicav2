@@ -534,21 +534,18 @@ class DashboardController extends Controller
                 DB::raw('COALESCE(SUM(CASE WHEN bookings.status = "Completed" THEN services.service_cost ELSE 0 END), 0) as total_service_sales'),
                 DB::raw('COALESCE(SUM(CASE WHEN bookings.status = "Completed" THEN services.service_cost ELSE 0 END), 0) as total_sales')
             )
-            ->leftJoin('bookings', 'staff.id', '=', 'bookings.id')
+            ->leftJoin('bookings', 'staff.id', '=', 'bookings.staff_id')
             ->leftJoin('services', 'bookings.service_id', '=', 'services.service_id')
-            ->where('bookings.status','=', 'Completed')
+            ->where('bookings.status', '=', 'Completed')
             ->groupBy('staff.id', 'staff.firstname', 'staff.lastname')
-            ->orderBy('staff.firstname')
+            ->orderBy('total_sales', 'desc')
             ->get();
 
         // Calculate total metrics for the header cards
         $totalMetrics = [
             'total_sales' => $employees->sum('total_sales'),
             'monthly_sales' => $this->getMonthlySales(),
-            'top_employee' => $employees->sortByDesc(function($emp) {
-                // Score based on service count and client count
-                return ($emp->service_count * 0.6) + ($emp->client_count * 0.4);
-            })->first()
+            'top_employee' => $employees->first()
         ];
 
         return view('page.employee-sales', compact('employees', 'totalMetrics'));
