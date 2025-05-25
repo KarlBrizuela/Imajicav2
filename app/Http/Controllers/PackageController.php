@@ -8,7 +8,9 @@ use App\Models\branch;
 use App\Models\service;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\PackageController::getCost;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class PackageController extends Controller
 {
@@ -52,7 +54,7 @@ public function getCost(Request $request)
         return view('page.new-package', compact('branches', 'services'));
     }
 
-     public function getCost(Request $request)
+     public function get_cost(Request $request)
     {
         $packageId = $request->input('package_id');
         $quantity = $request->input('quantity', 1);
