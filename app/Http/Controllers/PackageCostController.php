@@ -17,37 +17,13 @@ class PackageCostController extends Controller {
         }
 
         $totalCost = Package::whereIn('package_id', $packageIds)->sum('price');
+        $totalPoints = Package::whereIn('package_id', $packageIds)->sum('points'); // Assuming there's a 'points' field
 
         return response()->json([
             'success' => true,
-            'total_cost' => $totalCost
+            'total_cost' => $totalCost,
+            'total_points' => $totalPoints // Add points
         ]);
     }
 }
-
-
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-use App\Models\Service;
-
-class ServiceCostController extends Controller {
-    public function getServiceCost(Request $request) {
-        $serviceIds = $request->service_ids;
-
-        if (!$serviceIds) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No service IDs provided'
-            ], 400);
-        }
-
-        $totalCost = Service::whereIn('service_id', $serviceIds)->sum('service_cost'); // Sum up costs
-
-        return response()->json([
-            'success' => true,
-            'total_cost' => $totalCost
-        ]);
-    }
-}
+// Compare this snippet from app/Models/Package.php:

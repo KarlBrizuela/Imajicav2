@@ -30,6 +30,8 @@ use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\wasteController;
 
+use App\Http\Controllers\VoidLogController;
+
 
 Route::get('/package/get-cost', [PackageController::class, 'get_cost'])->name('service.get_cost');
 
@@ -51,10 +53,16 @@ use App\Http\Controllers\VoidLogController;
 
 
 
+
 use App\Http\Controllers\VoidedOrdersController;
+use App\Http\Controllers\ServiceProductController;
+use App\Http\Controllers\PackageController;
+use App\Http\Controllers\PackageCostController;
+use App\Http\Controllers\ServiceCostController;
 
-
-
+Route::get('/service/get-cost', [PackageController::class, 'getPackageCost'])->name('package.get_cost');
+Route::get('/service/get-cost', [ServiceCostController::class, 'getServiceCost'])->name('service.get_cost');
+Route::get('/package/get-cost', [PackageCostController::class, 'getPackageCost'])->name('package.get_cost');
 // Route::get('/', function () {
 //     return view('welcome');
 // });

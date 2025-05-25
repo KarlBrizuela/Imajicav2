@@ -595,6 +595,17 @@
                               @endforeach
                             </select>
 <small id="points_needed_section" class="form-text text-muted">
+
+    Points needed to avail services:
+    <span id="points_needed_display" class="fw-semibold text-success"></span>
+</small>
+
+<small id="amount_needed_section" class="form-text text-muted" style="display: none;">
+    Amount needed to avail services:
+    <span id="amount_needed_display" class="fw-semibold text-primary"></span>
+</small>
+</div>
+
         Points needed to avail services: <span id="points_needed_display" class="fw-semibold text-success">0</span>
     </small>
     
@@ -603,6 +614,7 @@
     </small>
                           </div>
 
+
 <div class="mb-5" id="package_section" style="display:none;">
     <label class="form-label" for="package_id">Select Package</label>
     <select class="select2 form-select" name="package_id[]" id="package_id" multiple>
@@ -610,7 +622,6 @@
         <option value="{{$package->package_id}}">{{$package->package_name}}</option>
         @endforeach
     </select>
-    <small class="form-text text-muted">Amount needed to avail services: <span id="amount_needed_display_price"></span></small>
 </div>
                           
                           <div class="mb-5">
@@ -3576,56 +3587,6 @@ $(document).ready(function() {
 });
   </script>
 
-  <script>
-$(document).ready(function() {
-    $('input[name="useReward"]').on('change', function() {
-        const useReward = $('input[name="useReward"]:checked').val();
-        const selectedServiceId = $('#service_id').val(); // Get selected service(s)
-
-        if (useReward === '1') { // If "Yes" is selected
-            $('#points_needed_section').show();
-            $('#amount_needed_section').hide();
-        } else { // If "No" is selected, fetch service cost and points
-            $('#points_needed_section').hide();
-            $('#amount_needed_section').show();
-
-            if (selectedServiceId.length > 0) {
-                $.ajax({
-                    url: "{{ route('service.get_cost') }}", // Fetch cost & points from database
-                    type: "GET",
-                    data: { service_ids: selectedServiceId },
-                    success: function(response) {
-                        console.log("Service Cost API Response:", response); // Debugging
-
-                        if (response.success) {
-                            $('#amount_needed_display').text('₱' + response.total_cost);
-                            $('#points_to_earn_display').text(response.total_points + " pts"); // Display points
-                        } else {
-                            $('#amount_needed_display').text('-');
-                            $('#points_to_earn_display').text('-');
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error("Error fetching service cost:", xhr);
-                        $('#amount_needed_display').text('-');
-                        $('#points_to_earn_display').text('-');
-                    }
-                });
-            } else {
-                $('#amount_needed_display').text('-'); // Reset display if no service is selected
-                $('#points_to_earn_display').text('-');
-            }
-        }
-    });
-
-    $('#service_id').on('change', function() {
-        $('input[name="useReward"]:checked').trigger('change'); // Refresh based on selection
-    });
-});
-
-  </script>
-
-
 <script>
 $(document).ready(function() {
     $('input[name="useReward"]').on('change', function() {
@@ -3634,10 +3595,10 @@ $(document).ready(function() {
 
         if (useReward === '1') {  // If "Yes" is selected
             $('#points_needed_section').show();
-            $('#amount_needed_section').hide();
+           
         } else {  // If "No" is selected, fetch service cost and points
             $('#points_needed_section').hide();
-            $('#amount_needed_section').show();
+           
 
             if (selectedServiceId.length > 0) {
                 $.ajax({
@@ -3649,12 +3610,9 @@ $(document).ready(function() {
 
                         if (response.success) {
                             $('#amount_needed_display').text('₱' + response.total_cost);
-                            $('#summary_total_price').text('₱' + response.total_cost);
                             $('#points_to_earn_display').text(response.total_points + " Points"); // Display points
-                            
                         } else {
                             $('#amount_needed_display').text('-');
-                            $('#summary_total_price').text('₱');
                             $('#points_to_earn_display').text('-');
                         }
                     },
@@ -3677,14 +3635,14 @@ $(document).ready(function() {
 });
 </script>
 
+
 <script>
 $(document).ready(function() {
     $('#package_id').on('change', function() {
-        const selectedPackageIds = $(this).val();
-
-        if (selectedPackageIds.length > 0) {
+        const selectedPackageIds = $(this).val(); // Corrected variable name
+        if (selectedPackageIds.length > 0) { // Ensure a package is selected
             $.ajax({
-                url: "{{ route('package.get_cost') }}",
+                url: "{{ route('package.get_cost') }}", // Fetch cost & points from database
                 type: "GET",
                 data: { package_ids: selectedPackageIds },
                 success: function(response) {
@@ -3694,30 +3652,30 @@ $(document).ready(function() {
                         let totalCost = Number(response.total_cost);
 
                         // Update displayed amount and payment field
-                        $('#amount_needed_display_price').text('₱' + totalCost);
-                        $('#payment_amount').val(totalCost).prop('readonly', true); // Prevent user input
+                        $('#amount_needed_display').text('₱' + totalCost);
+                        $('#payment_amount').val(totalCost).prop('readonly', true);
                         $('#summary_total_price').text('₱' + totalCost);
-                        $('#summary_total_price_service').text('₱' + totalCost);
-                        
+                        // Update points display if available
+                        if (response.total_points) {
+                            $('#points_to_earn_display').text(response.total_points + " Points");
+                        } else {
+                            $('#points_to_earn_display').text('-');
+                        }
                     } else {
                         console.error("Response missing total_cost:", response);
-                        $('#amount_needed_display_price').text('-');
-                        $('#payment_amount').val('-');
-                         $('#summary_total_price').text('-');
-                        $('#summary_total_price_service').text('-');
+                        resetDisplayFields();
                     }
                 },
                 error: function(xhr) {
                     console.error("Error fetching package cost:", xhr.responseText);
-                    $('#amount_needed_display_price').text('-');
-                    $('#payment_amount').val('-');
+                    resetDisplayFields();
                 }
             });
         } else {
-            $('#amount_needed_display_price').text('-');
-            $('#payment_amount').val('-');
+            resetDisplayFields(); // Reset display if no package is selected
         }
     });
+
 });
 </script>
 
