@@ -591,10 +591,11 @@
                             <label class="form-label" for="service_id">Select Services</label>
                             <select class="select2 form-select" name="service_id[]" id="service_id" multiple>
                               @foreach ($services as $service)
-                              <option value="{{$service->service_id}}", value= "{{$service->loyalty_pts}}">{{$service->service_name}} {{$service->loyalty_pts}}pts</option>
+                              <option value="{{$service->service_id}}"  data-loyalty-pts="{{$service->loyalty_pts}}"    data-service-cost="{{$service->service_cost}}">  {{$service->service_name}} - {{$service->loyalty_pts}}pts - ${{$service->service_cost}} </option>
                               @endforeach
                             </select>
 <small id="points_needed_section" class="form-text text-muted">
+
     Points needed to avail services:
     <span id="points_needed_display" class="fw-semibold text-success"></span>
 </small>
@@ -604,6 +605,15 @@
     <span id="amount_needed_display" class="fw-semibold text-primary"></span>
 </small>
 </div>
+
+        Points needed to avail services: <span id="points_needed_display" class="fw-semibold text-success">0</span>
+    </small>
+    
+    <small id="amount_needed_section" class="form-text text-muted">
+        Amount needed to avail services: $<span id="amount_needed_display" class="fw-semibold text-primary">0.00</span>
+    </small>
+                          </div>
+
 
 <div class="mb-5" id="package_section" style="display:none;">
     <label class="form-label" for="package_id">Select Package</label>
@@ -777,16 +787,16 @@
                             <textarea class="form-control" name="remarks" id="remarks"></textarea>
                           </div>
                           <div class="mb-4">
-                            <label class="form-label">Booking Summary</label>
-                            <div class="form-control bg-light" readonly style="min-height: 110px;">
-                              <div><strong>Service Price:</strong> <span id="summary_total_price_service">-</span></div>
-                              <div><strong>Coupon Discount:</strong> <span id="summary_coupon_discount">-</span></div>
-                              <div><strong>Referral Points:</strong> <span id="summary_referral_points">-</span></div>
-                              <div><strong>Used Points:</strong> <span id="summary_patient_reward">-</span></div>
-                              <div class="mt-2"><strong>Points to Earn: <span id="points_to_earn_display"></span></strong> </div>
-                              <div class="mt-2"><strong>Total Price:<span id="summary_total_price"></span></strong></div>
-                            </div>
-                          </div>
+  <label class="form-label">Booking Summary</label>
+  <div class="form-control bg-light" readonly style="min-height: 110px;">
+    <div><strong>Service Price:</strong> <span id="summary_total_price_service">-</span></div>
+    <div><strong>Coupon Discount:</strong> <span id="summary_coupon_discount">-</span></div>
+    <div><strong>Referral Points:</strong> <span id="summary_referral_points">-</span></div>
+    <div><strong>Used Points:</strong> <span id="summary_patient_reward">-</span></div>
+    <div><strong>Points to Earn:</strong> <span id="points_to_earn_display">-</span></div>
+    <div class="mt-2"><strong>Total Price:</strong> <span id="summary_total_price">-</span></div>
+  </div>
+</div>
                           <div class="d-flex justify-content-sm-between justify-content-start mt-6 gap-2">
                             <div class="d-flex">
                               <button type="submit" class="btn btn-primary btn-add-event me-4">Save</button>
@@ -915,31 +925,31 @@
                           </div>
                           </div>
                           
-                          <div class="col-xl-12">
-                            <label class="form-label">Use Reward Points</label>
-                            <div class="row">
-                              <div class="col-md mb-md-0 mb-5">
-                                <div class="form-check custom-option custom-option-basic">
-                                  <label class="form-check-label custom-option-content" for="updateUseRewardYes">
-                                    <input name="useReward" class="form-check-input" type="radio" value="1" id="updateUseRewardYes" />
-                                    <span class="custom-option-header">
-                                      <span class="h6 mb-0">Yes</span>
-                                    </span>
-                                  </label>
-                                </div>
-                              </div>
-                              <div class="col-md">
-                                <div class="form-check custom-option custom-option-basic">
-                                  <label class="form-check-label custom-option-content" for="updateUseRewardNo">
-                                    <input name="useReward" class="form-check-input" type="radio" value="0" id="updateUseRewardNo" />
-                                    <span class="custom-option-header">
-                                      <span class="h6 mb-0">No</span>
-                                    </span>
-                                  </label>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                         <div class="col-xl-12">
+    <label class="form-label">Use Reward Points</label>
+    <div class="row">
+        <div class="col-md mb-md-0 mb-5">
+            <div class="form-check custom-option custom-option-basic">
+                <label class="form-check-label custom-option-content" for="updateUseRewardYes">
+                    <input name="useReward" class="form-check-input" type="radio" value="1" id="updateUseRewardYes" />
+                    <span class="custom-option-header">
+                        <span class="h6 mb-0">Yes</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-check custom-option custom-option-basic">
+                <label class="form-check-label custom-option-content" for="updateUseRewardNo">
+                    <input name="useReward" class="form-check-input" type="radio" value="0" id="updateUseRewardNo" />
+                    <span class="custom-option-header">
+                        <span class="h6 mb-0">No</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
 
                           <!-- Coupon Fields -->
                           <div class="mb-4">
@@ -995,17 +1005,17 @@
                             <label class="form-label" for="update_remarks">Remarks</label>
                             <textarea class="form-control" name="remarks" id="update_remarks"></textarea>
                           </div>
-                          <div class="mb-4">
-                            <label class="form-label">Booking Summary</label>
-                            <div class="form-control bg-light" readonly style="min-height: 110px;">
-                              <div><strong>Service Price:</strong> <span id="update_summary_service_price">-</span></div>
-                              <div><strong>Coupon Discount:</strong> <span id="update_summary_coupon_discount">-</span></div>
-                              <div><strong>Referral Points:</strong> <span id="update_summary_referral_points">-</span></div>
-                              <div><strong>Used Points:</strong> <span id="update_summary_patient_reward">-</span></div>
-                              <div><strong>Points to Earn:</strong> <span id="update_summary_points_to_earn">-</span></div>
-                              <div class="mt-2"><strong>Total Price:</strong> <span id="update_summary_total_price">-</span></div>
-                            </div>
-                          </div>
+                         <div class="mb-4">
+  <label class="form-label">Booking Summary</label>
+  <div class="form-control bg-light" readonly style="min-height: 110px;">
+    <div><strong>Service Price:</strong> <span id="update_summary_service_price">-</span></div>
+    <div><strong>Coupon Discount:</strong> <span id="update_summary_coupon_discount">-</span></div>
+    <div><strong>Referral Points:</strong> <span id="update_summary_referral_points">-</span></div>
+    <div><strong>Used Points:</strong> <span id="update_summary_patient_reward">-</span></div>
+    <div><strong>Points to Earn:</strong> <span id="update_summary_points_to_earn">-</span></div>
+    <div class="mt-2"><strong>Total Price:</strong> <span id="update_summary_total_price">-</span></div>
+  </div>
+</div>
                           <div class="d-flex justify-content-sm-between justify-content-start mt-6 gap-2">
                             <div class="d-flex">
                               <button type="submit" class="btn btn-primary btn-update-event me-4" onclick="return validateUpdateForm()">Update</button>
@@ -1417,6 +1427,68 @@
   
   <!-- Custom initialization script -->
   <script>
+
+ 
+$(document).ready(function() {
+    $('#service_id').select2({
+        placeholder: "Choose services...",
+        allowClear: true
+    });
+    
+    // Handle service selection changes
+    $('#service_id').on('change select2:select select2:unselect', function() {
+        updateServiceCalculations();
+    });
+    
+    // Handle reward points radio selection
+    $('input[name="useReward"]').on('change', function() {
+        updateServiceCalculations();
+        toggleDisplaySections();
+    });
+    
+    function updateServiceCalculations() {
+        let totalPoints = 0;
+        let totalCost = 0;
+        
+        // Get selected values
+        let selectedValues = $('#service_id').val() || [];
+        
+        selectedValues.forEach(function(serviceId) {
+            let option = $(`#service_id option[value="${serviceId}"]`);
+            totalPoints += parseInt(option.data('loyalty-pts')) || 0;
+            totalCost += parseFloat(option.data('service-cost')) || 0;
+        });
+        
+        // Update displays
+        $('#points_needed_display').text(totalPoints);
+        $('#amount_needed_display').text(totalCost.toFixed(2));
+        
+        console.log('Calculated - Points:', totalPoints, 'Cost:', totalCost);
+    }
+    
+    function toggleDisplaySections() {
+        let useReward = $('input[name="useReward"]:checked').val();
+        
+        if (useReward === '1') {
+            // Show points, hide amount
+            $('#points_needed_section').show();
+            $('#amount_needed_section').hide();
+        } else if (useReward === '0') {
+            // Show amount, hide points
+            $('#points_needed_section').hide();
+            $('#amount_needed_section').show();
+        } else {
+            // No selection yet - show both or default behavior
+            $('#points_needed_section').show();
+            $('#amount_needed_section').show();
+        }
+    }
+    
+    // Initial setup
+    updateServiceCalculations();
+    toggleDisplaySections();
+});
+
     document.addEventListener('DOMContentLoaded', function() {
       // Check for validation errors on page load and display with SweetAlert
       const errorList = document.getElementById('error-list');
@@ -1699,6 +1771,12 @@ $(document).ready(function() {
     var status = $('#status').val();
     var bookingType = $('input[name="booking_type"]:checked').val();
     
+   if (status === 'Paid') {
+    pointsToEarn = Math.floor(servicePrice / 50);
+    pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '-';
+  }
+    
+
     console.log('updateSummary called with:', {
       serviceIds: serviceIds,
       packageIds: packageIds,
@@ -1711,6 +1789,7 @@ $(document).ready(function() {
     
     // Initialize total price
     var servicePrice = 0;
+    var pointsToEarn = 0;
     
     // Calculate total based on booking type
     if (bookingType === 'service' && serviceIds.length > 0) {
@@ -1780,9 +1859,9 @@ $(document).ready(function() {
     var pointsToEarn = 0;
     var pointsToEarnText = '-';
     
-    if (status === 'Paid') {
+    if (status === 'updateUseRewardNo') {
       // Award 1 point per 50 pesos
-      pointsToEarn = Math.floor(servicePrice / 50);
+      pointsToEarn = Math.floor(servicePrice / 100);
       pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '-';
     }
     
@@ -1791,7 +1870,7 @@ $(document).ready(function() {
     $('#summary_coupon_discount').text(discountText);
     $('#summary_referral_points').text(referralText);
     $('#summary_patient_reward').text(usedPointsText);
-    $('#summary_points_to_earn').text(pointsToEarnText);
+    $('#points_to_earn_display').text(pointsToEarnText);
     $('#summary_total_price').text(formatMoney(total));
     
     // Update the payment amount field with the calculated total

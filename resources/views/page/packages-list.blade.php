@@ -70,6 +70,8 @@
 
   <script src="../../assets/js/config.js"></script>
 
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
   <style>
     /* Add to your existing styles */
     .client-detail-card {
@@ -142,6 +144,55 @@
   cursor: pointer;
 }
 
+    /* Table text wrapping and responsive styles */
+    .table {
+      width: 100%;
+      margin-bottom: 1rem;
+      white-space: normal;
+    }
+
+    .table td {
+      max-width: 200px; /* Adjust this value based on your needs */
+      white-space: normal;
+      word-wrap: break-word;
+      vertical-align: middle;
+    }
+
+    .table td.description-cell {
+      max-width: 300px;
+    }
+
+    .table td.services-cell {
+      max-width: 250px;
+    }
+
+    .table td.free-items-cell {
+      max-width: 200px;
+    }
+
+    /* Price column alignment */
+    .table td.price-cell {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* Actions column */
+    .table td.actions-cell {
+      white-space: nowrap;
+      min-width: 160px;
+    }
+
+    /* Make table responsive */
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (max-width: 992px) {
+      .table td {
+        min-width: 150px;
+      }
+    }
   </style>
 </head>
 
@@ -182,13 +233,14 @@
               <table class="table table-striped border-top" id="packagesTable">
                 <thead>
                   <tr>
-                    <th>ID</th>
-                    <th>Package Name</th>
-                    <th>Branch</th>
-                    <th>Description</th>
-                    <th>Services</th>
-                    <th>Free Items</th>
-                    <th class="text-center">Actions</th>
+                    <th style="width: 60px;">ID</th>
+                    <th style="width: 200px;">Package Name</th>
+                    <th style="width: 200px;">Branch</th>
+                    <th style="width: 300px;">Description</th>
+                    <th style="width: 250px;">Services</th>
+                    <th style="width: 200px;">Free Items</th>
+                    <th style="width: 120px;">Price</th>
+                    <th style="width: 160px;" class="text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -197,16 +249,14 @@
                     <td>{{ $package->package_id }}</td>
                     <td>
                       <div class="d-flex align-items-center">
-                        <span class="fw-medium">{{ $package->package_name }}</span>
+                        <span class="fw-medium text-wrap">{{ $package->package_name }}</span>
                       </div>
                     </td>
-                    <td>{{ $package->branch->branch_name ?? 'No Branch' }}</td>
-<td>
-  <span class="text-truncate d-inline-block" style="max-width: 150px;" title="{{ $package->description }}">
-    {{ \Illuminate\Support\Str::limit($package->description, 30) }}
-  </span>
-</td>
-                    <td>
+                    <td class="text-wrap">{{ $package->branch->branch_name ?? 'N/A' }}</td>
+                    <td class="description-cell text-wrap">
+                      {{ $package->description ?: 'N/A' }}
+                    </td>
+                    <td class="services-cell">
                       @if($package->services->count() > 0)
                         <span class="badge bg-label-info">{{ $package->services->count() }} services</span>
                         <button type="button" class="btn btn-xs btn-text" data-bs-toggle="tooltip" data-bs-html="true" 
@@ -214,22 +264,13 @@
                           <i class="ti tabler-info-circle"></i>
                         </button>
                       @else
-                        <span class="badge bg-label-warning">No services</span>
+                        <span class="text-muted">No services</span>
                       @endif
                     </td>
-                    <td>{{ $package->free ?? 'None' }}</td>
-                    <td class="text-center">
+                    <td class="free-items-cell text-wrap">{{ $package->free ?: 'None' }}</td>
+                    <td class="price-cell">₱{{ number_format($package->price, 2) }}</td>
+                    <td class="actions-cell text-center">
                       <div class="d-flex gap-2 justify-content-center">
-                        {{-- <button 
-                          class="btn btn-sm btn-primary view-package" 
-                          data-id="{{ $package->package_id }}" 
-                          data-name="{{ $package->package_name }}"
-                          data-branch="{{ $package->branch->branch_name ?? 'No Branch' }}"
-                          data-description="{{ $package->description }}"
-                          data-free="{{ $package->free ?? 'None' }}"
-                          data-services="{{ json_encode($package->services) }}">
-                          <i class="ti tabler-eye me-1"></i> View
-                        </button> --}}
                         <a href="{{ route('package.edit', $package->package_id) }}" class="btn btn-sm btn-info">
                           <i class="ti tabler-edit me-1"></i> Edit
                         </a>
@@ -326,14 +367,13 @@
         <div class="modal fade" id="deletePackageModal" tabindex="-1" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-<div class="modal-header bg-danger text-white d-flex justify-content-between align-items-center rounded-top">
-  <h5 class="modal-title d-flex align-items-center m-0">
-    <i class="ti tabler-alert-triangle me-2 "></i>
-    Confirm Delete
-  </h5>
-  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-
+              <div class="modal-header bg-danger text-white d-flex justify-content-between align-items-center rounded-top">
+                <h5 class="modal-title d-flex align-items-center m-0">
+                  <i class="ti tabler-alert-triangle me-2 "></i>
+                  Confirm Delete
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
               <div class="modal-body">
                 <p>Are you sure you want to delete <span id="packageNameToDelete" class="fw-bold"></span>?</p>
                 <p class="text-danger">This action cannot be undone.</p>
@@ -366,6 +406,9 @@
   <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
   <script src="{{ asset('vendor/js/menu.js') }}"></script>
 
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <!-- Main JS -->
   <script src="../../assets/js/main.js"></script>
 
@@ -374,6 +417,13 @@
 
   <script>
     $(document).ready(function() {
+        // Setup CSRF token for all AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         // Initialize DataTable with enhanced options
         $('#packagesTable').DataTable({
             responsive: true,
@@ -426,10 +476,82 @@
             const packageId = $(this).data('id');
             const packageName = $(this).data('name');
             
-            $('#packageIdToDelete').val(packageId);
-            $('#packageNameToDelete').text(packageName);
-            $('#deletePackageForm').attr('action', "{{ route('package.delete') }}");
-            $('#deletePackageModal').modal('show');
+            // Show confirmation dialog using SweetAlert2
+            Swal.fire({
+                title: 'Confirm Delete',
+                html: `Are you sure you want to delete <strong>${packageName}</strong>?<br><br><span class="text-danger">This action cannot be undone.</span>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Deleting...',
+                        html: 'Please wait while we delete the package',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Send delete request
+                    $.ajax({
+                        url: '/package/delete',
+                        type: 'DELETE',
+                        data: JSON.stringify({
+                            package_id: packageId
+                        }),
+                        contentType: 'application/json',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success!',
+                                    text: response.message || 'Package deleted successfully',
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message || 'Failed to delete package'
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Delete request failed:', {
+                                status: status,
+                                error: error,
+                                response: xhr.responseText
+                            });
+                            
+                            let errorMessage = 'An error occurred while deleting the package';
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                if (response.message) {
+                                    errorMessage = response.message;
+                                }
+                            } catch (e) {
+                                console.error('Error parsing error response:', e);
+                            }
+                            
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: errorMessage
+                            });
+                        }
+                    });
+                }
+            });
         });
         
         // View Package Details
