@@ -778,7 +778,6 @@
   <div class="form-control bg-light" readonly style="min-height: 110px;">
     
     <div><strong>Coupon Discount:</strong> <span id="summary_coupon_discount">-</span></div>
-    <div><strong>Referral Points:</strong> <span id="summary_referral_points">-</span></div>
     <div><strong>Used Points:</strong> <span id="summary_patient_reward">-</span></div>
     <div><strong>Points to Earn:</strong> <span id="points_to_earn_display">-</span></div>
     <div class="mt-2"><strong>Total Price:</strong> <span id="summary_total_price">-</span></div>

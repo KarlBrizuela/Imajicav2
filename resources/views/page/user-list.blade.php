@@ -261,36 +261,52 @@
                     cancelButtonColor: '#6c757d'
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        // Show loading state
+                        Swal.fire({
+                            title: 'Deleting...',
+                            text: 'Please wait while we delete the user',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
                         $.ajax({
                             url: "/user/delete/" + id,
                             type: "POST",
                             data: { _token: token },
                             success: function (response) {
-                                let message = response.success ? 
-                                    "The user has been deleted successfully." : 
-                                    "Failed to delete the user.";
-
-                                let icon = response.success ? "success" : "error";
-
-                                Swal.fire({
-                                    title: response.success ? "Deleted!" : "Error!",
-                                    text: message,
-                                    icon: icon,
-                                    timer: 2000
-                                });
-
                                 if (response.success) {
-                                    setTimeout(function() {
-                                        location.reload(); // Reload the page after 2 seconds
-                                    }, 2000);
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: 'User has been deleted successfully',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Failed to delete the user. Please try again.',
+                                        confirmButtonColor: '#d33'
+                                    });
                                 }
                             },
-                            error: function () {
+                            error: function (xhr) {
+                                let errorMessage = 'Something went wrong. Please try again.';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                }
+                                
                                 Swal.fire({
-                                    title: "Oops!",
-                                    text: "Something went wrong. Try again.",
-                                    icon: "error",
-                                    timer: 2000
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: errorMessage,
+                                    confirmButtonColor: '#d33'
                                 });
                             }
                         });

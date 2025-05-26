@@ -134,15 +134,9 @@ class UserController extends Controller
         $user = User::find($id);
 
         if ($user) {
-
             if($user->delete()){
-                $staff = staff::where('user_id', $id)->first();
-                if($staff){
-                    $staff->user_id = NULL;
-                    $staff->save();
-                }
+                return response()->json(['success' => true]);
             }
-            return response()->json(['success' => true]);
         }
 
         return response()->json(['success' => false]);
