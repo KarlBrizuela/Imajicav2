@@ -44,11 +44,7 @@
       <meta property="og:description" content="Vuexy is the best bootstrap 5 dashboard for responsive web apps. Streamline your app development process with ease." />
       <meta property="og:site_name" content="Pixinvent" />
       <link rel="canonical" href="https://themeforest.net/item/vuexy-vuejs-html-laravel-admin-dashboard-template/23328599" />
-<<<<<<< HEAD
     
-=======
-
->>>>>>> origin/main
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <!-- ? PROD Only: Google Tag Manager (Default ThemeSelection: GTM-5DDHKGP, PixInvent: GTM-5J3LMKC) -->
       <script>
@@ -378,11 +374,7 @@ $(document).ready(function () {
     `)
     .appendTo('head');
 
-<<<<<<< HEAD
   // Existing DataTable initialization 
-=======
-  // Existing DataTable initialization
->>>>>>> origin/main
   $('#orderTable').DataTable({
     layout: {
       topStart: {
@@ -416,11 +408,7 @@ $(document).ready(function () {
     const row = $(this).closest('tr');
     const orderId = row.data('id');
     const orderItems = row.data('items');
-<<<<<<< HEAD
     
-=======
-
->>>>>>> origin/main
     // Store all order details in session storage
     const orderDetails = {
       id: orderId,
@@ -435,11 +423,7 @@ $(document).ready(function () {
       status: row.find('td:eq(5)').text().trim(),
       payment: row.find('td:eq(6)').text().trim()
     };
-<<<<<<< HEAD
     
-=======
-
->>>>>>> origin/main
     sessionStorage.setItem('orderDetails', JSON.stringify(orderDetails));
     sessionStorage.setItem('currentOrderItems', JSON.stringify(orderItems));
     console.log("Order details from order list:", orderDetails);
@@ -473,19 +457,11 @@ $(document).ready(function () {
           showConfirmButton: false,
           didOpen: () => {
             Swal.showLoading()
-<<<<<<< HEAD
             
             // Set the order ID in the hidden form
             $('#delete_order_id').val(orderId);
             $('#delete_void_reason').val('Order deleted by staff');
             
-=======
-
-            // Set the order ID in the hidden form
-            $('#delete_order_id').val(orderId);
-            $('#delete_void_reason').val('Order deleted by staff');
-
->>>>>>> origin/main
             // Submit the form via AJAX
             $.ajax({
               type: "POST",
