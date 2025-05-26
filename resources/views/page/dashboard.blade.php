@@ -474,20 +474,20 @@
 
             <!-- Popular Services Gantt Chart -->
             <div class="row g-4 mb-4">
-              <div class="col-12">
-                <div class="card">
-                  <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Popular Services Timeline</h5>
-                    <button class="btn btn-sm btn-outline-primary" onclick="exportChartData('servicesGanttChart')">
-                      <i class="ti tabler-download me-1"></i>Export Data
-                    </button>
-                  </div>
-                  <div class="card-body">
-                    <canvas id="servicesGanttChart" height="400"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Popular Services Timeline</h5>
+        <button class="btn btn-sm btn-outline-primary" onclick="exportChartData('servicesGanttChart')">
+          <i class="ti tabler-download me-1"></i>Export Data
+        </button>
+      </div>
+      <div class="card-body">
+        <canvas id="servicesGanttChart" style="height: 400px !important;"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
 
             <!-- Branch Performance Chart -->
             <div class="row g-4 mb-4">
@@ -856,27 +856,15 @@
         // Popular Services Gantt Chart
         const servicesGanttCtx = document.getElementById('servicesGanttChart');
         if (servicesGanttCtx) {
-          const services = @json($services);
-
-          // Sort services by booking count
-          const sortedServices = [...services].sort((a, b) => b.booking_count - a.booking_count);
-
-          // Get the last 6 months
-          const months = [];
-          for (let i = 5; i >= 0; i--) {
-            const date = new Date();
-            date.setMonth(date.getMonth() - i);
-            months.push(date.toLocaleString('default', { month: 'short' }));
-          }
+          const chartData = @json($chartData);
+          const services = chartData.services;
+          const months = chartData.months;
 
           // Create datasets for each service
-          const datasets = sortedServices.slice(0, 5).map((service, index) => {
-            // Use the monthly_data from the service if available, otherwise use booking_count
-            const data = service.monthly_data || Array(6).fill(service.booking_count / 6);
-
+          const datasets = services.map((service, index) => {
             return {
               label: service.service_name,
-              data: data,
+              data: service.monthly_data,
               backgroundColor: `hsla(${index * 72}, 70%, 50%, 0.7)`,
               borderColor: `hsl(${index * 72}, 70%, 50%)`,
               borderWidth: 1,

@@ -27,6 +27,7 @@ class DashboardController extends Controller
     // Add this method to fix the "Method does not exist" error
     public function dashboard()
     {
+        
         $patients = Patient::all();
         $bookings = Booking::with(['patients', 'services'])->where('status', 'Paid')->get();
         
@@ -43,24 +44,46 @@ class DashboardController extends Controller
             ->where('bookings.status', 'Paid')
             ->groupBy('services.service_id', 'services.service_name', 'services.service_cost')
             ->orderBy('booking_count', 'desc')
-            ->get()
-            ->map(function($service) {
-                // Get monthly booking counts for the last 6 months (paid only)
-                $monthlyData = [];
-                for ($i = 5; $i >= 0; $i--) {
-                    $month = now()->subMonths($i)->format('Y-m');
-                    $count = DB::table('booking_service')
-                        ->join('bookings', 'booking_service.booking_id', '=', 'bookings.booking_id')
-                        ->where('booking_service.service_id', $service->service_id)
-                        ->where('bookings.status', 'Paid')
-                        ->whereYear('bookings.booking_date', now()->subMonths($i)->year)
-                        ->whereMonth('bookings.booking_date', now()->subMonths($i)->month)
-                        ->count();
-                    $monthlyData[] = $count;
-                }
-                $service->monthly_data = $monthlyData;
-                return $service;
-            });
+            ->limit(5)  // Get only top 5 services
+            ->get();
+
+        // Get monthly data for each service
+        $services = $services->map(function($service) {
+            $monthlyData = collect([]);
+            
+            // Get data for each of the last 6 months
+            for ($i = 5; $i >= 0; $i--) {
+                $date = now()->subMonths($i);
+                $count = DB::table('booking_service')
+                    ->join('bookings', 'booking_service.booking_id', '=', 'bookings.booking_id')
+                    ->where('booking_service.service_id', $service->service_id)
+                    ->where('bookings.status', 'Paid')
+                    ->whereYear('bookings.start_date', $date->year)
+                    ->whereMonth('bookings.start_date', $date->month)
+                    ->count();
+                $monthlyData->push($count);
+            }
+
+            return (object)[
+                'service_id' => $service->service_id,
+                'service_name' => $service->service_name,
+                'service_cost' => $service->service_cost,
+                'booking_count' => $service->booking_count,
+                'monthly_data' => $monthlyData->toArray()
+            ];
+        });
+
+        // Get the last 6 months for labels
+        $months = collect([]);
+        for ($i = 5; $i >= 0; $i--) {
+            $months->push(now()->subMonths($i)->format('M Y'));
+        }
+
+        // Format data for the chart
+        $chartData = [
+            'months' => $months,
+            'services' => $services
+        ];
         
         // Calculate patient growth
         $patientGrowth = 0;
@@ -160,6 +183,7 @@ class DashboardController extends Controller
             'patients', 
             'bookings', 
             'services',
+            'chartData',
             'patientGrowth', 
             'bookingGrowth', 
             'todayBirthdays', 
@@ -177,10 +201,59 @@ class DashboardController extends Controller
         $patients = Patient::all();
         $bookings = booking::all();
         
-        // Get services with booking counts
-        $services = service::select('service_id', 'service_name', 'service_cost')
-            ->withCount('booking')
+        // Get services with booking counts and monthly data for paid bookings only
+        $services = DB::table('services')
+            ->select(
+                'services.service_id',
+                'services.service_name',
+                'services.service_cost',
+                DB::raw('COUNT(DISTINCT booking_service.booking_id) as booking_count')
+            )
+            ->leftJoin('booking_service', 'services.service_id', '=', 'booking_service.service_id')
+            ->leftJoin('bookings', 'booking_service.booking_id', '=', 'bookings.booking_id')
+            ->where('bookings.status', 'Paid')
+            ->groupBy('services.service_id', 'services.service_name', 'services.service_cost')
+            ->orderBy('booking_count', 'desc')
+            ->limit(5)  // Get only top 5 services
             ->get();
+
+        // Get monthly data for each service
+        $services = $services->map(function($service) {
+            $monthlyData = collect([]);
+            
+            // Get data for each of the last 6 months
+            for ($i = 5; $i >= 0; $i--) {
+                $date = now()->subMonths($i);
+                $count = DB::table('booking_service')
+                    ->join('bookings', 'booking_service.booking_id', '=', 'bookings.booking_id')
+                    ->where('booking_service.service_id', $service->service_id)
+                    ->where('bookings.status', 'Paid')
+                    ->whereYear('bookings.start_date', $date->year)
+                    ->whereMonth('bookings.start_date', $date->month)
+                    ->count();
+                $monthlyData->push($count);
+            }
+
+            return (object)[
+                'service_id' => $service->service_id,
+                'service_name' => $service->service_name,
+                'service_cost' => $service->service_cost,
+                'booking_count' => $service->booking_count,
+                'monthly_data' => $monthlyData->toArray()
+            ];
+        });
+
+        // Get the last 6 months for labels
+        $months = collect([]);
+        for ($i = 5; $i >= 0; $i--) {
+            $months->push(now()->subMonths($i)->format('M Y'));
+        }
+
+        // Format data for the chart
+        $chartData = [
+            'months' => $months,
+            'services' => $services
+        ];
         
         // Calculate patient growth (example calculation - modify as needed)
         $patientGrowth = $this->calculatePatientGrowth();
@@ -230,6 +303,7 @@ class DashboardController extends Controller
             'patients', 
             'bookings', 
             'services',
+            'chartData',
             'patientGrowth', 
             'bookingGrowth', 
             'todayBirthdays', 

@@ -776,7 +776,7 @@
                           <div class="mb-4">
   <label class="form-label">Booking Summary</label>
   <div class="form-control bg-light" readonly style="min-height: 110px;">
-    <div><strong>Service Price:</strong> <span id="summary_total_price_service">-</span></div>
+    
     <div><strong>Coupon Discount:</strong> <span id="summary_coupon_discount">-</span></div>
     <div><strong>Referral Points:</strong> <span id="summary_referral_points">-</span></div>
     <div><strong>Used Points:</strong> <span id="summary_patient_reward">-</span></div>
@@ -995,7 +995,7 @@
                          <div class="mb-4">
   <label class="form-label">Booking Summary</label>
   <div class="form-control bg-light" readonly style="min-height: 110px;">
-    <div><strong>Service Price:</strong> <span id="update_summary_service_price">-</span></div>
+    
     <div><strong>Coupon Discount:</strong> <span id="update_summary_coupon_discount">-</span></div>
     <div><strong>Referral Points:</strong> <span id="update_summary_referral_points">-</span></div>
     <div><strong>Used Points:</strong> <span id="update_summary_patient_reward">-</span></div>
@@ -1417,63 +1417,128 @@
 
  
 $(document).ready(function() {
+    // Initialize service prices object
+    var servicePrices = {};
+    @foreach ($services as $service)
+      servicePrices['{{ $service->service_id }}'] = {{ $service->service_cost }};
+    @endforeach
+
+    // Initialize select2 for service selection
     $('#service_id').select2({
-        placeholder: "Choose services...",
-        allowClear: true
+      placeholder: "Choose services...",
+      allowClear: true
     });
-    
+
     // Handle service selection changes
     $('#service_id').on('change select2:select select2:unselect', function() {
-        updateServiceCalculations();
+      updateSummary(); // This will update all summary information including service price
     });
-    
-    // Handle reward points radio selection
+
+    // Add event handler for reward points radio buttons
     $('input[name="useReward"]').on('change', function() {
-        updateServiceCalculations();
-        toggleDisplaySections();
+      updateSummary();
     });
-    
-    function updateServiceCalculations() {
-        let totalPoints = 0;
-        let totalCost = 0;
-        
-        // Get selected values
-        let selectedValues = $('#service_id').val() || [];
-        
-        selectedValues.forEach(function(serviceId) {
-            let option = $(`#service_id option[value="${serviceId}"]`);
-            totalPoints += parseInt(option.data('loyalty-pts')) || 0;
-            totalCost += parseFloat(option.data('service-cost')) || 0;
+
+    // Function to calculate service price
+    function calculateServicePrice() {
+      var servicePrice = 0;
+      var bookingType = $('input[name="booking_type"]:checked').val();
+      var serviceIds = $('#service_id').val() || [];
+      var packageIds = $('#package_id').val() || [];
+
+      if (bookingType === 'service' && serviceIds.length > 0) {
+        serviceIds.forEach(function(serviceId) {
+          if (servicePrices[serviceId]) {
+            servicePrice += parseFloat(servicePrices[serviceId]);
+          }
         });
-        
-        // Update displays
-        $('#points_needed_display').text(totalPoints);
-        $('#amount_needed_display').text(totalCost.toFixed(2));
-        
-        console.log('Calculated - Points:', totalPoints, 'Cost:', totalCost);
+      } else if (bookingType === 'package' && packageIds.length > 0) {
+        packageIds.forEach(function(packageId) {
+          $.ajax({
+            url: '/api/package-price/' + packageId,
+            method: 'GET',
+            async: false,
+            success: function(data) {
+              if (data && data.total_price) {
+                servicePrice += parseFloat(data.total_price);
+              }
+            }
+          });
+        });
+      }
+      return servicePrice;
     }
-    
-    function toggleDisplaySections() {
-        let useReward = $('input[name="useReward"]:checked').val();
-        
-        if (useReward === '1') {
-            // Show points, hide amount
-            $('#points_needed_section').show();
-            $('#amount_needed_section').hide();
-        } else if (useReward === '0') {
-            // Show amount, hide points
-            $('#points_needed_section').hide();
-            $('#amount_needed_section').show();
+
+    // Function to update booking summary for new bookings
+    window.updateSummary = function() {
+      var serviceIds = $('#service_id').val() || [];
+      var packageIds = $('#package_id').val() || [];
+      var pid = $('#patient_id').val();
+      var dtype = $('#discount_type').val();
+      var dval = $('#discount_value').val();
+      var useReward = $('input[name="useReward"]:checked').val();
+      var status = $('#status').val();
+      var bookingType = $('input[name="booking_type"]:checked').val();
+      var referrerId = $('#referrer_id').val();
+      
+      // Calculate service price
+      var servicePrice = calculateServicePrice();
+      
+      var patient = patientData[pid] || {reward: 0};
+      var discount = 0;
+      var discountText = '-';
+      var referralText = '-';
+      
+      // Calculate coupon discount
+      if (dtype && dval) {
+        if (dtype === 'percentage') {
+          discount = servicePrice * (parseFloat(dval) / 100);
+          discountText = dval + '% (' + formatMoney(discount) + ')';
         } else {
-            // No selection yet - show both or default behavior
-            $('#points_needed_section').show();
-            $('#amount_needed_section').show();
+          discount = parseFloat(dval);
+          discountText = formatMoney(discount);
         }
+      }
+      
+      // Calculate referral points
+      if (referrerId && $('#referralSection').is(':visible')) {
+        referralText = '100 points';
+      }
+      
+      var afterCoupon = Math.max(0, servicePrice - discount);
+      var rewardPoints = patient.reward || 0;
+      var usedPoints = useReward == '1' && rewardPoints > 0 ? Math.min(rewardPoints, afterCoupon) : 0;
+      var usedPointsText = usedPoints > 0 ? '- ' + formatMoney(usedPoints) : '-';
+      var afterReward = Math.max(0, afterCoupon - usedPoints);
+      var total = afterReward;
+      
+      // Calculate points to earn
+      var pointsToEarn = 0;
+      var pointsToEarnText = '0 points';
+      
+      if (useReward === '0') {
+        pointsToEarn = Math.floor(servicePrice / 100);
+        pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '0 points';
+      }
+      
+      // Update all summary displays
+      $('#summary_coupon_discount').text(discountText);
+      $('#summary_referral_points').text(referralText);
+      $('#summary_patient_reward').text(usedPointsText);
+      $('#points_to_earn_display').text(pointsToEarnText);
+      $('#summary_total_price').text(formatMoney(total));
+      
+      // Update the payment amount field
+      $('#payment_amount').val(total.toFixed(2));
     }
-    
-    // Initial setup
-    updateServiceCalculations();
-    toggleDisplaySections();
+
+    // Add event handlers for all form changes that should trigger summary updates
+    $('#service_id, #package_id, input[name="booking_type"], #patient_id, #discount_type, #discount_value, input[name="useReward"], #status, #referrer_id').on('change', function() {
+      updateSummary();
+    });
+
+    // Trigger initial update
+    updateSummary();
 });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -1758,12 +1823,6 @@ $(document).ready(function() {
     var status = $('#status').val();
     var bookingType = $('input[name="booking_type"]:checked').val();
     
-   if (status === 'Paid') {
-    pointsToEarn = Math.floor(servicePrice / 50);
-    pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '-';
-  }
-    
-
     console.log('updateSummary called with:', {
       serviceIds: serviceIds,
       packageIds: packageIds,
@@ -1832,7 +1891,7 @@ $(document).ready(function() {
     // Check if referrer is selected
     var referrerId = $('#referrer_id').val();
     if (referrerId && $('#referralSection').is(':visible')) {
-      referralText = "Will earn 100 points";
+      referralText = "100 points";
     }
     
     var afterCoupon = Math.max(0, servicePrice - discount);
@@ -1842,22 +1901,25 @@ $(document).ready(function() {
     var afterReward = Math.max(0, afterCoupon - usedPoints);
     var total = afterReward;
     
-    // Calculate points to earn based on service price (only for Paid status)
+    // Calculate points to earn based on service price
     var pointsToEarn = 0;
-    var pointsToEarnText = '-';
+    var pointsToEarnText = '0 points'; // Default to 0 points
     
-    if (status === 'updateUseRewardNo') {
-      // Award 1 point per 50 pesos
+    // Show points based on reward points selection
+    if (useReward === '0') { // When "No" is selected
       pointsToEarn = Math.floor(servicePrice / 100);
-      pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '-';
+      pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '0 points';
     }
+    
+    // Always show points section, but value changes based on selection
+    $('#points_to_earn_section').show();
+    $('#points_to_earn_display').text(pointsToEarnText);
     
     // Update summary display
     $('#summary_service_price').text(formatMoney(servicePrice));
     $('#summary_coupon_discount').text(discountText);
     $('#summary_referral_points').text(referralText);
     $('#summary_patient_reward').text(usedPointsText);
-    $('#points_to_earn_display').text(pointsToEarnText);
     $('#summary_total_price').text(formatMoney(total));
     
     // Update the payment amount field with the calculated total
@@ -1871,7 +1933,7 @@ $(document).ready(function() {
     var pid = $('#update_patient_id').val();
     var dtype = $('#update_discount_type').val();
     var dval = $('#update_discount_value').val();
-    var useReward = $('input[name="useReward"]:checked').val();
+    var useReward = $('input[name="update_useReward"]:checked').val();
     var status = $('#update_status').val();
     var bookingType = $('input[name="edit_booking_type"]:checked').val();
     
@@ -1942,7 +2004,7 @@ $(document).ready(function() {
     // Check if referrer is selected
     var referrerId = $('#update_referrer_id').val();
     if (referrerId && $('#updateReferralSection').is(':visible')) {
-      referralText = "Will earn 100 points";
+      referralText = "100 points";
     }
     
     var afterCoupon = Math.max(0, servicePrice - discount);
@@ -1952,22 +2014,25 @@ $(document).ready(function() {
     var afterReward = Math.max(0, afterCoupon - usedPoints);
     var total = afterReward;
     
-    // Calculate points to earn based on service price (only for Paid status)
+    // Calculate points to earn based on service price
     var pointsToEarn = 0;
-    var pointsToEarnText = '-';
+    var pointsToEarnText = '0 points'; // Default to 0 points
     
-    if (status === 'Paid') {
-      // Award 1 point per 50 pesos
-      pointsToEarn = Math.floor(servicePrice / 50);
-      pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '-';
+    // Show points based on reward points selection
+    if (useReward === '0') { // When "No" is selected
+      pointsToEarn = Math.floor(servicePrice / 100);
+      pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '0 points';
     }
+    
+    // Always show points section, but value changes based on selection
+    $('#update_points_to_earn_section').show();
+    $('#update_summary_points_to_earn').text(pointsToEarnText);
     
     // Update summary display
     $('#update_summary_service_price').text(formatMoney(servicePrice));
     $('#update_summary_coupon_discount').text(discountText);
     $('#update_summary_referral_points').text(referralText);
     $('#update_summary_patient_reward').text(usedPointsText);
-    $('#update_summary_points_to_earn').text(pointsToEarnText);
     $('#update_summary_total_price').text(formatMoney(total));
     
     // Update the payment amount field with the calculated total
