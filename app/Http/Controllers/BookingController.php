@@ -331,47 +331,36 @@ class BookingController extends Controller
                     'No Show' => 'ETC'
                 ];
 
-                // Determine if this is a package booking
-                $isPackageBooking = !empty($booking->package_id);
-
                 // Get all services and packages
-                $services = $booking->services();
-                $packages = $booking->packages();
+                $services = $booking->services;
+                $packages = $booking->packages;
 
                 // Prepare service names and package names
-                $serviceNames = $services->pluck('service_name')->implode(', ');
-                $packageNames = $packages->pluck('package_name')->implode(', ');
+                $serviceNames = $services ? $services->pluck('service_name')->implode(', ') : '';
+                $packageNames = $packages ? $packages->pluck('package_name')->implode(', ') : '';
 
                 // Create the description with package information if applicable
                 $description = "";
-                if ($isPackageBooking) {
+                if ($packages && $packages->count() > 0) {
                     $description .= "Package(s): {$packageNames}\n";
                 }
+                if ($services && $services->count() > 0) {
+                    $description .= "Service(s): {$serviceNames}\n";
+                }
 
-                $description .= "Service(s): {$serviceNames}\n";
-                $description .= "Staff: " . ($booking->staff ? $booking->staff->firstname . ' ' . $booking->staff->lastname : 'Unassigned') . "\n" .
-                               "Branch: " . ($booking->branch ? $booking->branch->branch_name : 'N/A') . "\n" .
-                               "Status: " . $booking->status;
-
-                // Format service_id and package_id for the response
-                $serviceId = $booking->service_id;
-                $packageId = $booking->package_id;
-
-                // Log the data for debugging
-                Log::debug("Calendar event for booking #{$booking->booking_id}", [
-                    'service_id' => $serviceId,
-                    'package_id' => $packageId
-                ]);
+                // Get service and package IDs
+                $serviceId = $services ? $services->pluck('service_id')->toArray() : [];
+                $packageId = $packages ? $packages->pluck('package_id')->toArray() : [];
 
                 return [
                     'id' => $booking->booking_id,
                     'title' => 'Book ' . $booking->booking_id,
-                    'start' => $booking->start_date,
-                    'end' => $booking->end_date,
+                    'start' => date('Y-m-d H:i:s', strtotime($booking->start_date)),
+                    'end' => date('Y-m-d H:i:s', strtotime($booking->end_date)),
                     'allDay' => false,
                     'extendedProps' => [
                         'calendar' => $statusColors[$booking->status] ?? 'Business',
-                        'bookingId' => $booking->booking_id, // Add explicit booking ID
+                        'bookingId' => $booking->booking_id,
                         'status' => $booking->status,
                         'serviceId' => $serviceId,
                         'packageId' => $packageId,
@@ -385,7 +374,9 @@ class BookingController extends Controller
                         'serviceNames' => $serviceNames,
                         'packageNames' => $packageNames,
                         'staffName' => $booking->staff ? $booking->staff->firstname . ' ' . $booking->staff->lastname : 'Unassigned',
-                        'branchName' => $booking->branch ? $booking->branch->branch_name : 'No Branch'
+                        'branchName' => $booking->branch ? $booking->branch->branch_name : 'No Branch',
+                        'start_date' => date('Y-m-d H:i:s', strtotime($booking->start_date)),
+                        'end_date' => date('Y-m-d H:i:s', strtotime($booking->end_date))
                     ]
                 ];
             });
