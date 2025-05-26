@@ -430,3 +430,5 @@ Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->nam
 
 Route::put('/package/update', [App\Http\Controllers\PackageController::class, 'update'])->name('package.update');
 
+Route::get('/service/get-points', [App\Http\Controllers\ServiceController::class, 'getPoints'])->name('service.get_points');
+

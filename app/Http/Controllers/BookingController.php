@@ -26,195 +26,135 @@ class BookingController extends Controller
     }
 
     public function create(Request $request)
-    {
-        $data = $request->validate([
-            'service_id' => 'nullable|required_without:package_id|array',
-            'service_id.*' => 'nullable|exists:services,service_id',
-            'package_id' => 'nullable|required_without:service_id|array',
-            'package_id.*' => 'nullable|exists:packages,package_id',
-            'status' => 'required',
-            'payment' => 'nullable',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'id' => 'required',
-            'branch_code' => 'required',
-            'patient_id' => 'required',
-            'useReward' => 'required',
-            'remarks' => 'required',
-            'coupon_code' => 'nullable|exists:coupons,coupon_code',
-            'discount_type' => 'nullable|in:fixed,percentage',
-            'discount_value' => 'nullable|numeric',
-        ]);
-//
-        // Get the patient for calculations
-        $patient = patient::find($data['patient_id']);
+{
+    $data = $request->validate([
+        'service_id' => 'nullable|required_without:package_id|array',
+        'service_id.*' => 'nullable|exists:services,service_id',
+        'package_id' => 'nullable|required_without:service_id|array',
+        'package_id.*' => 'nullable|exists:packages,package_id',
+        'status' => 'required',
+        'payment' => 'nullable',
+        'start_date' => 'required',
+        'end_date' => 'required',
+        'id' => 'required',
+        'branch_code' => 'required',
+        'patient_id' => 'required',
+        'useReward' => 'required',
+        'remarks' => 'required',
+        'coupon_code' => 'nullable|exists:coupons,coupon_code',
+        'discount_type' => 'nullable|in:fixed,percentage',
+        'discount_value' => 'nullable|numeric',
+    ]);
 
-        if (!$patient) {
-            return redirect()->route('page.booking')
-                ->with('error', 'Invalid patient selected.');
-        }
+    $patient = patient::find($data['patient_id']);
 
-        // Determine if this is a package or service booking
-        $isPackageBooking = isset($data['package_id']) && !empty($data['package_id']) && count($data['package_id']) > 0;
-
-        // Initialize servicePrice
-        $servicePrice = 0;
-
-        // Calculate price for services if applicable
-        if (isset($data['service_id']) && is_array($data['service_id']) && !$isPackageBooking) {
-            foreach ($data['service_id'] as $serviceId) {
-                $service = Service::find($serviceId);
-                if (!$service) {
-                    continue;
-                }
-                $servicePrice += $service->service_cost;
-            }
-        }
-
-        // Calculate price for packages if applicable
-        if ($isPackageBooking && isset($data['package_id']) && is_array($data['package_id'])) {
-            foreach ($data['package_id'] as $packageId) {
-                $package = Package::with('services')->find($packageId);
-                if (!$package) {
-                    continue; // Skip invalid packages
-                }
-                $servicePrice += $package->services->sum('service_cost');
-            }
-        }
-
-        $discount = 0;
-
-        // Apply coupon discount if provided
-        if (!empty($data['coupon_code']) && !empty($data['discount_type']) && !empty($data['discount_value'])) {
-            if ($data['discount_type'] === 'percentage') {
-                $discount = ($servicePrice * $data['discount_value']) / 100;
-            } else {
-                $discount = $data['discount_value'];
-            }
-
-            // Log the applied discount
-            Log::info("Applied coupon discount: Code: {$data['coupon_code']}, Type: {$data['discount_type']}, Value: {$data['discount_value']}, Amount: {$discount}");
-        }
-
-        $afterCoupon = max(0, $servicePrice - $discount);
-
-        // Initialize variables for tracking changes
-        $usedPoints = 0;
-
-        // We no longer use balance, so skip directly to points
-        $afterBalance = $afterCoupon;
-
-        // Apply reward points if selected
-        $afterReward = $afterBalance;
-        if ($data['useReward'] == '1' && $patient->points > 0) {
-            // Assuming 1 point = 1 in monetary value
-            $usedPoints = min($patient->points, $afterBalance);
-            $afterReward = $afterBalance - $usedPoints;
-        }
-
-        // Set final price
-        $totalPrice = $afterReward;
-
-        // Store original values in the booking record
-        $data['price'] = $servicePrice; // Original service price
-        $data['payment'] = $totalPrice; // Final amount to pay
-
-        // Remove service_id and package_id from the data array as we'll handle these separately
-        // through the relationship methods
-        $serviceIds = $data['service_id'] ?? [];
-        $packageIds = $data['package_id'] ?? [];
-        unset($data['service_id'], $data['package_id']);
-
-        // Create the booking record without service_id and package_id for now
-        $newBooking = booking::create($data);
-
-        // Attach services to the booking using the pivot table
-        if (!empty($serviceIds)) {
-            $newBooking->services()->attach($serviceIds);
-            Log::info("Attached services to booking ID: {$newBooking->booking_id}, Services: " . implode(', ', $serviceIds));
-        }
-
-        // Attach packages to the booking using the pivot table
-        if (!empty($packageIds)) {
-            $newBooking->packages()->attach($packageIds);
-            Log::info("Attached packages to booking ID: {$newBooking->booking_id}, Packages: " . implode(', ', $packageIds));
-        }
-
-        // Update patient's points if used
-        if ($usedPoints > 0) {
-            $patient->points -= $usedPoints;
-            Log::info("Deducted {$usedPoints} points from patient ID: {$patient->patient_id}. New points: {$patient->points}");
-        }
-
-        // Add points if this is a paid booking
-        if ($data['status'] == 'Paid') {
-            // Calculate points to be awarded based on service cost
-            $pointsToAdd = 0;
-
-            // Award 1 point per 50 pesos
-            $pointsToAdd = floor($servicePrice / 50);
-
-            // Add points and update total cost
-            $patient->points += $pointsToAdd;
-            $patient->total_cost += $servicePrice;
-
-            Log::info("Added {$pointsToAdd} points to Patient ID: {$patient->patient_id}. New total: {$patient->points}");
-            Log::info("Added {$servicePrice} to total_cost for Patient ID: {$patient->patient_id}. New total cost: {$patient->total_cost}");
-        }
-
-        // Save patient changes
-        $patient->save();
-
-        // After successfully creating the booking, handle referrer points if applicable
-        if ($request->has('referrer_id') && $request->has('is_first_time') && $request->has('add_points')) {
-            $referrerId = $request->input('referrer_id');
-            $patientId = $request->input('patient_id');
-
-            // Make sure referrer and patient are different people
-            if ($referrerId != $patientId && !empty($referrerId)) {
-                // Add 100 points to referrer
-                $referrer = Patient::find($referrerId);
-                if ($referrer) {
-                    $referrer->reward_points += 100;
-                    $referrer->save();
-
-                    // Log points transaction for referrer
-                    PatientPointsHistory::create([
-                        'patient_id' => $referrerId,
-                        'points' => 100,
-                        'transaction_type' => 'earned',
-                        'description' => 'Received points for referring a new patient'
-                    ]);
-                }
-
-                // Add 100 points to referred patient (new patient)
-                $patient = Patient::find($patientId);
-                if ($patient) {
-                    $patient->reward_points += 100;
-                    $patient->save();
-
-                    // Log points transaction for referred patient
-                    PatientPointsHistory::create([
-                        'patient_id' => $patientId,
-                        'points' => 100,
-                        'transaction_type' => 'earned',
-                        'description' => 'Received points for being referred by another patient'
-                    ]);
-                }
-            }
-        }
-
-        if($request->wantsJson()) {
-            return response()->json([
-                'status' => true,
-                'message' => 'Booking created successfully',
-                'booking' => $newBooking
-            ]);
-        }
-
+    if (!$patient) {
         return redirect()->route('page.booking')
-            ->with('success', 'Booking created successfully');
+            ->with('error', 'Invalid patient selected.');
     }
+
+    $isPackageBooking = isset($data['package_id']) && !empty($data['package_id']) && count($data['package_id']) > 0;
+    $servicePrice = 0;
+
+    // Calculate price for services if applicable
+    if (isset($data['service_id']) && is_array($data['service_id']) && !$isPackageBooking) {
+        foreach ($data['service_id'] as $serviceId) {
+            $service = Service::find($serviceId);
+            if (!$service) continue;
+            $servicePrice += $service->service_cost;
+        }
+    }
+
+    // Calculate price for packages if applicable
+    if ($isPackageBooking && isset($data['package_id']) && is_array($data['package_id'])) {
+        foreach ($data['package_id'] as $packageId) {
+            $package = Package::with('services')->find($packageId);
+            if (!$package) continue;
+            $servicePrice += $package->services->sum('service_cost');
+        }
+    }
+
+    $discount = 0;
+
+    // Apply coupon discount if provided
+    if (!empty($data['coupon_code']) && !empty($data['discount_type']) && !empty($data['discount_value'])) {
+        if ($data['discount_type'] === 'percentage') {
+            $discount = ($servicePrice * $data['discount_value']) / 100;
+        } else {
+            $discount = $data['discount_value'];
+        }
+    }
+
+    $afterCoupon = max(0, $servicePrice - $discount);
+    $usedPoints = 0;
+    $afterBalance = $afterCoupon;
+    $afterReward = $afterBalance;
+
+    // Calculate potential points (1 point per 100 pesos)
+    $potentialPoints = floor($servicePrice / 100);
+    
+    if ($data['useReward'] == '1' && $patient->points > 0) {
+        $usedPoints = min($patient->points, $afterBalance);
+        $afterReward = $afterBalance - $usedPoints;
+    }
+
+    $totalPrice = $afterReward;
+
+    // Store original values in the booking record
+    $data['price'] = $servicePrice;
+    $data['payment'] = $totalPrice;
+    $data['potential_points'] = $potentialPoints; // Add potential points to booking data
+
+    $serviceIds = $data['service_id'] ?? [];
+    $packageIds = $data['package_id'] ?? [];
+    unset($data['service_id'], $data['package_id']);
+
+    $newBooking = booking::create($data);
+
+    if (!empty($serviceIds)) {
+        $newBooking->services()->attach($serviceIds);
+    }
+
+    if (!empty($packageIds)) {
+        $newBooking->packages()->attach($packageIds);
+    }
+
+    if ($usedPoints > 0) {
+        $patient->points -= $usedPoints;
+    }
+
+    if ($data['status'] == 'Paid') {
+        $pointsToAdd = floor($servicePrice / 100);
+        $patient->points += $pointsToAdd;
+        $patient->total_cost += $servicePrice;
+    }
+
+    $patient->save();
+
+    // Return the response with points information
+    if($request->wantsJson()) {
+        return response()->json([
+            'status' => true,
+            'message' => 'Booking created successfully',
+            'booking' => $newBooking,
+            'points_info' => [
+                'potential_points' => $potentialPoints,
+                'used_points' => $usedPoints,
+                'remaining_points' => $patient->points,
+                'new_points_earned' => ($data['status'] == 'Paid') ? $pointsToAdd : 0
+            ]
+        ]);
+    }
+
+    return redirect()->route('page.booking')
+        ->with('success', 'Booking created successfully')
+        ->with('points_info', [
+            'potential_points' => $potentialPoints,
+            'used_points' => $usedPoints,
+            'remaining_points' => $patient->points,
+            'new_points_earned' => ($data['status'] == 'Paid') ? $pointsToAdd : 0
+        ]);
+}
 
     public function update(Request $request)
     {

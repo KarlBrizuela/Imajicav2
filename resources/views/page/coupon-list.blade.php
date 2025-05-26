@@ -379,9 +379,12 @@
                 // Get current time in the same timezone as your application
                 $now = now();
                 
+                // Split the start_end_date into start and end dates
+                $dates = explode(' to ', $coupon->start_end_date);
+                
                 // Parse dates with timezone consideration
-                $startDate = \Carbon\Carbon::parse($coupon->start_date, config('app.timezone'));
-                $endDate = \Carbon\Carbon::parse($coupon->end_date, config('app.timezone'));
+                $startDate = \Carbon\Carbon::parse($dates[0], config('app.timezone'));
+                $endDate = \Carbon\Carbon::parse($dates[1], config('app.timezone'));
                 
                 // Check if dates are valid (start before end)
                 $isValidDateRange = $startDate->lte($endDate);
@@ -391,6 +394,10 @@
                     $status = 'invalid';
                     $statusClass = 'bg-label-warning';
                     $statusText = 'Invalid Dates';
+                } elseif ($now->lt($startDate)) {
+                    $status = 'upcoming';
+                    $statusClass = 'bg-label-info';
+                    $statusText = 'Upcoming';
                 } elseif ($now->between($startDate, $endDate)) {
                     $status = 'active';
                     $statusClass = 'bg-label-success';

@@ -231,7 +231,12 @@ public function store(Request $request)
     public function verify(Request $request)
     {
         $couponCode = $request->input('coupon_code');
-        $serviceId = $request->input('service_id');
+        $serviceIds = $request->input('service_id');
+        
+        // Convert single service ID to array if needed
+        if (!is_array($serviceIds)) {
+            $serviceIds = [$serviceIds];
+        }
         
         // Find the coupon
         $coupon = \App\Models\coupon::where('coupon_code', $couponCode)->first();
@@ -245,7 +250,7 @@ public function store(Request $request)
         
         // Check if the coupon has start/end date constraints
         if ($coupon->start_end_date) {
-            $dates = explode(' - ', $coupon->start_end_date);
+            $dates = explode(' to ', $coupon->start_end_date);
             if (count($dates) === 2) {
                 $startDate = \Carbon\Carbon::parse($dates[0]);
                 $endDate = \Carbon\Carbon::parse($dates[1]);
@@ -260,20 +265,23 @@ public function store(Request $request)
             }
         }
         
-        // Check if coupon is service-specific and matches the requested service
-        if ($coupon->service_id && $coupon->service_id != $serviceId) {
-            // Get service name for error message
-            $service = service::find($coupon->service_id);
-            $serviceName = $service ? $service->service_name : 'specific services';
-            
-            return response()->json([
-                'valid' => false,
-                'message' => "This coupon is only valid for {$serviceName}"
-            ]);
+        // Check if coupon is service-specific and matches any of the requested services
+        if ($coupon->service_id) {
+            $validForService = in_array($coupon->service_id, $serviceIds);
+            if (!$validForService) {
+                // Get service name for error message
+                $service = \App\Models\service::find($coupon->service_id);
+                $serviceName = $service ? $service->service_name : 'specific services';
+                
+                return response()->json([
+                    'valid' => false,
+                    'message' => "This coupon is only valid for {$serviceName}"
+                ]);
+            }
         }
         
         // Check if coupon is restricted to new customers only
-        if ($coupon->new_customer) {
+        if ($coupon->new_customer === 'Yes') {
             $patientId = $request->input('patient_id');
             if ($patientId) {
                 $bookingsCount = \App\Models\booking::where('patient_id', $patientId)->count();
@@ -308,7 +316,7 @@ public function store(Request $request)
             'discount_type' => $coupon->discount_type,
             'discount_value' => $coupon->discount_value,
             'service_id' => $coupon->service_id,
-            'service_name' => $service ? $service->service_name : null
+            'service_name' => $service ? $service->service_name : 'All Services'
         ]);
     }
 }

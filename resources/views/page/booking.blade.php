@@ -598,9 +598,7 @@
         Points needed to avail services: <span id="points_needed_display" class="fw-semibold text-success">0</span>
     </small>
     
-    <small id="amount_needed_section" class="form-text text-muted">
-        Amount needed to avail services: $<span id="amount_needed_display" class="fw-semibold text-primary">0.00</span>
-    </small>
+   
                           </div>
 
 <div class="mb-5" id="package_section" style="display:none;">
@@ -2341,12 +2339,18 @@ $(document).ready(function() {
   // Coupon verification for new booking
   $('#verifyCoupon').on('click', function() {
     const couponCode = $('#coupon_code').val().trim();
-    const serviceId = $('#service_id').val();
+    const serviceIds = $('#service_id').val(); // This will be an array if multiple selection is enabled
     const verifyBtn = $(this);
     
     if (!couponCode) {
       // Show error message in the form instead of SweetAlert
       $('#couponHelp').removeClass('text-success text-muted').addClass('text-danger').text('Please enter a coupon code');
+      $('#coupon_code').removeClass('is-valid border-success').addClass('is-invalid');
+      return;
+    }
+
+    if (!serviceIds || (Array.isArray(serviceIds) && serviceIds.length === 0)) {
+      $('#couponHelp').removeClass('text-success text-muted').addClass('text-danger').text('Please select a service first');
       $('#coupon_code').removeClass('is-valid border-success').addClass('is-invalid');
       return;
     }
@@ -2362,7 +2366,7 @@ $(document).ready(function() {
       data: {
         _token: $('meta[name="csrf-token"]').attr('content'),
         coupon_code: couponCode,
-        service_id: serviceId
+        service_id: serviceIds
       },
       success: function(response) {
         if (response.valid) {
@@ -2383,26 +2387,14 @@ $(document).ready(function() {
           $('#discount_type').val(response.discount_type);
           $('#discount_value').val(response.discount_value);
           
-          console.log('Coupon verified successfully:', {
-            discountType: response.discount_type,
-            discountValue: response.discount_value,
-            hiddenFieldType: $('#discount_type').val(),
-            hiddenFieldValue: $('#discount_value').val()
-          });
-          
           // Success message
-          $('#couponHelp').removeClass('text-muted').addClass('text-success').html('<i class="bx bx-check-circle me-1"></i> Coupon applied successfully!');
+          $('#couponHelp').removeClass('text-muted text-danger').addClass('text-success').html('<i class="bx bx-check-circle me-1"></i> Coupon applied successfully!');
           
           // Add visual indicator for successful coupon application
-          $('#coupon_code').addClass('is-valid border-success');
+          $('#coupon_code').removeClass('is-invalid').addClass('is-valid border-success');
           
           // Update summary after a short delay to ensure hidden fields are set
           setTimeout(function() {
-            console.log('Updating summary after successful coupon verification');
-            console.log('Hidden fields before update:', {
-              discountType: $('#discount_type').val(),
-              discountValue: $('#discount_value').val()
-            });
             window.updateSummary();
           }, 100);
         } else {
@@ -2410,11 +2402,10 @@ $(document).ready(function() {
           $('#couponDetails').addClass('d-none');
           $('#discount_type').val('');
           $('#discount_value').val('');
-          $('#couponHelp').removeClass('text-success').addClass('text-danger').text(response.message || 'Invalid coupon code');
+          $('#couponHelp').removeClass('text-success text-muted').addClass('text-danger').text(response.message || 'Invalid coupon code');
           $('#coupon_code').removeClass('is-valid border-success').addClass('is-invalid');
           
           // Update summary immediately
-          console.log('Updating summary after invalid coupon');
           window.updateSummary();
         }
       },
@@ -2424,7 +2415,7 @@ $(document).ready(function() {
         $('#coupon_code').removeClass('is-valid border-success').addClass('is-invalid');
       },
       complete: function() {
-        // Reset button state - ALWAYS runs regardless of success or error
+        // Reset button state
         verifyBtn.html('Verify');
         verifyBtn.prop('disabled', false);
       }
@@ -3579,47 +3570,73 @@ $(document).ready(function() {
   <script>
 $(document).ready(function() {
     $('input[name="useReward"]').on('change', function() {
-        const useReward = $('input[name="useReward"]:checked').val();
-        const selectedServiceId = $('#service_id').val(); // Get selected service(s)
+        const selectedValue = $(this).val();
+        const selectedServiceId = $('#service_id').val();
 
-        if (useReward === '1') { // If "Yes" is selected
+        if (selectedValue === 'Yes') {
+            // Show points section, hide amount section
             $('#points_needed_section').show();
             $('#amount_needed_section').hide();
-        } else { // If "No" is selected, fetch service cost and points
-            $('#points_needed_section').hide();
-            $('#amount_needed_section').show();
+            $('#points_to_earn_section').hide(); // Hide points to earn when using points
 
-            if (selectedServiceId.length > 0) {
+            if (selectedServiceId && selectedServiceId.length > 0) {
+                // Fetch points needed
                 $.ajax({
-                    url: "{{ route('service.get_cost') }}", // Fetch cost & points from database
+                    url: "/service/get-points",
                     type: "GET",
                     data: { service_ids: selectedServiceId },
                     success: function(response) {
-                        console.log("Service Cost API Response:", response); // Debugging
-
                         if (response.success) {
-                            $('#amount_needed_display').text('₱' + response.total_cost);
-                            $('#points_to_earn_display').text(response.total_points + " pts"); // Display points
+                            $('#points_needed_display').text(response.points_needed + " pts");
+                        } else {
+                            $('#points_needed_display').text('-');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error("Error fetching points needed:", xhr);
+                        $('#points_needed_display').text('-');
+                    }
+                });
+            } else {
+                $('#points_needed_display').text('-');
+            }
+        } else {
+            // Show amount section and points to earn, hide points needed
+            $('#points_needed_section').hide();
+            $('#amount_needed_section').show();
+            $('#points_to_earn_section').show();
+
+            if (selectedServiceId && selectedServiceId.length > 0) {
+                // Fetch cost and points to earn
+                $.ajax({
+                    url: "/service/get-cost",
+                    type: "GET",
+                    data: { service_ids: selectedServiceId },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#amount_needed_display').text('₱' + response.total_cost.toFixed(2));
+                            $('#points_to_earn_display').text(response.total_points + " pts");
                         } else {
                             $('#amount_needed_display').text('-');
                             $('#points_to_earn_display').text('-');
                         }
                     },
                     error: function(xhr) {
-                        console.error("Error fetching service cost:", xhr);
+                        console.error("Error fetching service details:", xhr);
                         $('#amount_needed_display').text('-');
                         $('#points_to_earn_display').text('-');
                     }
                 });
             } else {
-                $('#amount_needed_display').text('-'); // Reset display if no service is selected
+                $('#amount_needed_display').text('-');
                 $('#points_to_earn_display').text('-');
             }
         }
     });
 
+    // Update when service selection changes
     $('#service_id').on('change', function() {
-        $('input[name="useReward"]:checked').trigger('change'); // Refresh based on selection
+        $('input[name="useReward"]:checked').trigger('change');
     });
 });
 
@@ -3721,8 +3738,32 @@ $(document).ready(function() {
 });
 </script>
 
+<!-- Points/Amount Section -->
+<div class="mb-4">
+    <!-- Points Needed Section (Initially Hidden) -->
+    <div id="points_needed_section" style="display: none;">
+        <label class="form-label">Points Needed</label>
+        <div class="input-group">
+            <span id="points_needed_display" class="form-control">-</span>
+        </div>
+    </div>
 
+    <!-- Amount Needed Section -->
+    <div id="amount_needed_section">
+        <label class="form-label">Amount</label>
+        <div class="input-group">
+            <span id="amount_needed_display" class="form-control">-</span>
+        </div>
+    </div>
 
+    <!-- Points to Earn Section -->
+    <div id="points_to_earn_section">
+        <label class="form-label">Points to Earn</label>
+        <div class="input-group">
+            <span id="points_to_earn_display" class="form-control">-</span>
+        </div>
+    </div>
+</div>
 
 </body>
 
