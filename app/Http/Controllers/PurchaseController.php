@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\OrderItem;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PurchaseController extends Controller
 {
@@ -23,21 +24,22 @@ class PurchaseController extends Controller
                 ->first()
         ];
 
-        // Get purchase records
-        $purchases = OrderItem::select(
-            'order_items.created_at',
-            'new_order_table.order_number as trans_no',
-            'new_order_table.customer_name as vendor_name',
-            'order_items.item_name as product_ordered',
-            'order_items.created_at as date_received',
-            'new_order_table.customer_name as received_by',
-            'order_items.quantity as qty',
-            'order_items.total as amount',
-            'new_order_table.payment_method as payment_terms'
-        )
-        ->join('new_order_table', 'order_items.order_id', '=', 'new_order_table.order_id')
-        ->get();
+        // Get orders data with debugging
+        $orders = Order::select(
+            'order_number',
+            'order_date',
+            'payment_status',
+            'payment_method',
+            'total'
+        )->get();
 
-        return view('page.purchase', compact('stats', 'purchases'));
+        // Debug output
+        if ($orders->isEmpty()) {
+            Log::info('No orders found in database');
+        } else {
+            Log::info('Found orders:', ['count' => $orders->count(), 'first_order' => $orders->first()]);
+        }
+
+        return view('page.purchase', compact('stats', 'orders'));
     }
 }
