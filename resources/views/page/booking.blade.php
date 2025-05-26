@@ -777,11 +777,24 @@
   <label class="form-label">Booking Summary</label>
   <div class="form-control bg-light" readonly style="min-height: 110px;">
     
-    <div><strong>Coupon Discount:</strong> <span id="summary_coupon_discount">-</span></div>
-    <div><strong>Referral Points:</strong> <span id="summary_referral_points">-</span></div>
-    <div><strong>Used Points:</strong> <span id="summary_patient_reward">-</span></div>
-    <div><strong>Points to Earn:</strong> <span id="points_to_earn_display">-</span></div>
-    <div class="mt-2"><strong>Total Price:</strong> <span id="summary_total_price">-</span></div>
+    <div class="mb-3">
+      <div class="d-flex justify-content-between">
+        <span>Coupon Discount:</span>
+        <span id="summary_coupon_discount">-</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>Used Points:</span>
+        <span id="summary_patient_reward">-</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>Points to Earn:</span>
+        <span id="points_to_earn_display">0 points</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>Total Price:</span>
+        <span id="summary_total_price">₱0.00</span>
+      </div>
+    </div>
   </div>
 </div>
                           <div class="d-flex justify-content-sm-between justify-content-start mt-6 gap-2">
@@ -996,11 +1009,24 @@
   <label class="form-label">Booking Summary</label>
   <div class="form-control bg-light" readonly style="min-height: 110px;">
     
-    <div><strong>Coupon Discount:</strong> <span id="update_summary_coupon_discount">-</span></div>
-    <div><strong>Referral Points:</strong> <span id="update_summary_referral_points">-</span></div>
-    <div><strong>Used Points:</strong> <span id="update_summary_patient_reward">-</span></div>
-    <div><strong>Points to Earn:</strong> <span id="update_summary_points_to_earn">-</span></div>
-    <div class="mt-2"><strong>Total Price:</strong> <span id="update_summary_total_price">-</span></div>
+    <div class="mb-3">
+      <div class="d-flex justify-content-between">
+        <span>Coupon Discount:</span>
+        <span id="update_summary_coupon_discount">-</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>Used Points:</span>
+        <span id="update_summary_patient_reward">-</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>Points to Earn:</span>
+        <span id="update_summary_points_to_earn">-</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span>Total Price:</span>
+        <span id="update_summary_total_price">-</span>
+      </div>
+    </div>
   </div>
 </div>
                           <div class="d-flex justify-content-sm-between justify-content-start mt-6 gap-2">
@@ -1487,7 +1513,6 @@ $(document).ready(function() {
       var patient = patientData[pid] || {reward: 0};
       var discount = 0;
       var discountText = '-';
-      var referralText = '-';
       
       // Calculate coupon discount
       if (dtype && dval) {
@@ -1498,11 +1523,6 @@ $(document).ready(function() {
           discount = parseFloat(dval);
           discountText = formatMoney(discount);
         }
-      }
-      
-      // Calculate referral points
-      if (referrerId && $('#referralSection').is(':visible')) {
-        referralText = '100 points';
       }
       
       var afterCoupon = Math.max(0, servicePrice - discount);
@@ -1523,7 +1543,6 @@ $(document).ready(function() {
       
       // Update all summary displays
       $('#summary_coupon_discount').text(discountText);
-      $('#summary_referral_points').text(referralText);
       $('#summary_patient_reward').text(usedPointsText);
       $('#points_to_earn_display').text(pointsToEarnText);
       $('#summary_total_price').text(formatMoney(total));
