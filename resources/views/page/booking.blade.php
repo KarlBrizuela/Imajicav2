@@ -1907,7 +1907,7 @@ $(document).ready(function() {
     
     // Show points based on reward points selection
     if (useReward === '0') { // When "No" is selected
-      pointsToEarn = Math.floor(servicePrice / 100);
+      pointsToEarn = Math.floor(servicePrice / 50);
       pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '0 points';
     }
     
