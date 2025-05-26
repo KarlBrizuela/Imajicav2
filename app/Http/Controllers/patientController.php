@@ -37,7 +37,8 @@ class patientController extends Controller
                 'medical_concerns' => 'nullable|string',
                 'current_medications' => 'nullable|string',
                 'note_from_admin' => 'nullable|string',
-                'image_path' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+                'image_path' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'referrer_id' => 'nullable|exists:patients,patient_id'
             ]);
 
             // Automatically assign 100 points to new patients
@@ -57,15 +58,29 @@ class patientController extends Controller
             // Create patient record with points
             $patient = patient::create($validatedData);
 
-            // Create a record in the points history
-            // PatientPointsHistory::create([
-            //     'patient_id' => $patient->patient_id,
-            //     'points' => 100,
-            //     'transaction_type' => 'earned',
-            //     'description' => 'Welcome bonus for new patient registration'
-            // ]);
+            // If there's a referrer, add points to their account
+            if ($request->filled('referrer_id')) {
+                $referrer = patient::findOrFail($request->referrer_id);
+                $referrer->increment('points', 100);
+                
+                // Create points history for referrer
+                PatientPointsHistory::create([
+                    'patient_id' => $referrer->patient_id,
+                    'points' => 100,
+                    'transaction_type' => 'earned',
+                    'description' => 'Referral bonus for referring ' . $patient->firstname . ' ' . $patient->lastname
+                ]);
+            }
 
-            return redirect()->back()->with('success', 'Customer created successfully! The patient has received 100 welcome points.');
+            // Create points history for new patient
+            PatientPointsHistory::create([
+                'patient_id' => $patient->patient_id,
+                'points' => 100,
+                'transaction_type' => 'earned',
+                'description' => $request->filled('referrer_id') ? 'Welcome bonus and referral points' : 'Welcome bonus for new patient registration'
+            ]);
+
+            return redirect()->back()->with('success', 'Customer created successfully! Points have been awarded to both customers.');
         } catch (ValidationException $e) {
             // For validation errors, get the detailed error messages
             $errors = $e->validator->errors()->all();

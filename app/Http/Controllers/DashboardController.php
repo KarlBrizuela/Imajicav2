@@ -506,8 +506,11 @@ class DashboardController extends Controller
         // Get all patient tiers for the dropdown
         $tiers = tier::all();
         
-        // Pass the tiers to the view
-        return view('page.new-patient', compact('tiers'));
+        // Get all existing patients for the referral dropdown
+        $patients = patient::all();
+        
+        // Pass both tiers and patients to the view
+        return view('page.new-patient', compact('tiers', 'patients'));
     }
     public function patient_list()
     {
