@@ -414,4 +414,33 @@ public function delete(Request $request)
                 ->with('error', $errorMessage);
         }
     }
+
+    public function show($id)
+    {
+        try {
+            // Find the order with its items
+            $order = order::with('orderItems')->findOrFail($id);
+            
+            // Get all products for reference
+            $products = DB::table('new_product')->get();
+            
+            // Calculate payment status counts for the dashboard widgets
+            $paymentCounts = [
+                'pending' => order::where('payment_status', 'Pending')->count(),
+                'paid' => order::where('payment_status', 'Paid')->count(),
+                'cancelled' => order::where('payment_status', 'Cancelled')->count(),
+                'failed' => order::where('payment_status', 'Failed')->count(),
+            ];
+            
+            return view('page.order-details', compact('order', 'products', 'paymentCounts'));
+        } catch (\Exception $e) {
+            Log::error('Error loading order details:', [
+                'order_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return redirect()->route('page.order-list')
+                ->with('error', 'Order not found or could not be loaded.');
+        }
+    }
 }

@@ -31,10 +31,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Imajica Booking System</title>
+    <title>Order Details</title>
 
     
-      <meta name="description" content="Vuexy is the best bootstrap 5 dashboard for responsive web apps. Streamline your app development process with ease." />
+      <meta name="description" content="View order details in the Imajica Booking System" />
       <!-- Canonical SEO -->
       <meta name="keywords" content="Vuexy bootstrap dashboard, vuexy bootstrap 5 dashboard, themeselection, html dashboard, web dashboard, frontend dashboard, responsive bootstrap theme" />
       <meta property="og:title" content="Vuexy bootstrap Dashboard by Pixinvent" />
@@ -138,164 +138,116 @@
         <div class="content-wrapper">
           <!-- Content -->
           <div class="container-xxl flex-grow-1 container-p-y">
-  <!-- Order List Widget -->
+            <!-- Order Details -->
+            <div class="row">
+              <div class="col-12">
+                <div class="card mb-4">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Order #{{ $order->order_number }}</h5>
+                    <a href="{{ route('page.order-list') }}" class="btn btn-secondary">
+                      <i class="ti ti-arrow-left me-1"></i> Back to Orders
+                    </a>
+                  </div>
+                  <div class="card-body">
+                    <div class="row mb-4">
+                      <div class="col-md-6">
+                        <h6 class="fw-semibold">Customer Information</h6>
+                        <p class="mb-1">Name: {{ $order->customer_name }}</p>
+                        <p>Email: {{ $order->customer_email }}</p>
+                      </div>
+                      <div class="col-md-6">
+                        <h6 class="fw-semibold">Order Information</h6>
+                        <p class="mb-1">Date: {{ $order->order_date }}</p>
+                        <p class="mb-1">Status: 
+                          <span class="badge bg-label-{{ 
+                            $order->order_status == 'Delivered' ? 'success' : 
+                            ($order->order_status == 'Ordered' ? 'primary' : 
+                            ($order->order_status == 'Out for Delivery' ? 'warning' : 
+                            ($order->order_status == 'Ready to Pickup' ? 'info' : 'secondary'))) 
+                          }}">
+                            {{ $order->order_status }}
+                          </span>
+                        </p>
+                        <p class="mb-1">Payment Status: 
+                          <span class="badge bg-label-{{ 
+                            $order->payment_status == 'Paid' ? 'success' : 
+                            ($order->payment_status == 'Pending' ? 'warning' : 
+                            ($order->payment_status == 'Failed' ? 'danger' : 
+                            ($order->payment_status == 'Cancelled' ? 'secondary' : 'info'))) 
+                          }}">
+                            {{ $order->payment_status }}
+                          </span>
+                        </p>
+                        <p>Payment Method: {{ $order->payment_method }}</p>
+                      </div>
+                    </div>
 
-  <div class="card mb-6">
-    <div class="card-widget-separator-wrapper">
-      <div class="card-body card-widget-separator">
-        <div class="row gy-4 gy-sm-1">
-          <div class="col-sm-6 col-lg-3">
-            <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
-              <div>
-                <h4 class="mb-0">{{ $paymentCounts['pending'] }}</h4>
-                <p class="mb-0">Pending Payment</p>
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @foreach($order->orderItems as $item)
+                          <tr>
+                            <td>{{ $item->item_name }}</td>
+                            <td>{{ $item->quantity }}</td>
+                            <td>₱{{ number_format($item->unit_price, 2) }}</td>
+                            <td>₱{{ number_format($item->total, 2) }}</td>
+                          </tr>
+                          @endforeach
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td colspan="3" class="text-end fw-semibold">Subtotal:</td>
+                            <td>₱{{ number_format($order->subtotal, 2) }}</td>
+                          </tr>
+                          <tr>
+                            <td colspan="3" class="text-end fw-semibold">Tax:</td>
+                            <td>₱{{ number_format($order->tax, 2) }}</td>
+                          </tr>
+                          <tr>
+                            <td colspan="3" class="text-end fw-semibold">Total:</td>
+                            <td>₱{{ number_format($order->total, 2) }}</td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+
+                    <div class="mt-4">
+                      <a href="{{ route('page.edit-order', $order->order_id) }}" class="btn btn-primary me-2">
+                        <i class="ti ti-edit me-1"></i> Edit Order
+                      </a>
+                      <button class="btn btn-danger delete-order" data-id="{{ $order->order_id }}" data-number="{{ $order->order_number }}">
+                        <i class="ti ti-trash me-1"></i> Delete Order
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <span class="avatar me-sm-6">
-                <span class="avatar-initial bg-label-warning rounded text-heading">
-                  <i class="icon-base ti tabler-calendar-stats icon-26px text-heading"></i>
-                </span>
-              </span>
             </div>
-            <hr class="d-none d-sm-block d-lg-none me-6" />
           </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
-              <div>
-                <h4 class="mb-0">{{ $paymentCounts['paid'] }}</h4>
-                <p class="mb-0">Paid</p>
+
+          <!-- Footer -->
+          <footer class="content-footer footer bg-footer-theme">
+            <div class="container-xxl">
+              <div class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+                <div class="text-body">
+                  ©
+                  <script>
+                    document.write(new Date().getFullYear());
+                  </script>
+                   Developed by <a href="https://intra-code.com/" target="_blank" class="footer-link">Intracode IT Solutions</a>
+                </div>
+               
               </div>
-              <span class="avatar p-2 me-lg-6">
-                <span class="avatar-initial bg-label-success rounded"><i class="icon-base ti tabler-checks icon-26px text-heading"></i></span>
-              </span>
             </div>
-            <hr class="d-none d-sm-block d-lg-none" />
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
-              <div>
-                <h4 class="mb-0">{{ $paymentCounts['cancelled'] > 0 ? $paymentCounts['cancelled'] : 'None' }}</h4>
-                <p class="mb-0">Cancelled</p>
-              </div>
-              <span class="avatar p-2 me-sm-6">
-                <span class="avatar-initial bg-label-secondary rounded"><i class="icon-base ti tabler-wallet icon-26px text-heading"></i></span>
-              </span>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <h4 class="mb-0">{{ $paymentCounts['failed'] > 0 ? $paymentCounts['failed'] : 'None' }}</h4>
-                <p class="mb-0">Failed</p>
-              </div>
-              <span class="avatar p-2">
-                <span class="avatar-initial bg-label-danger rounded"><i class="icon-base ti tabler-alert-octagon icon-26px text-heading"></i></span>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Order List Table -->
-  <div class="card">
-    <table class="table border-top table-striped table-responsive" id="orderTable">
-      <thead class="table-light">
-        <tr>
-          <th></th>
-          <th>order</th>
-          <th>date</th>
-          <th>customers</th>
-          <th>payment</th>
-          <th>payment status</th>
-          <th>method</th>
-          <th>actions</th>
-        </tr>
-        <tbody>
-         @foreach ($orders as $order)
-          <tr 
-            data-id="{{ $order->order_id }}"
-            data-items='@json($order->orderItems)'>
-            <td></td>
-            <td>
-              <a href="javascript:void(0)" class="text-heading fw-bold">#{{ $order->order_number }}</a>
-            </td>
-            <td>{{ $order->order_date }}</td>
-            <td>
-            <div class="d-flex flex-column">
-              <h6 class="mb-0">{{ $order->customer_name }}</h6>
-              <small class="text-muted">{{ $order->customer_email ?? 'No email available' }}</small>
-            </div>
-      
-          </td>
-
-            <td>${{ $order->total }}</td>
-            <td>
-              <span class="badge bg-label-{{ 
-                $order->payment_status == 'Paid' ? 'success' : 
-                ($order->payment_status == 'Pending' ? 'warning' : 
-                ($order->payment_status == 'Failed' ? 'danger' : 
-                ($order->payment_status == 'Cancelled' ? 'secondary' : 'info'))) 
-            }} me-1">
-                {{ ucfirst($order->payment_status) }}
-            </span>
-            
-            </td>
-            <td>{{ $order->payment_method }}</td>
-            <td>
-              <div class="d-flex gap-2">
-                <a href="{{ route('page.order-details', $order->order_id) }}" 
-                   class="btn btn-sm btn-success view-order">
-                  <i class="ti tabler-eye me-1"></i> View
-                </a>
-                
-                <a href="{{ route('page.edit-order', $order->order_id) }}" 
-                   class="btn btn-sm btn-primary edit-order">
-                  <i class="ti tabler-edit me-1"></i> Edit
-                </a>
-            
-                <button class="btn btn-sm btn-danger delete-order">
-                  <i class="ti tabler-trash me-1"></i> Delete
-                </button>
-              </div>
-            </td>
-          </tr>
-          @endforeach
-        </tbody>
-      </thead>
-    </table>
-  </div>
-</div>
-
-<!-- Delete Order Form (Hidden) -->
-<form id="deleteOrderForm" method="POST" action="{{ route('order.delete') }}" style="display: none;">
-    @csrf
-    @method('DELETE')
-    <input type="hidden" id="delete_order_id" name="order_id">
-    <input type="hidden" id="delete_void_reason" name="void_reason">
-</form>
-
-          <!-- / Content -->
-
-          
-            
-
-<!-- Footer -->
-<footer class="content-footer footer bg-footer-theme">
-    <div class="container-xxl">
-      <div class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-        <div class="text-body">
-          ©
-          <script>
-            document.write(new Date().getFullYear());
-          </script>
-           Developed by <a href="https://intra-code.com/" target="_blank" class="footer-link">Intracode IT Solutions</a>
-        </div>
-       
-      </div>
-    </div>
-  </footer>
-<!-- / Footer -->
+          </footer>
 
           
           <div class="content-backdrop fade"></div>
@@ -433,8 +385,8 @@ $(document).ready(function () {
 
   // Handle delete order button clicks - COMPLETE IMPLEMENTATION
   $(document).on('click', '.delete-order', function() {
-    const orderId = $(this).closest('tr').data('id');
-    const orderNumber = $(this).closest('tr').find('td:eq(1)').text().trim();
+    const orderId = $(this).data('id');
+    const orderNumber = $(this).data('number');
 
     Swal.fire({
       title: 'Are you sure?',
@@ -458,15 +410,16 @@ $(document).ready(function () {
           didOpen: () => {
             Swal.showLoading()
             
-            // Set the order ID in the hidden form
-            $('#delete_order_id').val(orderId);
-            $('#delete_void_reason').val('Order deleted by staff');
-            
-            // Submit the form via AJAX
+            // Submit delete request
             $.ajax({
               type: "POST",
               url: "{{ route('order.delete') }}",
-              data: $('#deleteOrderForm').serialize(),
+              data: {
+                _token: "{{ csrf_token() }}",
+                _method: "DELETE",
+                order_id: orderId,
+                void_reason: 'Order deleted by staff'
+              },
               success: function(response) {
                 if(response.status) {
                   // Success message
@@ -478,7 +431,7 @@ $(document).ready(function () {
                     showConfirmButton: false
                   }).then(() => {
                     // Reload the page to refresh the order list
-                    location.reload();
+                    window.location.href = "{{ route('page.order-list') }}";
                   });
                 } else {
                   // Error message
