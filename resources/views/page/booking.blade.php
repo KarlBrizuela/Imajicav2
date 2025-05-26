@@ -1517,7 +1517,7 @@ $(document).ready(function() {
       var pointsToEarnText = '0 points';
       
       if (useReward === '0') {
-        pointsToEarn = Math.floor(servicePrice / 50);
+        pointsToEarn = Math.floor(servicePrice / 50); // Consistently use 1 point per 50 pesos
         pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '0 points';
       }
       
@@ -1907,7 +1907,7 @@ $(document).ready(function() {
     
     // Show points based on reward points selection
     if (useReward === '0') { // When "No" is selected
-      pointsToEarn = Math.floor(servicePrice / 50);
+      pointsToEarn = Math.floor(servicePrice / 50); // Consistently use 1 point per 50 pesos
       pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '0 points';
     }
     
@@ -2020,7 +2020,7 @@ $(document).ready(function() {
     
     // Show points based on reward points selection
     if (useReward === '0') { // When "No" is selected
-      pointsToEarn = Math.floor(servicePrice / 100);
+      pointsToEarn = Math.floor(servicePrice / 50); // Consistently use 1 point per 50 pesos
       pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '0 points';
     }
     

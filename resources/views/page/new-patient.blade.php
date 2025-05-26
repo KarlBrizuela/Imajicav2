@@ -450,6 +450,19 @@
                                 <input type="text" id="occupation" name="occupation" class="form-control" value="{{ old('occupation') }}" />
                               </div>
 
+                              <div class="col-md-6">
+                                <label class="form-label" for="referrer_id">Referred By (Optional)</label>
+                                <select id="referrer_id" name="referrer_id" class="form-select">
+                                  <option value="">Select Referrer</option>
+                                  @foreach($patients as $referrer)
+                                    <option value="{{ $referrer->patient_id }}" {{ old('referrer_id') == $referrer->patient_id ? 'selected' : '' }}>
+                                      {{ $referrer->firstname }} {{ $referrer->lastname }}
+                                    </option>
+                                  @endforeach
+                                </select>
+                                <small class="text-muted">Both you and your referrer will receive 100 points</small>
+                              </div>
+
                               <div class="col-12">
                                 <label class="form-label" for="address">Address</label>
                                 <textarea name="address" class="form-control" id="address" rows="3" required>{{ old('address') }}</textarea>

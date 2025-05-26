@@ -124,9 +124,17 @@ class BookingController extends Controller
     }
 
     if ($data['status'] == 'Paid') {
-        $pointsToAdd = floor($servicePrice / 100);
+        $pointsToAdd = floor($servicePrice / 50);
         $patient->points += $pointsToAdd;
         $patient->total_cost += $servicePrice;
+
+        // Create points history entry
+        PatientPointsHistory::create([
+            'patient_id' => $patient->patient_id,
+            'points' => $pointsToAdd,
+            'transaction_type' => 'earned',
+            'description' => 'Points earned from booking services'
+        ]);
     }
 
     $patient->save();
