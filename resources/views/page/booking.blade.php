@@ -1517,7 +1517,7 @@ $(document).ready(function() {
       var pointsToEarnText = '0 points';
       
       if (useReward === '0') {
-        pointsToEarn = Math.floor(servicePrice / 100);
+        pointsToEarn = Math.floor(servicePrice / 50);
         pointsToEarnText = pointsToEarn > 0 ? pointsToEarn + ' points' : '0 points';
       }
       
