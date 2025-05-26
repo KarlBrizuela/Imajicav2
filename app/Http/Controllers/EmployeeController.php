@@ -19,9 +19,9 @@ class EmployeeController extends Controller
                 'staff.id',
                 DB::raw('CONCAT(staff.firstname, " ", staff.lastname) as employee_name'),
                 DB::raw('COUNT(DISTINCT bookings.booking_id) as service_count'),
-                DB::raw('COALESCE(SUM(CASE WHEN bookings.status = "Completed" THEN bookings.payment ELSE 0 END), 0) as total_service_sales')
+                DB::raw('COALESCE(SUM(bookings.payment), 0) as total_service_sales')
             )
-            ->leftJoin('bookings', 'staff.id', '=', 'bookings.id') 
+            ->leftJoin('bookings', 'staff.id', '=', 'bookings.id')
             ->groupBy('staff.id', 'staff.firstname', 'staff.lastname')
             ->orderBy('staff.firstname')
             ->get();
@@ -29,11 +29,14 @@ class EmployeeController extends Controller
         // Calculate total sales
         $totalSales = $employees->sum('total_service_sales');
         
-        // Get monthly sales
+        // Get monthly sales - only from bookings linked to staff
         $currentMonth = now()->month;
-        $monthlySales = booking::whereMonth('start_date', $currentMonth)
-            ->where('status', 'Completed')
-            ->sum('payment');
+        $currentYear = now()->year;
+        $monthlySales = DB::table('staff')
+            ->leftJoin('bookings', 'staff.id', '=', 'bookings.id')
+            ->whereMonth('bookings.start_date', $currentMonth)
+            ->whereYear('bookings.start_date', $currentYear)
+            ->sum('bookings.payment');
         
         // Find top performing employee (by sales)
         $topEmployee = $employees->sortByDesc('total_service_sales')->first();

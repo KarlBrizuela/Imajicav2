@@ -160,9 +160,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
             },
             eventTimeFormat: {
-                hour: "numeric",
-                minute: "2-digit",
-                meridiem: "short",
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: true,
+                hour12: true
             },
             displayEventTime: true,
             displayEventEnd: true,
@@ -192,16 +193,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="calendar-tooltip">
                         <div class="tooltip-title fw-semibold">${tooltipTitle}</div>
                         <div class="tooltip-datetime">
-                            <i class="ti ti-calendar-event me-1"></i> ${moment(
-                                info.event.start
-                            ).format("MMM D, YYYY")}
+                            <i class="ti ti-calendar-event me-1"></i> ${moment(info.event.start).format("MMM D, YYYY")}
                             <br>
-                            <i class="ti ti-clock me-1"></i> ${moment(
-                                info.event.start
-                            ).format("h:mm A")} - ${moment(
-                    info.event.end ||
-                        new Date(info.event.start.getTime() + 60 * 60 * 1000)
-                ).format("h:mm A")}
+                            <i class="ti ti-clock me-1"></i> ${moment(info.event.start).format("hh:mm A")} - ${moment(info.event.end).format("hh:mm A")}
                         </div>
                         <div class="tooltip-status mt-1">
                             <span class="badge bg-label-${statusColor}">${status}</span>

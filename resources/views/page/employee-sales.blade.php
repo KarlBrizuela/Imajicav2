@@ -39,7 +39,7 @@
     <!-- End Google Tag Manager -->
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('logo/logo.png') }}" />
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/" />
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
@@ -98,6 +98,10 @@
                     border-radius: 0.5rem;
                     padding: 1.5rem;
                     margin-bottom: 1.5rem;
+                    height: 150px; /* Fixed height */
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
                 }
                 
                 .card-top-employee {
@@ -110,6 +114,29 @@
 
                 .card-monthly-sales {
                     background-color: #fff3cd; /* Light yellow */
+                }
+
+                .summary-card h5 {
+                    font-size: 1rem;
+                    margin-bottom: 0.5rem;
+                    color: #333;
+                }
+
+                .summary-card h4 {
+                    font-size: 1.5rem;
+                    margin: 0;
+                    color: #333;
+                }
+
+                .summary-card .employee-name {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    margin-bottom: 0.25rem;
+                }
+
+                .summary-card .metric-value {
+                    font-size: 1.5rem;
+                    font-weight: bold;
                 }
                 
                 /* Adjust table padding */
@@ -153,9 +180,9 @@
                         <div class="col-md-4">
                             <div class="summary-card card-top-employee">
                                 <h5>Top Performing Employee</h5>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <h4>{{ $totalMetrics['top_employee']->employee_name }}</h4>
-                                    <h4>₱{{ number_format($totalMetrics['top_employee']->total_service_sales, 2) }}</h4>
+                                <div>
+                                    <div class="employee-name">{{ $totalMetrics['top_employee']->employee_name }}</div>
+                                    <div class="metric-value">₱{{ number_format($totalMetrics['top_employee']->total_service_sales, 2) }}</div>
                                 </div>
                             </div>
                         </div>
@@ -165,9 +192,9 @@
                         <div class="col-md-4">
                             <div class="summary-card card-top-sales">
                                 <h5>Total Sales</h5>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <h4>All Employees</h4>
-                                    <h4>₱{{ number_format($totalMetrics['total_sales'], 2) }}</h4>
+                                <div>
+                                    <div class="employee-name">All Employees</div>
+                                    <div class="metric-value">₱{{ number_format($totalMetrics['total_sales'], 2) }}</div>
                                 </div>
                             </div>
                         </div>
@@ -176,9 +203,9 @@
                         <div class="col-md-4">
                             <div class="summary-card card-monthly-sales">
                                 <h5>Monthly Sales (Current Month)</h5>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <h4>All Services</h4>
-                                    <h4>₱{{ number_format($totalMetrics['monthly_sales'], 2) }}</h4>
+                                <div>
+                                    <div class="employee-name">All Services</div>
+                                    <div class="metric-value">₱{{ number_format($totalMetrics['monthly_sales'], 2) }}</div>
                                 </div>
                             </div>
                         </div>
@@ -199,7 +226,7 @@
                                     @foreach($employees as $employee)
                                     <tr>
                                         <td>{{ $employee->employee_name }}</td>
-                                        <td class="text-center">{{ number_format($employee->service_count) }}</td>
+                                        <td class="text-center">{{ $employee->service_count }}</td>
                                         <td class="text-center">₱{{ number_format($employee->total_service_sales, 2) }}</td>
                                     </tr>
                                     @endforeach
