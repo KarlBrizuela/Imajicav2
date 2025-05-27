@@ -768,7 +768,8 @@
                               <input type="hidden" id="referral_discount_value" name="referral_discount_value">
                             </div>
                           </div>
-                          
+          
+
                           <div class="mb-5">
                             <label class="form-label" for="remarks">Remarks</label>
                             <textarea class="form-control" name="remarks" id="remarks"></textarea>
@@ -924,7 +925,7 @@
                             </div> 
                           </div>
                           </div>
-                          
+                          <!-- wala lang -->
                          <div class="col-xl-12">
     <label class="form-label">Use Reward Points</label>
     <div class="row">
