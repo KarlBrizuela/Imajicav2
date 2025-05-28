@@ -432,3 +432,5 @@ Route::put('/package/update', [App\Http\Controllers\PackageController::class, 'u
 
 Route::get('/service/get-points', [App\Http\Controllers\ServiceController::class, 'getPoints'])->name('service.get_points');
 
+
+

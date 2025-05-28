@@ -778,24 +778,11 @@
   <label class="form-label">Booking Summary</label>
   <div class="form-control bg-light" readonly style="min-height: 110px;">
     
-    <div class="mb-3">
-      <div class="d-flex justify-content-between">
-        <span>Coupon Discount:</span>
-        <span id="summary_coupon_discount">-</span>
-      </div>
-      <div class="d-flex justify-content-between">
-        <span>Used Points:</span>
-        <span id="summary_patient_reward">-</span>
-      </div>
-      <div class="d-flex justify-content-between">
-        <span>Points to Earn:</span>
-        <span id="points_to_earn_display">0 points</span>
-      </div>
-      <div class="d-flex justify-content-between">
-        <span>Total Price:</span>
-        <span id="summary_total_price">₱0.00</span>
-      </div>
-    </div>
+    <div><strong>Coupon Discount:</strong> <span id="summary_coupon_discount">-</span></div>
+    <div><strong>Referral Points:</strong> <span id="summary_referral_points">-</span></div>
+    <div><strong>Used Points:</strong> <span id="summary_patient_reward">-</span></div>
+    <div><strong>Points to Earn:</strong> <span id="points_to_earn_display">-</span></div>
+    <div class="mt-2"><strong>Total Price:</strong> <span id="summary_total_price">-</span></div>
   </div>
 </div>
                           <div class="d-flex justify-content-sm-between justify-content-start mt-6 gap-2">
@@ -1630,78 +1617,88 @@ $(document).ready(function() {
       
       // Function to initialize flatpickr date pickers properly
       function initDatepickr() {
-        console.log('Initializing date pickers...');
+        console.log('Initializing date and time pickers...');
         
-        // Destroy any existing instances first to prevent duplicates
-        if (window.startPicker) {
-          window.startPicker.destroy();
-        }
-        if (window.endPicker) {
-          window.endPicker.destroy();
-        }
-        if (window.updateStartPicker) {
-          window.updateStartPicker.destroy();
-        }
-        if (window.updateEndPicker) {
-          window.updateEndPicker.destroy();
-        }
+        // Configuration for date and time pickers
+        const dateTimeConfig = {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            minuteIncrement: 15,
+            time_24hr: false,
+            defaultHour: 9,
+            minDate: "today",
+            locale: {
+                firstDayOfWeek: 1, // Start week on Monday
+                time_24hr: false
+            },
+            // Business hours
+            minTime: "09:00",
+            maxTime: "18:00",
+            // Disable weekends
+            disable: [
+                function(date) {
+                    return (date.getDay() === 0 || date.getDay() === 6);
+                }
+            ],
+            // Show calendar and time picker in a more readable format
+            altInput: true,
+            altFormat: "F j, Y at h:i K", // Example: "March 15, 2024 at 9:00 AM"
+            // Allow manual input
+            allowInput: true,
+            // Position the calendar properly
+            static: true
+        };
+
+        // Destroy existing instances if they exist
+        if (window.startPicker) window.startPicker.destroy();
+        if (window.endPicker) window.endPicker.destroy();
         
-        // Basic flatpickr initialization with enhanced options
+        // Initialize start date and time picker
         window.startPicker = flatpickr("#start_date", {
-          enableTime: true,
-          dateFormat: "Y-m-d H:i",
-          minuteIncrement: 15,
-          time_24hr: false,
-          allowInput: true,
-          appendTo: document.getElementById('addEventSidebar'),
-          onClose: function(selectedDates, dateStr) {
-            // If end date is earlier than start date, update it
-            if (window.endPicker && selectedDates[0] && window.endPicker.selectedDates[0] < selectedDates[0]) {
-              window.endPicker.setDate(new Date(selectedDates[0].getTime() + 60*60*1000));
+            ...dateTimeConfig,
+            onChange: function(selectedDates, dateStr) {
+                if (selectedDates[0]) {
+                    // Set minimum end date/time to selected start date/time
+                    window.endPicker.set('minDate', selectedDates[0]);
+                    
+                    // If no end date/time is set or it's before start date/time
+                    const endDate = window.endPicker.selectedDates[0];
+                    if (!endDate || endDate <= selectedDates[0]) {
+                        // Set end date/time to start + 1 hour
+                        const newEndDate = new Date(selectedDates[0].getTime() + 60*60*1000);
+                        window.endPicker.setDate(newEndDate);
+                    }
+                }
             }
-          }
         });
-        
+
+        // Initialize end date and time picker
         window.endPicker = flatpickr("#end_date", {
-          enableTime: true,
-          dateFormat: "Y-m-d H:i",
-          minuteIncrement: 15,
-          time_24hr: false,
-          allowInput: true,
-          appendTo: document.getElementById('addEventSidebar')
-        });
-        
-        window.updateStartPicker = flatpickr("#update_start_date", {
-          enableTime: true,
-          dateFormat: "Y-m-d H:i",
-          minuteIncrement: 15,
-          time_24hr: false,
-          allowInput: true,
-          appendTo: document.getElementById('updateEventSidebar'),
-          onClose: function(selectedDates, dateStr) {
-            // If end date is earlier than start date, update it
-            if (window.updateEndPicker && selectedDates[0] && window.updateEndPicker.selectedDates[0] < selectedDates[0]) {
-              window.updateEndPicker.setDate(new Date(selectedDates[0].getTime() + 60*60*1000));
+            ...dateTimeConfig,
+            onChange: function(selectedDates) {
+                if (selectedDates[0]) {
+                    // Set maximum start date/time to selected end date/time
+                    window.startPicker.set('maxDate', selectedDates[0]);
+                    
+                    // If start date/time is after end date/time
+                    const startDate = window.startPicker.selectedDates[0];
+                    if (startDate && startDate >= selectedDates[0]) {
+                        // Set start date/time to end - 1 hour
+                        const newStartDate = new Date(selectedDates[0].getTime() - 60*60*1000);
+                        window.startPicker.setDate(newStartDate);
+                    }
+                }
             }
-          }
         });
-        
-        window.updateEndPicker = flatpickr("#update_end_date", {
-          enableTime: true,
-          dateFormat: "Y-m-d H:i",
-          minuteIncrement: 15,
-          time_24hr: false,
-          allowInput: true,
-          appendTo: document.getElementById('updateEventSidebar')
-        });
-        
+
         // Initialize inline calendar
         flatpickr('.inline-calendar', {
-          inline: true,
-          dateFormat: 'Y-m-d'
+            inline: true,
+            dateFormat: 'Y-m-d',
+            minDate: "today"
         });
         
-        console.log('Date pickers initialized successfully');
+        console.log('Date and time pickers initialized successfully');
       }
       
       // Setup initialization triggers

@@ -212,16 +212,38 @@ background-color: #d1ecf1; /* Light cyan */
         <table class="table table-striped" id="purchaseTablee">
             <thead>
                 <tr>
-                    <th>Trans No.</th>
-                    <th>Vendor Name</th>
-                    <th>Product Ordered</th>
-                    <th>Date Received</th>
-                    <th>Received By</th>
-                    <th>Quantity</th>
-                    <th>Amount</th>
-                    <th>Payment Terms</th>
+                    <th>Order No.</th>
+                    <th>Date</th>
+                    <th>Payment Status</th>
+                    <th>Method</th>
+                    <th>Total</th>
                 </tr>
             </thead>
+            <tbody>
+                @foreach($orders as $order)
+                <tr>
+                    <td>#{{ $order->order_number }}</td>
+                    <td>{{ \Carbon\Carbon::parse($order->order_date)->format('Y-m-d') }}</td>
+                    <td>
+                        @php
+                            $badgeClass = 'bg-label-info';
+                            if ($order->payment_status === 'Paid') {
+                                $badgeClass = 'bg-label-success';
+                            } elseif ($order->payment_status === 'Pending') {
+                                $badgeClass = 'bg-label-warning';
+                            } elseif ($order->payment_status === 'Failed') {
+                                $badgeClass = 'bg-label-danger';
+                            } elseif ($order->payment_status === 'Cancelled') {
+                                $badgeClass = 'bg-label-secondary';
+                            }
+                        @endphp
+                        <span class="badge {{ $badgeClass }}">{{ $order->payment_status }}</span>
+                    </td>
+                    <td>{{ $order->payment_method }}</td>
+                    <td>₱{{ number_format($order->total, 2) }}</td>
+                </tr>
+                @endforeach
+            </tbody>
         </table>
       </div>
     </div>
@@ -308,7 +330,6 @@ background-color: #d1ecf1; /* Light cyan */
   <script>
     $(document).ready(function() {
         var table = $('#purchaseTablee').DataTable({
-            data: @json($purchases),
             dom: '<"row"<"col-md-6 d-flex align-items-center justify-content-start gap-2"lB><"col-md-6"f>><"row"<"col-sm-12"t>><"row"<"col-sm-12"r>><"row"<"col-sm-12"p>>',
             buttons: [
                 {
@@ -343,26 +364,6 @@ background-color: #d1ecf1; /* Light cyan */
                         }
                     ]
                 }
-            ],
-            columns: [
-                { data: 'trans_no' },
-                { data: 'vendor_name' },
-                { data: 'product_ordered' },
-                { 
-                    data: 'date_received',
-                    render: function(data) {
-                        return moment(data).format('YYYY-MM-DD');
-                    }
-                },
-                { data: 'received_by' },
-                { data: 'qty' },
-                { 
-                    data: 'amount',
-                    render: function(data) {
-                        return '₱' + parseFloat(data).toFixed(2);
-                    }
-                },
-                { data: 'payment_terms' }
             ],
             processing: true,
             pageLength: 10,
