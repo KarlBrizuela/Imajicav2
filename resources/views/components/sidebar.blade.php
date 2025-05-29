@@ -6,7 +6,7 @@
     <br />
     <div class="app-brand demo">
         <a href="/dashboard" class="app-brand-link">
-            <img src="{{ asset('/logo/logo.png') }}" alt="Logo" width="100%" height="30%">
+            <img src="/public/logo/logo.png" alt="Logo" width="100%" height="30%">
 
 
         </a>

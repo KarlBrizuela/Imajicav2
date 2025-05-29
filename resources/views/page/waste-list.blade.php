@@ -47,22 +47,19 @@
       rel="stylesheet"
     />
 
-   <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
+  <link rel="stylesheet" href="/public/vendor/libs/node-waves/node-waves.css" />
+ <link rel="stylesheet" href="/public/vendor/libs/pickr/pickr-themes.css" />
+  <link rel="stylesheet" href="/public/vendor/css/core.css">
+  <link rel="stylesheet" href="/public/css/demo.css" />
 
-    
-    <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.js') }}" />
+    <link rel="stylesheet" href="/public/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
+  <link rel="stylesheet" href="/public/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css" />
+  <link rel="stylesheet" href="/public/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css" >
+  <link rel="stylesheet" href="/public/vendor/libs/select2/select2.css" />
 
-    <link rel="stylesheet" href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
-
-    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}">
-  <link rel="stylesheet" href="{{ asset('/css/demo.css') }}" />
-
-    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
-  <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
-  <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}" >
-  <link rel="stylesheet" href="{{ asset('vendor/libs/select2/select2.css') }}" />
+ 
   
-    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
+  <script src="/public/vendor/js/helpers.js"></script>
  
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="../../assets/js/config.js"></script>
@@ -197,56 +194,54 @@
     </div>
 
 
-   <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
-   <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
- <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+  <script src="/public/vendor/libs/jquery/jquery.js"></script>
+   <script src="/public/vendor/libs/popper/popper.js"></script>
+<script src="/public/vendor/js/bootstrap.js"></script>
+  <script src="/public/vendor/libs/node-waves/node-waves.js"></script>
 
      <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>
 
-    <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
-
-    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-  <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
-<script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
-
-     <script src="{{ asset('vendor/js/menu.js') }}"></script>
+    <script src="/public/vendor/libs/pickr/pickr.js"></script>
+  <script src="/public/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="/public/vendor/libs/hammer/hammer.js"></script>
+<script src="/public/vendor/libs/i18n/i18n.js"></script>
+  <script src="/public/vendor/js/menu.js"></script>
 
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-   <script src="{{ asset('vendor/libs/cleave-zen/cleave-zen.js') }}"></script>
-     <script src="{{ asset('vendor/libs/select2/select2.js') }}"></script>
+   <script src="/public/vendor/libs/cleave-zen/cleave-zen.js"></script>
+     <script src="/public/vendor/libs/select2/select2.js"></script>
 
-    <script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
-    <script src="../../assets/vendor/libs/flatpickr/flatpickr.js"></script>
-     <script src="{{ asset('vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js') }}"></script>
-     <script src="{{ asset('vendor/libs/jquery-timepicker/jquery-timepicker.js') }}"></script>
-   <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
+    <script src="/public/vendor/libs/moment/moment.js"></script>
+    <script src="/public/vendor/libs/flatpickr/flatpickr.js"></script>
+     <script src="/public/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js"></script>
+     <script src="/public/vendor/libs/jquery-timepicker/jquery-timepicker.js"></script>
+   <script src="/public/vendor/libs/pickr/pickr.js"></script>
 
 
 
-    <script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
-    <script src="../../assets/vendor/libs/datatables-buttons/datatables-buttons.js"></script>
-    <script src="{{ asset('assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.js') }}"></script>
-     <script src="{{ asset('vendor/libs/jszip/jszip.js') }}"></script>
-  <script src="{{ asset('vendor/libs/pdfmake/pdfmake.js') }}"></script>
-    <script src="../../assets/vendor/libs/datatables-buttons/buttons.html5.js"></script>
-    <script src="../../assets/vendor/libs/datatables-buttons/buttons.print.js"></script>
+    <script src="/public/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+    <script src="/public/vendor/libs/datatables-buttons/datatables-buttons.js"></script>
+    <script src="/public/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.js"></script>
+     <script src="/public/vendor/libs/jszip/jszip.j"></script>
+  <script src="/public/vendor/libs/pdfmake/pdfmake.js"></script>
+    <script src="/public/vendor/libs/datatables-buttons/buttons.html5.js"></script>
+    <script src="/public/assets/vendor/libs/datatables-buttons/buttons.print.js"></script>
 
-    <script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
-    <script src="../../assets/vendor/libs/flatpickr/flatpickr.js"></script>
-    <script src="{{ asset('vendor/libs/@form-validation/popular.js') }}"></script>
-    <script src="../../assets/vendor/libs/%40form-validation/bootstrap5.js"></script>
-  <script src="{{ asset('vendor/libs/@form-validation/auto-focus.js') }}"></script>
+    <script src="/public/vendor/libs/moment/moment.js"></script>
+    <script src="/public/vendor/libs/flatpickr/flatpickr.js"></script>
+    <script src="/public/vendor/libs/@form-validation/popular.js"></script>
+    <script src="/publicvendor/libs/%40form-validation/bootstrap5.js"></script>
+  <script src="/public/vendor/libs/@form-validation/auto-focus.js"></script>
 
     <!-- Main JS -->
 
-    <script src="../../assets/js/main.js"></script>
+    <script src="/public/assets/js/main.js"></script>
 
     <!-- Page JS -->
-    <script src="../../assets/js/form-layouts.js"></script>
-    <script src="../../assets/js/forms-pickers.js"></script>
+    <script src="/public/assets/js/form-layouts.js"></script>
+    <script src="/public/assets/js/forms-pickers.js"></script>
 
     <!-- Custom Script for Waste Management -->
     <script>

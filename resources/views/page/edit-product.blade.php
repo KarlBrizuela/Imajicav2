@@ -62,47 +62,46 @@
       <!-- End Google Tag Manager -->
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
+   <link rel="icon" type="image/x-icon" href="/public/logo/logo.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/" />
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;ampdisplay=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
+    <link rel="stylesheet" href="/public/vendor/fonts/iconify-icons.css" />
 
     <!-- Core CSS -->
     <!-- build:css assets/vendor/css/theme.css  -->
     
-    <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
-    
+   <link rel="stylesheet" href="/public/vendor/libs/node-waves/node-waves.css" />
+ <link rel="stylesheet" href="/public/vendor/libs/pickr/pickr-themes.css" />
+  <link rel="stylesheet" href="/public/vendor/css/core.css">
+  <link rel="stylesheet" href="/public/css/demo.css" />
     <!-- Vendors CSS -->
     
-       <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+        <link rel="stylesheet" href="/public/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
     
     <!-- endbuild -->
 
-   <link rel="stylesheet" href="{{ asset('vendor/libs/quill/typography.css') }}" />
-  <link rel="stylesheet" href="{{ asset('vendor/libs/quill/katex.css') }}" />
-  <link rel="stylesheet" href="{{ asset('vendor/libs/quill/editor.css') }}" />
-  <link rel="stylesheet" href="{{ asset('vendor/libs/select2/select2.css') }}" />
-  <link rel="stylesheet" href="{{ asset('vendor/libs/dropzone/dropzone.css') }}" />
-   <link rel="stylesheet" href="{{ asset('vendor/libs/flatpickr/flatpickr.css') }}" />
-   <link rel="stylesheet" href="{{ asset('vendor/libs/tagify/tagify.css') }}" />
+   <link rel="stylesheet" href="/public/vendor/libs/quill/typography.css" />
+  <link rel="stylesheet" href="/public/vendor/libs/quill/katex.css" />
+  <link rel="stylesheet" href="/public/vendor/libs/quill/editor.css" />
+  <link rel="stylesheet" href="/public/vendor/libs/select2/select2.css" />
+  <link rel="stylesheet" href="/public/vendor/libs/dropzone/dropzone.css" />
+   <link rel="stylesheet" href="/public/vendor/libs/flatpickr/flatpickr.css" />
+   <link rel="stylesheet" href="/public/vendor/libs/tagify/tagify.css" />
 
     <!-- Page CSS -->
     
 
     <!-- Helpers -->
-    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
+   <script src="/public/vendor/js/helpers.js"></script>
    
   
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     
-      <script src="../../assets/js/config.js"></script>
+     <script src="/public/assets/js/config.js"></script>
     
   </head>
 
@@ -344,38 +343,36 @@
     <!-- build:js assets/vendor/js/theme.js -->
     
     
-      <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+     <script src="/public/vendor/libs/jquery/jquery.js"></script>
+   <script src="/public/vendor/libs/popper/popper.js"></script>
+<script src="/public/vendor/js/bootstrap.js"></script>
+  <script src="/public/vendor/libs/node-waves/node-waves.js"></script>
 
     
    <script src="https://cdn.jsdelivr.net/npm/@algolia/autocomplete-js"></script>>
 
     
       
-     <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
-
-    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-  <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
-<script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
-
-     <script src="{{ asset('vendor/js/menu.js') }}"></script>
+    <script src="/public/vendor/libs/pickr/pickr.js"></script>
+  <script src="/public/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="/public/vendor/libs/hammer/hammer.js"></script>
+<script src="/public/vendor/libs/i18n/i18n.js"></script>
+  <script src="/public/vendor/js/menu.js"></script>
     
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="../../assets/vendor/libs/quill/katex.js"></script>
-  <script src="../../assets/vendor/libs/quill/quill.js"></script>
-  <script src="../../assets/vendor/libs/select2/select2.js"></script>
-  <script src="../../assets/vendor/libs/dropzone/dropzone.js"></script>
-  <script src="../../assets/vendor/libs/jquery-repeater/jquery-repeater.js"></script>
-  <script src="../../assets/vendor/libs/flatpickr/flatpickr.js"></script>
-   <script src="{{ asset('vendor/libs/tagify/tagify.js') }}"></script>
+    <script src="/public/vendor/libs/quill/katex.js"></script>
+  <script src="/public/vendor/libs/quill/quill.js"></script>
+  <script src="/public/vendor/libs/select2/select2.js"></script>
+  <script src="/public/vendor/libs/dropzone/dropzone.js"></script>
+  <script src="/public/vendor/libs/jquery-repeater/jquery-repeater.js"></script>
+  <script src="/public/vendor/libs/flatpickr/flatpickr.js"></script>
+   <script src="/public/vendor/libs/tagify/tagify.js"></script>
 
     <!-- Main JS -->
     
-      <script src="../../assets/js/main.js"></script>
+     <script src="/public/assets/js/main.js"></script>
     
 
     <!-- Page JS -->

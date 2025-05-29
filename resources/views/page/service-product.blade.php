@@ -45,30 +45,30 @@
         rel="stylesheet"
         />
 
-        <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
+        <link rel="stylesheet" href="/public/vendor/fonts/iconify-icons.css" />
 
         <!-- Core CSS -->
-        <link rel="stylesheet"  href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
-        <link  rel="stylesheet"  href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
-        <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
-        <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
-        <script src="{{ asset('vendor/libs/chartjs/chartjs.js') }}"></script>
+        <link rel="stylesheet"  href="/public/vendor/libs/node-waves/node-waves.css" />
+        <link  rel="stylesheet"  href="/public/vendor/libs/pickr/pickr-themes.css" />
+        <link rel="stylesheet" href="/public/vendor/css/core.css" />
+        <link rel="stylesheet" href="/public/css/demo.css" />
+        <script src="/public/vendor/libs/chartjs/chartjs.js"></script>
 
-        <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />>
+        <link rel="stylesheet" href="/public/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />>
 
-    <link rel="stylesheet" href="{{ asset('vendor/libs/apex-charts/apex-charts.css') }}" />
-        <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
-        <link  rel="stylesheet"  href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
-        <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/flag-icons.css') }}" />
+    <link rel="stylesheet" href="/public/vendor/libs/apex-charts/apex-charts.css" />
+        <link rel="stylesheet" href="/public/vendor/libs/swiper/swiper.css" />
+        <link  rel="stylesheet"  href="/public/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
+        <link rel="stylesheet" href="/public/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.cs" />
+    <link rel="stylesheet" href="/public/vendor/fonts/flag-icons.css" />
 
         <!-- Page CSS -->
-        <link rel="stylesheet" href="{{ asset('vendor/css/pages/cards-advance.css') }}" />
+        <link rel="stylesheet" href="/public/vendor/css/pages/cards-advance.css" />
 
 
         <!-- Helpers -->
-        <script src="{{ asset('vendor/js/helpers.js') }}"></script>
-        <script src="../../assets/js/config.js"></script>
+        <script src="/public/vendor/js/helpers.js"></script>
+        <script src="/public/assets/js/config.js"></script>
         <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
         </head>
         <style>
