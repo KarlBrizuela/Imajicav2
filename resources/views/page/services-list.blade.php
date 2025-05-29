@@ -70,7 +70,117 @@
   <script src="../../assets/js/config.js"></script>
 
   <style>
-    /* Add to your existing styles */
+    /* Style the entries dropdown button */
+    .dataTables_length select {
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      appearance: none !important;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23000' stroke-width='2' d='M4 6l4 4 4-4'/%3E%3C/svg%3E") no-repeat right 4px center !important;
+      background-size: 16px !important;
+      padding-right: 24px !important;
+      border: 1px solid #d8d8d8 !important;
+      border-radius: 4px !important;
+    }
+
+    /* Hide default arrow in IE */
+    .dataTables_length select::-ms-expand {
+      display: none !important;
+    }
+
+    /* Make table borders lighter */
+    #servicesTable th, #servicesTable td {
+      border-color: rgba(0,0,0,0.07) !important;
+    }
+    #servicesTable {
+      border-color: rgba(0,0,0,0.07) !important;
+    }
+
+    /* Style the entries dropdown */
+    .dataTables_length select {
+      border: 1px solid #d9dee3 !important;
+      border-radius: 0.375rem !important;
+      padding: 0.3rem 2rem 0.3rem 0.5rem !important;
+      font-size: 0.9375rem !important;
+      line-height: 1.5;
+      background-color: #fff !important;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23677788' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 0.5rem center !important;
+      background-size: 16px 12px !important;
+      appearance: none !important;
+    }
+
+    .dataTables_length select:focus {
+      border-color: #d9dee3 !important;
+      outline: 0 !important;
+      box-shadow: none !important;
+    }
+
+    /* Align DataTables controls */
+    .dataTables_wrapper .dataTables_length {
+      float: left;
+      margin-bottom: 1rem;
+      margin-left: 2rem;
+    }
+    .dataTables_wrapper .dataTables_filter {
+      float: right;
+      margin-bottom: 1rem;
+      margin-right: 2rem;
+      max-width: 300px;
+    }
+    .dataTables_wrapper .dataTables_filter input[type="search"] {
+      max-width: 200px;
+      display: inline-block;
+    }
+    /* Align pagination to the right */
+    .dataTables_wrapper .dataTables_paginate {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+      padding-right: 15px;
+    }
+    .dataTables_wrapper .dataTables_info {
+      padding-left: 15px;
+    }
+    /* Style pagination buttons */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      padding: 0.5rem 0.75rem;
+      margin: 0 2px;
+      border-radius: 5px;
+      min-width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #6f6b7d !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+      background: #7367f0 !important;
+      color: #fff !important;
+      border: 1px solid #7367f0 !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+      background: #f6f6f6 !important;
+      border: 1px solid #ddd !important;
+      color: #6f6b7d !important;
+    }
+    /* Hide numbered pagination buttons */
+    .dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous):not(.next) {
+      display: none;
+    }
+    @media (max-width: 767.98px) {
+      .dataTables_wrapper .dataTables_paginate {
+        justify-content: center;
+        padding-right: 0;
+      }
+      .dataTables_wrapper .dataTables_info {
+        text-align: center;
+        padding-left: 0;
+      }
+    }
+
+    /* Other styles */
     .client-detail-card {
       background: #fff;
       border-radius: 0.75rem;
@@ -112,20 +222,45 @@
       padding: 1.5rem;
     }
 
+    /* Button Styling */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.25rem;
-    }
-
-    .btn i {
-      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      border-radius: 0.375rem;
     }
 
     .btn-sm {
       padding: 0.25rem 0.5rem;
       font-size: 0.875rem;
+    }
+
+    /* Action Button Styling */
+    .text-primary {
+      color: #03c3ec !important;
+      background: transparent;
+      border: none;
+    }
+
+    .text-danger {
+      color: #ff3e1d !important;
+      background: transparent;
+      border: none;
+    }
+
+    .text-primary:hover {
+      color: #02b6dc !important;
+    }
+
+    .text-danger:hover {
+      color: #ff2b0a !important;
+    }
+
+    .btn i {
+      font-size: 1.25rem;
     }
 
     .gap-2 {
@@ -137,6 +272,13 @@
       z-index: 99999 !important;
     }
   </style>
+
+  <!-- Add these before the closing </head> tag -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 </head>
 
 <body>
@@ -147,203 +289,84 @@
 
       <!-- Keep rest of existing content -->
       <div class="layout-page">
-   
-        <!-- Replace the existing table section with this -->
-        <div class="container-xxl flex-grow-1 container-p-y">
-          <div class="card">
-            <!-- Table Header with Search -->
-            <div class="d-flex justify-content-between align-items-center p-3">
-              <h5 class="card-title mb-0">Services List</h5>
-              <a class="btn btn-primary" href="{{ route('page.new-services') }}">
-                <i class="ti tabler-plus me-1"></i> Add New Service
-              </a>
-            </div>
-
-            <!-- Success/Error Messages -->
-            <div id="responseMessage" style="display: none;" class="alert mx-3 mt-0 mb-3"></div>
-
-            <!-- Table -->
-            <div class="table-responsive text-nowrap px-3">
-  <table class="table table-striped" id="servicesTable">
-    <thead class="table-light">
-      <tr>
-        <th>Services Name</th>
-        <th>Branch Name</th>
-        <th>Description</th>
-        <th class="text-center">Service Cost</th>
-        <th class="text-center">Points</th>
-        <th class="text-center">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      @foreach ($services as $service)
-      <tr>
-        <td>{{ $service->service_name }}</td>
-        <td>{{ $service->branch ? $service->branch->branch_name : $service->branch_code }}</td>
-        <td>{{ $service->description }}</td>
-        <td>₱{{ number_format($service->service_cost, 2) }}</td>
-        <td class="text-center">{{ $service->acq_pts }}</td>
-        <td class="text-center">
-          <div class="d-flex gap-2 justify-content-center">
-            <button type="button" class="btn btn-sm btn-info edit-service" 
-              data-service-id="{{ $service->service_id }}"
-              data-service-name="{{ $service->service_name }}"
-              data-service-branch="{{ $service->branch_code }}"
-              data-service-description="{{ $service->description }}"
-              data-service-cost="{{ $service->service_cost }}"
-              data-acq-pts="{{ $service->acq_pts }}">
-              <i class="ti tabler-edit me-1"></i> Edit
-            </button>
-            
-            <button type="button" class="btn btn-sm btn-danger delete-service" 
-              data-service-id="{{ $service->service_id }}"
-              data-service-name="{{ $service->service_name }}">
-              <i class="ti tabler-trash me-1"></i> Delete
-            </button>
-          </div>
-        </td>
-      </tr>
-      @endforeach
-    </tbody>
-  </table>
-</div>
-
-<div class="modal fade" id="deleteServiceModal" tabindex="-1" aria-labelledby="deleteServiceModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteServiceModalLabel">Confirm Delete</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to delete the service "<span id="serviceNameToDelete"></span>"?</p>
-        <p class="text-muted small">This action cannot be undone.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <form id="deleteServiceForm" method="POST" style="display: inline;" action="">
-          @csrf
-          @method('DELETE')
-          <button type="submit" class="btn btn-danger" onclick="return confirm('Are you really sure you want to delete this service?')">Delete</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-              <br />
-            </div>
-          </div>
-        </div>
-
-        <!-- View Service Modal -->
-        <div class="modal fade" id="serviceModal" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-              <div class="modal-header sticky-element bg-primary">
-                <h5 class="card-title mb-sm-0 me-2 text-white">
-                  <i class="ti tabler-info-circle me-2"></i>
-                  <span id="modalServiceName"></span>
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="content-wrapper">
+          <!-- Content -->
+          <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="card">
+              <!-- Header -->
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Services List</h5>
+                <div class="d-flex gap-2">
+                  <button id="exportExcel" class="btn btn-primary">
+                    <i class="ti tabler-download me-1"></i>Export Excel
+                  </button>
+                  <a href="{{ route('page.new-services') }}" class="btn btn-success">
+                    <i class="ti tabler-plus me-1"></i>Add Service
+                  </a>
+                </div>
               </div>
-              <div class="modal-body">
-                <div class="row g-3">
-                  <!-- Image Section -->
-                  <div class="col-12 text-center mb-4">
-                    <div class="profile-upload-container mx-auto">
-                      <div class="avatar-upload">
-                        <div class="avatar-preview">
-                          <img id="modalServiceImage" src="" alt="Service Preview" class="rounded-circle"/>
+
+              <!-- Table -->
+              <div class="table-responsive text-nowrap px-3">
+                <table class="table border-top" id="servicesTable">
+                  <thead>
+                    <tr>
+                      <th>SERVICE NAME</th>
+                      <th>BRANCH NAME</th>
+                      <th>DESCRIPTION</th>
+                      <th class="text-center">SERVICE COST</th>
+                      <th class="text-center">POINTS</th>
+                      <th class="text-center">ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($services as $service)
+                    <tr>
+                      <td>{{ $service->service_name }}</td>
+                      <td>{{ $service->branch ? $service->branch->branch_name : $service->branch_code }}</td>
+                      <td>{{ $service->description }}</td>
+                      <td class="text-end">₱{{ number_format($service->service_cost, 2) }}</td>
+                      <td class="text-center">{{ $service->acq_pts }}</td>
+                      <td>
+                        <div class="d-flex gap-2 justify-content-center">
+                          <button type="button" class="btn btn-sm text-secondary p-0 edit-service"
+                            data-service-id="{{ $service->service_id }}"
+                            data-service-name="{{ $service->service_name }}"
+                            data-service-branch="{{ $service->branch_code }}"
+                            data-service-description="{{ $service->description }}"
+                            data-service-cost="{{ $service->service_cost }}"
+                            data-acq-pts="{{ $service->acq_pts }}">
+                            <i class="ti tabler-edit"></i>
+                          </button>
+                          <button type="button" class="btn btn-sm text-danger p-0 delete-service"
+                            data-service-id="{{ $service->service_id }}"
+                            data-service-name="{{ $service->service_name }}">
+                            <i class="ti tabler-trash"></i>
+                          </button>
                         </div>
-                      </div>
-                    </div>
-                  </div>
+                      </td>
+                    </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- / Content -->
 
-                  <!-- Service Details -->
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label class="form-label">Branch</label>
-                      <p id="modalBranch" class="form-control-static"></p>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label">Category</label>
-                      <p id="modalCategory" class="form-control-static"></p>
-                    </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label class="form-label">Duration</label>
-                      <p id="modalDuration" class="form-control-static"></p>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label">Service Cost</label>
-                      <p id="modalCost" class="form-control-static"></p>
-                    </div>
-                  </div>
-
-                  <div class="col-12">
-                    <div class="mb-3">
-                      <label class="form-label">Description</label>
-                      <p id="modalDescription" class="form-control-static"></p>
-                    </div>
-                  </div>
-                  
+          <!-- Footer -->
+          <footer class="content-footer footer bg-footer-theme">
+            <div class="container-xxl">
+              <div class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+                <div class="text-body">
+                  © <script>document.write(new Date().getFullYear());</script>
+                  Developed by
+                  <a href="https://intra-code.com/" target="_blank" class="footer-link">Intracode IT Solutions</a>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Edit Service Modal -->
-        <div class="modal fade" id="editServiceModal" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-              <div class="modal-header" style="background-color: #0A3622;">
-                <h5 class="modal-title text-white" id="serviceModalLabel">Edit Service</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <form id="editServiceForm" method="POST" action="{{ route('service.update') }}">
-                  @csrf
-                  @method('PUT')
-                  <input type="hidden" id="edit_service_id" name="service_id">
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label class="form-label" for="edit_service_name">Services Name</label>
-                      <input type="text" id="edit_service_name" name="service_name" class="form-control" required>
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">Branch</label>
-                      <select class="select2 form-select" name="branch_code" id="edit_branch_code" required>
-                        <option value="">Select Branch</option>
-                        @foreach($branches as $branch)
-                          <option value="{{ $branch->branch_code }}">{{ $branch->branch_name }}</option>
-                        @endforeach
-                      </select>
-                    </div>
-                    <div class="col-12">
-                      <label class="form-label" for="edit_description">Description</label>
-                      <textarea id="edit_description" name="description" class="form-control" rows="4"></textarea>
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label" for="edit_service_cost">Service Cost</label>
-                      <input type="number" step="0.01" min="0" id="edit_service_cost" name="service_cost" class="form-control" required>
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label" for="edit_acq_pts">Acquisition Points</label>
-                      <input type="number" id="edit_acq_pts" name="acq_pts" class="form-control" min="0" required>
-                    </div>
-                  </div>
-                  <div class="text-end mt-4">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary ms-2">Update Service</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
+          </footer>
+          <!-- / Footer -->
         </div>
       </div>
     </div>
@@ -475,5 +498,72 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   </script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+  $(document).ready(function() {
+    var table = $('#servicesTable').DataTable({
+      responsive: true,
+      pageLength: 10,
+      lengthMenu: [5, 10, 25, 50],
+      dom: '<"d-flex justify-content-between align-items-center mx-2 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>><"table-responsive"t><"d-flex justify-content-end align-items-center mx-2 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6 d-flex justify-content-end"p>>',
+      language: {
+        search: "",
+        searchPlaceholder: "Search Services...",
+        lengthMenu: "_MENU_ entries per page",
+        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+        paginate: {
+          previous: '←',
+          next: '→'
+        }
+      }
+    });
+
+    // Excel export button click handler
+    $('#exportExcel').on('click', function() {
+      // Get the filtered data
+      var filteredData = table.rows({ search: 'applied' }).data();
+      
+      // Create a new workbook
+      var wb = XLSX.utils.book_new();
+      
+      // Prepare the data for export
+      var exportData = [];
+      // Add headers
+      exportData.push(['Service Name', 'Branch Name', 'Description', 'Service Cost', 'Points']);
+      
+      // Add filtered data
+      filteredData.each(function(data) {
+        exportData.push([
+          data[0], // Service Name
+          data[1], // Branch Name
+          data[2], // Description
+          data[3].replace('₱', '').trim(), // Service Cost (remove ₱ symbol)
+          data[4]  // Points
+        ]);
+      });
+      
+      // Create worksheet
+      var ws = XLSX.utils.aoa_to_sheet(exportData);
+      
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Services');
+      
+      // Generate Excel file and trigger download
+      XLSX.writeFile(wb, 'services_list.xlsx');
+    });
+  });
+</script>
+
+<!-- DataTables Dependencies -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- Add SheetJS (XLSX) library before the closing </body> tag -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </body>
 </html>

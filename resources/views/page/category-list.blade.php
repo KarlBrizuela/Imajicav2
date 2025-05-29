@@ -108,6 +108,78 @@
     
       <script src="../../assets/js/config.js"></script>
     
+  <style>
+    /* Make table borders lighter */
+    #categoryTable th, #categoryTable td {
+      border-color: rgba(0,0,0,0.07) !important;
+    }
+    #categoryTable {
+      border-color: rgba(0,0,0,0.07) !important;
+    }
+    /* Align DataTables controls */
+    .dataTables_wrapper .dataTables_length {
+      float: left;
+      margin-bottom: 1rem;
+      margin-left: 2rem;
+    }
+    .dataTables_wrapper .dataTables_filter {
+      float: right;
+      margin-bottom: 1rem;
+      margin-right: 2rem;
+      max-width: 300px;
+    }
+    .dataTables_wrapper .dataTables_filter input[type="search"] {
+      max-width: 200px;
+      display: inline-block;
+    }
+    /* Align pagination to the right */
+    .dataTables_wrapper .dataTables_paginate {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+      padding-right: 15px;
+    }
+    .dataTables_wrapper .dataTables_info {
+      padding-left: 15px;
+    }
+    /* Style pagination buttons */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      padding: 0.5rem 0.75rem;
+      margin: 0 2px;
+      border-radius: 5px;
+      min-width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #6f6b7d !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+      background: #7367f0 !important;
+      color: #fff !important;
+      border: 1px solid #7367f0 !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+      background: #f6f6f6 !important;
+      border: 1px solid #ddd !important;
+      color: #6f6b7d !important;
+    }
+    /* Hide numbered pagination buttons */
+    .dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous):not(.next) {
+      display: none;
+    }
+    @media (max-width: 767.98px) {
+      .dataTables_wrapper .dataTables_paginate {
+        justify-content: center;
+        padding-right: 0;
+      }
+      .dataTables_wrapper .dataTables_info {
+        text-align: center;
+        padding-left: 0;
+      }
+    }
+  </style>
   </head>
 
   <body>
@@ -133,73 +205,76 @@
 
       <!-- Layout container -->
       <div class="layout-page">
-      
-        
-
-    <div class="container">
-  
-
-                    <!-- Category Table Card -->
-                    <div class="card">
-                      <div class="card-header d-flex justify-content-between align-items-center py-3">
-                        <div class="flex-grow-1">
-                          <h4 class="card-title mb-0">Product Category List</h4>
-                        </div>
-                        <button class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEcommerceCategoryList" id="eCommerceCategoryListForm">
-                          <i class="ti tabler-plus me-1"></i> Add New Category
+        <div class="content-wrapper">
+          <!-- Content -->
+          <div class="container-xxl flex-grow-1 container-p-y">
+            <!-- Category List Table -->
+            <div class="card">
+              <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center row">
+                  <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Product Category List</h5>
+                      <div class="d-flex gap-2">
+                        <button id="exportExcel" class="btn btn-primary">
+                          <i class="ti tabler-download me-1"></i>Export Excel
                         </button>
-                      </div>
-                      <div class="card-datatable table-responsive">
-                        <table class="table table-striped" id="categoryTable" style="width: 100%">
-                          <thead class="table-light">
-                            <tr>
-                              <th>ID</th>
-                              <th>Category</th>
-                              <th>Total Products</th>
-                              <th>Total Earnings</th>
-                              <th>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            @foreach ($categories as $category)
-                            <tr data-category-id="{{ $category->category_id }}">
-                              <td>{{ $category->category_id }}</td>
-                              <td>
-                                <div class="d-flex flex-column">
-                                  <h6 class="mb-0">{{ $category->categoryTitle }}</h6>
-                                  <small class="text-muted">{{ $category->description ?? 'No description available' }}</small>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="fw-semibold align-middle">{{ $category->products_count }}</span>
-                              </td>
-                              <td>
-                                <span class="fw-semibold">₱{{ number_format($category->total_earnings, 2) }}</span>
-                              </td>
-                              <td>
-                                <div class="d-flex gap-2">
-                                  <button class="btn btn-sm btn-info edit-category" 
-                                          data-bs-toggle="modal" 
-                                          data-bs-target="#editCategoryModal" 
-                                          data-category-id="{{ $category->category_id }}"
-                                          data-category-name="{{ $category->categoryTitle }}"
-                                          data-description="{{ $category->description }}">
-                                    <i class="ti tabler-edit"></i>
-                                  </button>
-                                  <button class="btn btn-sm btn-danger delete-category" 
-                                          data-category-id="{{ $category->category_id }}"
-                                          data-category-name="{{ $category->categoryTitle }}">
-                                    <i class="ti tabler-trash"></i>
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                            @endforeach
-                          </tbody>
-                        </table>
+                        <button class="btn btn-success" data-bs-toggle="offcanvas" data-bs-target="#offcanvasEcommerceCategoryList" id="eCommerceCategoryListForm">
+                          <i class="ti tabler-plus me-1"></i>Add New Category
+                        </button>
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div class="card-datatable table-responsive">
+                <table class="table border-top" id="categoryTable">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>CATEGORY</th>
+                      <th>TOTAL PRODUCTS</th>
+                      <th>TOTAL EARNINGS</th>
+                      <th>ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-nowrap">
+                    @foreach ($categories as $category)
+                    <tr>
+                      <td>{{ $category->category_id }}</td>
+                      <td>
+                        <div class="d-flex flex-column">
+                          <h6 class="text-body mb-0" data-search="{{ $category->categoryTitle }}">{{ $category->categoryTitle }}</h6>
+                          <small class="text-muted">{{ $category->description ?? 'No description available' }}</small>
+                        </div>
+                      </td>
+                      <td>{{ $category->products_count }}</td>
+                      <td>₱{{ number_format($category->total_earnings, 2) }}</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <a href="javascript:void(0);" class="text-body edit-category" 
+                             data-bs-toggle="modal" 
+                             data-bs-target="#editCategoryModal" 
+                             data-category-id="{{ $category->category_id }}"
+                             data-category-name="{{ $category->categoryTitle }}"
+                             data-description="{{ $category->description }}">
+                            <i class="ti tabler-edit me-2"></i>
+                          </a>
+                          <a href="javascript:void(0);" class="text-body delete-category"
+                             data-category-id="{{ $category->category_id }}"
+                             data-category-name="{{ $category->categoryTitle }}">
+                            <i class="ti tabler-trash text-danger"></i>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
 
                   <form id="deleteCategoryForm" method="POST" action="{{ route('category.delete') }}" style="display: none;">
                     @csrf
@@ -335,6 +410,9 @@
   <script src="{{ asset('vendor/libs/@form-validation/auto-focus.js') }}"></script>
  <script src="{{ asset('vendor/libs/quill/katex.js') }}"></script>
  <script src="{{ asset('vendor/libs/quill/quill.js') }}"></script>
+
+<!-- Add DataTables JS -->
+<script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
 
     <!-- Main JS -->
     
@@ -803,14 +881,68 @@
 
 <script>
   $(document).ready(function() {
-    var table = $('#categoryTable').DataTable({
-      responsive: true,
-      searching: true,
-      lengthChange: true,
-      info: true
+    var categoryTable = $('#categoryTable').DataTable({
+        responsive: true,
+        pageLength: 10,
+        lengthMenu: [5, 10, 25, 50],
+        dom: '<"d-flex justify-content-between align-items-center mx-2 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>><"table-responsive"t><"d-flex justify-content-end align-items-center mx-2 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6 d-flex justify-content-end"p>>',
+        language: {
+            search: "",
+            searchPlaceholder: "Search Category...",
+            lengthMenu: "_MENU_ entries per page",
+            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            paginate: {
+                previous: '←',
+                next: '→'
+            }
+        }
+    });
+
+    // Excel export button click handler
+    $('#exportExcel').on('click', function() {
+        // Get the filtered data
+        var filteredData = categoryTable.rows({ search: 'applied' }).data();
+        
+        // Create a new workbook
+        var wb = XLSX.utils.book_new();
+        
+        // Prepare the data for export
+        var exportData = [];
+        // Add headers
+        exportData.push(['ID', 'Category', 'Description', 'Total Products', 'Total Earnings']);
+        
+        // Add filtered data
+        filteredData.each(function(data) {
+            // Extract description from the category cell's small tag
+            var description = $(data[1]).find('small').text();
+            // Extract category name from the h6 tag
+            var categoryName = $(data[1]).find('h6').text();
+            // Clean up the earnings value by removing ₱ symbol
+            var earnings = data[3].replace('₱', '').trim();
+            
+            exportData.push([
+                data[0], // ID
+                categoryName, // Category Name
+                description, // Description
+                data[2], // Total Products
+                earnings  // Total Earnings (without ₱ symbol)
+            ]);
+        });
+        
+        // Create worksheet
+        var ws = XLSX.utils.aoa_to_sheet(exportData);
+        
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Categories');
+        
+        // Generate Excel file and trigger download
+        XLSX.writeFile(wb, 'category_list.xlsx');
     });
   });
 </script>
+
+<!-- DataTables core CSS and JS (required for default controls) -->
+
 
 </body>
 </html>

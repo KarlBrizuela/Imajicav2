@@ -315,9 +315,6 @@
                         </a>
                       </li>
 
-                      <li>
-                        <div class="dropdown-divider my-1 mx-n2"></div>
-                      </li>
 
                       <li>
                         <div class="d-grid px-2 pt-2 pb-1">
@@ -598,7 +595,7 @@
     <script>
       $(document).ready(function() {
         $('#couponTable').DataTable({
-            responsive: true,
+            responsive: false,
         });
       });
     </script>
