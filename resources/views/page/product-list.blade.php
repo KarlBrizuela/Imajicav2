@@ -103,6 +103,11 @@
     
     <!-- Add this in the <head> section -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Add these before closing </head> tag -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   </head>
 
   <body>
@@ -145,59 +150,56 @@
 
 
   <!-- Product List Table -->
-  <div class="card">
-    <div class="card-header border-bottom">
-      <div class="d-flex justify-content-between align-items-center">
-        <h4 class="card-title">Product List</h4>
-        <a href="{{ route('page.add-product') }}" class="btn btn-primary">
-          <i class="ti tabler-plus me-1"></i>Add Product
-        </a>
-      </div>
-      <div class="d-flex justify-content-between align-items-center row pt-4 gap-6 gap-md-0 g-md-6">
-        <div class="col-md-4 product_category"></div>
+  <div class="card mt-2">
+    <div class="card-header pb-2 pt-3">
+      <div class="d-flex justify-content-between align-items-center row">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Product List</h5>
+            <div class="d-flex gap-2">
+              <button id="exportExcel" class="btn btn-primary">
+                <i class="ti tabler-download me-1"></i>Export Excel
+              </button>
+              <a href="{{ route('page.add-product') }}" class="btn btn-success">
+                <i class="ti tabler-plus me-1"></i>Add Product
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="card-datatable table-responsive pt-0">
-      <table class="table table-striped" id="prodTable">
-        <thead class="border-top table-light">
+    <div class="card-datatable table-responsive">
+      <table class="table border-top" id="prodTable">
+        <thead>
           <tr>
-          
-            <th>Product</th>
-            <th>Category</th>
-            <th>Supplier</th>
-            <th>Base Price</th>
-            <th>Stock</th>
-            <th>Reorder Level</th>
-            <th>Manufacturing Date</th>
-            <th>Expiry Date</th>
-            <th>Removal Date</th>
-            <th>Actions</th>
+            <th>PRODUCT</th>
+            <th>CATEGORY</th>
+            <th>SUPPLIER</th>
+            <th>BASE PRICE</th>
+            <th>STOCK</th>
+            <th>REORDER LEVEL</th>
+            <th>EXPIRY DATE</th>
+            <th class="text-center">ACTIONS</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="text-nowrap">
           @foreach($products as $product)
           <tr>
-          
-            <td>
-      
-                  {{ $product->name }}
-            </td>
+            <td>{{ $product->name }}</td>
             <td>{{ $product->category ? $product->category->categoryTitle : $product->category_id }}</td>
             <td>{{ $product->supplier ? $product->supplier->supplier_name : $product->supplier_id }}</td>
             <td>{{ $product->base_price }}</td>
             <td>{{ $product->quantity }}</td>
             <td>{{ $product->restock_point }}</td>
-            <td>{{ $product->manufacturing_date }}</td>
             <td>{{ $product->expiry_date }}</td>
-            <td>{{ $product->removal_date }}</td>
             <td>
-              <div class="d-flex align-items-sm-center justify-content-sm-center">
-                <a href="{{ route('product.edit', ['sku' => $product->sku]) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Product">
-                  <i class="ti tabler-edit me-1"></i>Edit
+              <div class="d-flex justify-content-center gap-2">
+                <a href="{{ route('product.edit', ['sku' => $product->sku]) }}" class="text-body">
+                  <i class="ti tabler-edit"></i>
                 </a>
-                <button class="btn btn-sm btn-danger delete-product" data-sku="{{ $product->sku }}">
-                    <i class="ti tabler-trash me-1"></i>Delete
-                </button>
+                <a href="javascript:void(0);" class="text-body delete-product" data-sku="{{ $product->sku }}">
+                  <i class="ti tabler-trash text-danger"></i>
+                </a>
               </div>
             </td>
           </tr>
@@ -313,173 +315,141 @@
 
 <script>
 $(document).ready(function() {
-  $('#prodTable').DataTable();
-  
-    // SweetAlert default configuration
-    const swalConfig = {
-        customClass: {
-            confirmButton: 'btn btn-primary',
-            cancelButton: 'btn btn-secondary',
-            denyButton: 'btn btn-danger'
-        },
-        buttonsStyling: false,
-        backdrop: true,
-        allowOutsideClick: false
-    };
-
-    // Handle delete product button clicks using event delegation
-    $(document).on('click', '.delete-product', function() {
-        try {
-            const sku = $(this).data('sku');
-            const productName = $(this).closest('tr').find('td:first').text().trim();
-            
-            if (!sku) {
-                throw new Error("Product SKU not found in data attributes");
+    var table = $('#prodTable').DataTable({
+        responsive: true,
+        pageLength: 10,
+        lengthMenu: [5, 10, 25, 50],
+        dom: '<"d-flex justify-content-between align-items-center mx-2 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>><"table-responsive"t><"d-flex justify-content-end align-items-center mx-2 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6 d-flex justify-content-end"p>>',
+        language: {
+            search: "",
+            searchPlaceholder: "Search Product...",
+            lengthMenu: "_MENU_ entries per page",
+            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            paginate: {
+                previous: '←',
+                next: '→'
             }
-            
-            // Set the SKU in the hidden delete form
-            $('#delete_product_sku').val(sku);
-            $('#force_delete').val(0); // Reset force delete flag
-            
-            // Show delete confirmation
-            Swal.fire({
-                ...swalConfig,
-                title: 'Confirm Delete',
-                html: `Are you sure you want to delete product <strong>${productName}</strong>?<br>This action cannot be undone.`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Submit the delete form
-                    $('#deleteProductForm').submit();
-                }
-            });
-        } catch (e) {
-            console.error("Error in delete button click handler:", e);
-            Swal.fire({
-                ...swalConfig,
-                icon: 'error',
-                title: 'Delete Error',
-                html: 'An error occurred while processing your delete request:<br>' + e.message,
-                showConfirmButton: true
-            });
-        }
+        },
+        order: [[0, 'asc']]
     });
 
-    // Handle success/error messages from server
-    @if(session('success'))
-        Swal.fire({
-            ...swalConfig,
-            icon: 'success',
-            title: 'Success',
-            text: "{{ session('success') }}",
-            timer: 1500,
-            showConfirmButton: false
+    $('.dataTables_filter .form-control').removeClass('form-control-sm');
+    $('.dataTables_length select').removeClass('form-select-sm');
+
+    // Excel export button click handler
+    $('#exportExcel').on('click', function() {
+        // Get the filtered data
+        var filteredData = table.rows({ search: 'applied' }).data();
+        
+        // Create a new workbook
+        var wb = XLSX.utils.book_new();
+        
+        // Prepare the data for export
+        var exportData = [];
+        // Add headers
+        exportData.push(['Product', 'Category', 'Supplier', 'Base Price', 'Stock', 'Reorder Level', 'Expiry Date']);
+        
+        // Add filtered data
+        filteredData.each(function(data) {
+            exportData.push([
+                data[0], // Product
+                data[1], // Category
+                data[2], // Supplier
+                data[3], // Base Price
+                data[4], // Stock
+                data[5], // Reorder Level
+                data[6]  // Expiry Date
+            ]);
         });
-    @endif
-
-    @if(session('error'))
-        @if(session('show_force_delete'))
-            Swal.fire({
-                ...swalConfig,
-                icon: 'warning',
-                title: 'Cannot Delete Product',
-                html: `
-                    <div class="text-start">
-                        <p class="mb-3">{{ session('error') }}</p>
-
-                        @if(!empty(session('related_records')))
-                            <div class="alert alert-warning mb-3">
-                                <h6 class="fw-bold mb-2">Related Records:</h6>
-                                <div style="max-height: 200px; overflow-y: auto;">
-                                    @foreach(session('related_records') as $tableName => $records)
-                                        <div class="mb-2">
-                                            <strong>{{ $tableName }}</strong>
-                                            <ul class="mb-1 ps-3">
-                                                @foreach($records as $record)
-                                                    <li>{{ $record['name'] }} (ID: {{ $record['id'] }})</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="alert alert-info mb-0 mt-3">
-                            <h6 class="fw-bold mb-2">Options:</h6>
-                            <ol class="ps-3 mb-0">
-                                <li>Go to the referenced areas and remove all product references manually first</li>
-                                <li>Use <strong>"Force Delete"</strong> to delete anyway (may cause data inconsistency)</li>
-                            </ol>
-                        </div>
-                    </div>
-                `,
-                showDenyButton: true,
-                confirmButtonText: 'Cancel',
-                denyButtonText: '<i class="ti tabler-trash me-1"></i> Force Delete',
-                customClass: {
-                    confirmButton: 'btn btn-secondary',
-                    denyButton: 'btn btn-danger'
-                },
-                width: '42em',
-            }).then((result) => {
-                if (result.isDenied) {
-                    // Set the SKU and force_delete flag
-                    $('#delete_product_sku').val("{{ session('sku') }}");
-                    $('#force_delete').val(1);
-                    
-                    // Show force delete confirmation
-                    Swal.fire({
-                        ...swalConfig,
-                        title: 'Force Delete Confirmation',
-                        html: `
-                            <div class="text-start">
-                                <p>This will <strong class="text-danger">permanently delete</strong> the product and may leave related data in an inconsistent state.</p>
-                                
-                                <div class="alert alert-danger mt-3">
-                                    <h6 class="fw-bold mb-2">Warning:</h6>
-                                    <ul class="ps-3 mb-0">
-                                        <li>Records referencing this product will have invalid references</li>
-                                        <li>This may cause errors when viewing or processing those records</li>
-                                        <li>This action cannot be undone</li>
-                                    </ul>
-                                </div>
-                                
-                                <p class="mt-3 fw-bold">Are you absolutely sure you want to proceed?</p>
-                            </div>
-                        `,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: '<i class="ti tabler-alert-triangle me-1"></i> Yes, Force Delete!',
-                        cancelButtonText: 'Cancel',
-                        customClass: {
-                            confirmButton: 'btn btn-danger',
-                            cancelButton: 'btn btn-secondary'
-                        },
-                        width: '42em',
-                    }).then((confirmResult) => {
-                        if (confirmResult.isConfirmed) {
-                            // Submit the form with force delete
-                            $('#deleteProductForm').submit();
-                        }
-                    });
-                }
-            });
-        @else
-            Swal.fire({
-                ...swalConfig,
-                icon: 'error',
-                title: 'Error',
-                text: "{{ session('error') }}",
-                showConfirmButton: true
-            });
-        @endif
-    @endif
+        
+        // Create worksheet
+        var ws = XLSX.utils.aoa_to_sheet(exportData);
+        
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Products');
+        
+        // Generate Excel file and trigger download
+        XLSX.writeFile(wb, 'product_list.xlsx');
+    });
 });
 </script>
+
+<style>
+/* Make table borders lighter */
+#prodTable th, #prodTable td {
+    border-color: rgba(0,0,0,0.07) !important;
+}
+#prodTable {
+    border-color: rgba(0,0,0,0.07) !important;
+}
+/* Align DataTables controls */
+.dataTables_wrapper .dataTables_length {
+    float: left;
+    margin-bottom: 1rem;
+    margin-left: 2rem;
+}
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    margin-bottom: 1rem;
+    margin-right: 2rem;
+    max-width: 300px;
+}
+.dataTables_wrapper .dataTables_filter input[type="search"] {
+    max-width: 200px;
+    display: inline-block;
+}
+/* Align pagination to the right */
+.dataTables_wrapper .dataTables_paginate {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding-right: 15px;
+}
+.dataTables_wrapper .dataTables_info {
+    padding-left: 15px;
+}
+/* Style pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.5rem 0.75rem;
+    margin: 0 2px;
+    border-radius: 5px;
+    min-width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #6f6b7d !important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #1a5f2c !important;
+    color: #fff !important;
+    border: 1px solid #1a5f2c !important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+    background: #f6f6f6 !important;
+    border: 1px solid #ddd !important;
+    color: #6f6b7d !important;
+}
+/* Show all pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    display: inline-flex !important;
+}
+@media (max-width: 767.98px) {
+    .dataTables_wrapper .dataTables_paginate {
+        justify-content: center;
+        padding-right: 0;
+    }
+    .dataTables_wrapper .dataTables_info {
+        text-align: center;
+        padding-left: 0;
+    }
+}
+.table td {
+    white-space: normal;
+    word-wrap: break-word;
+}
+</style>
 
   </body>
 

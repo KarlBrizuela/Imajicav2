@@ -66,6 +66,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
   
   </head>
 
@@ -102,22 +104,27 @@
                 <!-- Header -->
                 <div class="card-header d-flex justify-content-between align-items-center">
                   <h5 class="card-title mb-0">Inventory Waste List</h5>
-                  <a href="{{ route('page.new-waste') }}" class="btn btn-primary">
-                    <i class="ti tabler-plus me-1"></i> Add New Waste
-                  </a>
+                  <div class="d-flex gap-2">
+                    <button id="exportExcel" class="btn btn-primary">
+                      <i class="ti tabler-download me-1"></i>Export Excel
+                    </button>
+                    <a href="{{ route('page.new-waste') }}" class="btn btn-success">
+                      <i class="ti tabler-plus me-1"></i> Add New Waste
+                    </a>
+                  </div>
                 </div>
 
                 <!-- Table -->
                 <div class="table-responsive text-nowrap px-3">
-                  <table class="table table-striped" id="wasteTable">
-                    <thead class="table-light">
+                  <table class="table border-top" id="wasteTable">
+                    <thead>
                       <tr>
                         <th>ID</th>
-                        <th>Product Name</th>
-                        <th>Quantity</th>
-                        <th>Reason</th>
-                        <th>Date Added</th>
-                        <th>Actions</th>
+                        <th>PRODUCT NAME</th>
+                        <th>QUANTITY</th>
+                        <th>REASON</th>
+                        <th>DATE ADDED</th>
+                        <th>ACTIONS</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -239,11 +246,105 @@
     <!-- Custom Script for Waste Management -->
     <script>
       $(document).ready(function() {
-        var table = $('#wasteTable').DataTable({
+        var wasteTable = $('#wasteTable').DataTable({
           responsive: true,
-          searching: true,
-          lengthChange: true,
-          info: true
+          pageLength: 10,
+          lengthMenu: [5, 10, 25, 50],
+          dom: '<"d-flex justify-content-between align-items-center mx-2 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>><"table-responsive"t><"d-flex justify-content-end align-items-center mx-2 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6 d-flex justify-content-end"p>>',
+          language: {
+            search: "",
+            searchPlaceholder: "Search Waste...",
+            lengthMenu: "_MENU_ entries per page",
+            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            paginate: {
+              previous: '←',
+              next: '→'
+            }
+          }
+        });
+
+        // Excel export button click handler
+        $('#exportExcel').on('click', function() {
+            // Get the filtered data
+            var filteredData = wasteTable.rows({ search: 'applied' }).data();
+            
+            // Create a new workbook
+            var wb = XLSX.utils.book_new();
+            
+            // Prepare the data for export
+            var exportData = [];
+            // Add headers
+            exportData.push(['ID', 'Product Name', 'Quantity', 'Reason', 'Date Added']);
+            
+            // Add filtered data
+            filteredData.each(function(data) {
+                exportData.push([
+                    data[0], // ID
+                    data[1], // Product Name
+                    data[2], // Quantity
+                    data[3], // Reason
+                    data[4]  // Date Added
+                ]);
+            });
+            
+            // Create worksheet
+            var ws = XLSX.utils.aoa_to_sheet(exportData);
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Waste List');
+            
+            // Generate Excel file and trigger download
+            XLSX.writeFile(wb, 'waste_list.xlsx');
+        });
+
+        // Delete waste functionality
+        $('.delete-waste').on('click', function() {
+          var wasteId = $(this).data('id');
+          
+          Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            customClass: {
+              confirmButton: 'btn btn-danger me-3',
+              cancelButton: 'btn btn-secondary'
+            },
+            buttonsStyling: false
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $.ajax({
+                url: '/waste/' + wasteId,
+                type: 'DELETE',
+                data: {
+                  _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: 'Waste has been deleted.',
+                    customClass: {
+                      confirmButton: 'btn btn-success'
+                    }
+                  }).then(() => {
+                    location.reload();
+                  });
+                },
+                error: function(xhr) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Something went wrong.',
+                    customClass: {
+                      confirmButton: 'btn btn-primary'
+                    }
+                  });
+                }
+              });
+            }
+          });
         });
       });
     </script>
@@ -267,52 +368,6 @@
           allowOutsideClick: false
         };
 
-        // Handle delete waste button clicks
-        $('.delete-waste').on('click', function() {
-          const wasteId = $(this).data('id');
-          
-          Swal.fire({
-            ...swalConfig,
-            title: 'Confirm Delete',
-            text: 'Are you sure you want to delete this waste record? This action cannot be undone.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // Send AJAX delete request
-              $.ajax({
-                url: `/waste/${wasteId}`,
-                type: 'DELETE',
-                data: {
-                  _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                  Swal.fire({
-                    ...swalConfig,
-                    icon: 'success',
-                    title: 'Deleted!',
-                    text: response.message || 'Waste record has been deleted.',
-                    timer: 1500,
-                    showConfirmButton: false
-                  }).then(() => {
-                    location.reload();
-                  });
-                },
-                error: function(xhr) {
-                  Swal.fire({
-                    ...swalConfig,
-                    icon: 'error',
-                    title: 'Error',
-                    text: xhr.responseJSON?.message || 'Failed to delete waste record'
-                  });
-                }
-              });
-            }
-          });
-        });
-
         // Display success/error messages from session
         @if(session('success'))
           Swal.fire({
@@ -334,6 +389,80 @@
           });
         @endif
     </script>
+
+    <!-- Add the same styling as category list -->
+    <style>
+      /* Make table borders lighter */
+      #wasteTable th, #wasteTable td {
+        border-color: rgba(0,0,0,0.07) !important;
+      }
+      #wasteTable {
+        border-color: rgba(0,0,0,0.07) !important;
+      }
+      /* Align DataTables controls */
+      .dataTables_wrapper .dataTables_length {
+        float: left;
+        margin-bottom: 1rem;
+        margin-left: 2rem;
+      }
+      .dataTables_wrapper .dataTables_filter {
+        float: right;
+        margin-bottom: 1rem;
+        margin-right: 2rem;
+        max-width: 300px;
+      }
+      .dataTables_wrapper .dataTables_filter input[type="search"] {
+        max-width: 200px;
+        display: inline-block;
+      }
+      /* Align pagination to the right */
+      .dataTables_wrapper .dataTables_paginate {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+        padding-right: 15px;
+      }
+      .dataTables_wrapper .dataTables_info {
+        padding-left: 15px;
+      }
+      /* Style pagination buttons */
+      .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.5rem 0.75rem;
+        margin: 0 2px;
+        border-radius: 5px;
+        min-width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #6f6b7d !important;
+      }
+      .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: #7367f0 !important;
+        color: #fff !important;
+        border: 1px solid #7367f0 !important;
+      }
+      .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+        background: #f6f6f6 !important;
+        border: 1px solid #ddd !important;
+        color: #6f6b7d !important;
+      }
+      /* Hide numbered pagination buttons */
+      .dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous):not(.next) {
+        display: none;
+      }
+      @media (max-width: 767.98px) {
+        .dataTables_wrapper .dataTables_paginate {
+          justify-content: center;
+          padding-right: 0;
+        }
+        .dataTables_wrapper .dataTables_info {
+          text-align: center;
+          padding-left: 0;
+        }
+      }
+    </style>
 
   </body>
 
