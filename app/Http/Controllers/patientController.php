@@ -48,10 +48,10 @@ class patientController extends Controller
             if ($request->hasFile('image_path')) {
                 $image = $request->file('image_path');
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('patient_images'), $imageName);
-                $validatedData['image_path'] = 'patient_images/' . $imageName;
+                // Save to storage/app/public/patient_images
+                $path = $image->storeAs('patient_images', $imageName, 'public');
+                $validatedData['image_path'] = $path; // This will be 'patient_images/xxxx.jpg'
             } else {
-                // If no image uploaded, set to null or a default image path
                 $validatedData['image_path'] = null;
             }
 
@@ -194,6 +194,17 @@ class patientController extends Controller
     
     public function index()
     {
+        $patients = Patient::all()->map(function ($patient) {
+        // Check if image exists and prepare full URL
+        if ($patient->image_path && Storage::disk('public')->exists($patient->image_path)) {
+            $patient->full_image_url = asset('storage/' . $patient->image_path);
+            $patient->has_valid_image = true;
+        } else {
+            $patient->full_image_url = null;
+            $patient->has_valid_image = false;
+        }
+        return $patient;
+    });
         $tiers = tier::all();
         return view('page.new-patient', compact('tiers'));
     }
@@ -804,6 +815,8 @@ public function downloadAttachment($id)
         }
     }
 
+
+
     /**
      * Get patient points for the welcome badge feature
      *
@@ -835,4 +848,66 @@ public function downloadAttachment($id)
             ], 500);
         }
     }
+
+
+    // In your controller
+public function uploadProfileImage(Request $request)
+{
+    try {
+        $request->validate([
+            'profile_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'patient_id' => 'required|exists:patients,patient_id'
+        ]);
+
+        $patient = Patient::findOrFail($request->patient_id);
+        
+        if ($request->hasFile('profile_image')) {
+            // Delete old image if exists
+            if ($patient->image_path && Storage::disk('public')->exists($patient->image_path)) {
+                Storage::disk('public')->delete($patient->image_path);
+            }
+            
+            // Store new image
+            $image = $request->file('profile_image');
+            $imageName = time() . '_' . $patient->patient_id . '.' . $image->getClientOriginalExtension();
+            
+            // Store in storage/app/public/patient_images
+            $path = $image->storeAs('patient_images', $imageName, 'public');
+            
+            // Update database
+            $patient->image_path = $path;
+            $patient->save();
+            
+            // Verify the file was actually saved
+            if (Storage::disk('public')->exists($path)) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Profile picture updated successfully',
+                    'image_url' => asset('storage/' . $path)
+                ]);
+            } else {
+                throw new Exception('File was not saved properly');
+            }
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'No image file received'
+        ], 400);
+        
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all())
+        ], 422);
+    } catch (\Exception $e) {
+        \Log::error('Profile image upload error: ' . $e->getMessage());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Upload failed: ' . $e->getMessage()
+        ], 500);
+    }
+}
+    
 }

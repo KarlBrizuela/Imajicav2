@@ -43,41 +43,41 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
+    <link rel="stylesheet" href="/public/vendor/fonts/iconify-icons.css" />
 
     <!-- Core CSS -->
     <!-- build:css assets/vendor/css/theme.css  -->
 
-    <link rel="stylesheet"  href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
-    <link  rel="stylesheet"  href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/chartjs/chartjs.css') }}" />
+    <link rel="stylesheet"  href="/public/vendor/libs/node-waves/node-waves.css" />
+    <link  rel="stylesheet"  href="/public/vendor/libs/pickr/pickr-themes.css" />
+    <link rel="stylesheet" href="/public/vendor/css/core.css" />
+    <link rel="stylesheet" href="/public/css/demo.css" />
+    <link rel="stylesheet" href="/public/vendor/libs/chartjs/chartjs.css" />
 
     <!-- Vendors CSS -->
 
-   <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+   <link rel="stylesheet" href="/public/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
     <!-- endbuild -->
 
-    <link rel="stylesheet" href="{{ asset('vendor/libs/apex-charts/apex-charts.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/swiper/swiper.css') }}" />
-      <link  rel="stylesheet"  href="{{ asset('vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
-  <link rel="stylesheet" href="{{ asset('vendor/fonts/flag-icons.css') }}" />
+    <link rel="stylesheet" href="/public/vendor/libs/apex-charts/apex-charts.css" />
+    <link rel="stylesheet" href="/public/vendor/libs/swiper/swiper.css" />
+      <link  rel="stylesheet"  href="/public/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
+    <link rel="stylesheet" href="/public/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css" />
+  <link rel="stylesheet" href="/public/vendor/fonts/flag-icons.css" />
 
     <!-- Page CSS -->
-    <link rel="stylesheet" href="{{ asset('vendor/css/pages/cards-advance.css') }}">
+    <link rel="stylesheet" href="/public/vendor/css/pages/cards-advance.css">
 
     <!-- Helpers -->
-    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
+    <script src="/public/vendor/js/helpers.js"></script>
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 
     <!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
 
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 
-    <script src="../../assets/js/config.js"></script>
+    <script src="/public/assets/js/config.js"></script>
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
@@ -1018,33 +1018,33 @@ function sortRows() {
  
   <!-- / Footer -->
 
- <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
-    <script src="{{ asset('vendor/libs/%40algolia/autocomplete-js.js') }}"></script>
-    <script src="{{ asset('vendor/libs/pickr/pickr.js') }}"></script>
-    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ asset('vendor/libs/hammer/hammer.js') }}"></script>
-    <script src="{{ asset('vendor/libs/i18n/i18n.js') }}"></script>
-    <script src="{{ asset('vendor/js/menu.js') }}"></script>
+ <script src="/public/vendor/libs/jquery/jquery.js"></script>
+    <script src="/public/vendor/libs/popper/popper.js"></script>
+    <script src="/public/vendor/js/bootstrap.js"></script>
+    <script src="/public/vendor/libs/node-waves/node-waves.js"></script>
+    <script src="/public/vendor/libs/%40algolia/autocomplete-js.js"></script>
+    <script src="/public/vendor/libs/pickr/pickr.js"></script>
+    <script src="/public/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="/public/vendor/libs/hammer/hammer.js"></script>
+    <script src="/public/vendor/libs/i18n/i18n.js"></script>
+    <script src="/public/vendor/js/menu.js"></script>
 
   <!-- endbuild -->
 
   <!-- Vendors JS -->
- <script src="{{ asset('vendor/libs/apex-charts/apexcharts.js') }}"></script>
-<script src="{{ asset('vendor/libs/swiper/swiper.js') }}"></script>
-<script src="{{ asset('vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+ <script src="/public/vendor/libs/apex-charts/apexcharts.js"></script>
+<script src="/public/vendor/libs/swiper/swiper.js"></script>
+<script src="/public/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
 
 
   <!-- Main JS -->
 
-  <script src="../../assets/js/main.js"></script>
+  <script src="/public/assets/js/main.js"></script>
 
   <!-- Page JS -->
-  <script src="../../assets/vendor/libs/chartjs/chartjs.js"></script>
-  <script src="../../assets/js/charts-chartjs-legend.js"></script>
-  <script src="../../assets/js/charts-chartjs.js"></script>
+  <script src="/public/assets/vendor/libs/chartjs/chartjs.js"></script>
+  <script src="/public/assets/js/charts-chartjs-legend.js"></script>
+  <script src="/public/assets/js/charts-chartjs.js"></script>
 
   <!-- Export Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

@@ -16,6 +16,7 @@
     <title>Patient Details - Imajica Booking System</title>
 
     <!-- Favicon -->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css">
     <link rel="icon" type="image/x-icon" href="{{ asset('logo/logo.png') }}" />
 
 
@@ -28,15 +29,18 @@
 
     <!-- Core CSS -->
       <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
-    <link rel="stylesheet"  href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
+     <link rel="stylesheet" href="{{ asset('vendor/libs/node-waves/node-waves.css') }}" />
+
+ <link rel="stylesheet" href="{{ asset('vendor/libs/pickr/pickr-themes.css') }}" />
+
+  <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}">
+
+  <link rel="stylesheet" href="{{ asset('/css/demo.css') }}" />
 
     <!-- Helpers -->
      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('vendor/js/helpers.js') }}"></script>
-    <script src="../../assets/js/config.js"></script>
+    <script src="{{ asset('assets/js/config.js') }}"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
     <!-- Add this before </head> -->
@@ -290,6 +294,64 @@
     .tab-content .card-body {
         padding: 1.5rem;
     }
+
+   .avatar-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    z-index: 1; /* Ensure the wrapper creates a stacking context */
+}
+
+.avatar-preview {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 3; /* Ensure the avatar stays below the button */
+}
+
+/* Camera button styling */
+.avatar-upload-btn {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    border: 2px solid #f8f9fa;
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+/* Tabler Icon styling */
+.avatar-upload-btn .ti-camera {
+    font-size: 18px;
+    color: #696cff;
+    display: block;
+    line-height: 1;
+}
+
+/* Fallback emoji styling */
+.avatar-upload-btn .icon-wrapper {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.avatar-upload-btn:hover {
+    background: #f8f8f8;
+    transform: translateX(-50%) scale(1.1);
+}
+
+
     </style>
 </head>
 
@@ -317,43 +379,52 @@
                         </div>
                     
                         <!-- Patient Header -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body text-center">
-                                        <div class="d-flex flex-column align-items-center gap-3">
-                                            <div class="avatar-wrapper">
-                                                <div class="avatar-preview">
-                                                    @if($patient->image_path && Storage::disk('public')->exists($patient->image_path))
-                                                        <img id="imagePreview" 
-                                                             src="{{ asset('storage/'.$patient->image_path) }}" 
-                                                             alt="Profile Preview"
-                                                             class="rounded-circle"
-                                                             style="width: 100%; height: 100%; object-fit: cover;">
-                                                    @else
-                                                        <div class="avatar-placeholder">
-                                                            <div class="avatar-circle">
-                                                                <div class="avatar-silhouette">
-                                                                    <div class="avatar-head"></div>
-                                                                    <div class="avatar-body"></div>
-                                                                </div>
-                                                                <span class="initials">
-                                                                    {{ strtoupper(substr($patient->firstname ?? '', 0, 1) . substr($patient->lastname ?? '', 0, 1)) }}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h3 class="mb-0">{{ $patient->firstname }} {{ $patient->lastname }}</h3>
-                                            </div>
+                      <!-- Patient Header -->
+          <div class="avatar-circle">
+                                        <div class="avatar-silhouette">
+                                            <div class="avatar-head"></div>
+                           <div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="d-flex flex-column align-items-center gap-3">
+                    <div class="avatar-wrapper position-relative mb-3">
+                        <div class="avatar-preview">
+                            @if($patient->image_path && Storage::disk('public')->exists($patient->image_path))
+                                <img id="imagePreview" 
+                                     src="{{ asset('storage/'.$patient->image_path) }}" 
+                                     alt="Profile Preview"
+                                     class="rounded-circle"
+                                     style="width: 100%; height: 100%; object-fit: cover;">
+                            @else
+                                <div class="avatar-placeholder">
+                                           <div class="avatar-body"></div>
                                         </div>
+                                        <span class="initials">
+                                            {{ strtoupper(substr($patient->firstname ?? '', 0, 1) . substr($patient->lastname ?? '', 0, 1)) }}
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
+                       <label for="profileImageUpload" class="avatar-upload-btn position-absolute start-50 translate-middle">
+        <span class="icon-wrapper">
 
+            <!-- OR -->
+            [◉] <!-- Emoji fallback -->
+        </span>
+        <input type="file" id="profileImageUpload" accept="image/*" class="d-none">
+    </label>
+                    </div>
+                    <div class="mt-2 position-relative">
+
+    <h3 class="mb-0 mt-4">{{ $patient->firstname }} {{ $patient->lastname }}</h3>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                         <!-- Navigation Tabs -->
                         <div class="row mt-4">
                             <div class="col-12">
@@ -858,8 +929,8 @@
                         </div>
                     </div>
                     <!-- / Content -->
-
-                    @include('components.footer')
+                @include('components.footer')
+                
                 </div>
                 <!-- / Content wrapper -->
             </div>
@@ -1097,7 +1168,7 @@
             </div>
         </div>
     </div>
-
+ 
     <!-- Add Appointment Modal -->
     <div class="modal fade" id="addAppointmentModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -1175,24 +1246,151 @@
                 </form>
             </div>
         </div>
+       
     </div>
     <!-- END MODALS -->
-
+    
     <!-- Core JS -->
    <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
-   <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
-    <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-    <script src="{{ asset('vendor/js/menu.js') }}"></script>
+  <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
+<script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
+     <script src="{{ asset('vendor/libs/node-waves/node-waves.js') }}"></script>
+  <script src="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    <script src="{{ asset('vendor/js/menu.js') }}"></script>>
 
     <!-- Main JS -->
-    <script src="../../assets/js/main.js"></script>
+    <script src="/public/assets/js/main.js"></script>
 
 
 
 
 <script>
+
+// Profile picture upload
+document.getElementById('profileImageUpload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.match('image.*')) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid File',
+            text: 'Please select an image file (JPEG, PNG, etc.)'
+        });
+        return;
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+        Swal.fire({
+            icon: 'error',
+            title: 'File Too Large',
+            text: 'Please select an image smaller than 2MB'
+        });
+        return;
+    }
+
+    // Store the original content before showing preview
+    const avatarPreview = document.querySelector('.avatar-preview');
+    const originalContent = avatarPreview.innerHTML;
+
+    // Show preview immediately
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        // Show the preview
+        avatarPreview.innerHTML = `<img id="imagePreview" src="${event.target.result}" 
+                                  alt="Profile Preview" class="rounded-circle" 
+                                  style="width: 100%; height: 100%; object-fit: cover;">`;
+        
+        // Now start the upload process
+        uploadImageToServer(file, originalContent, event.target.result);
+    };
+    reader.readAsDataURL(file);
+});
+
+function uploadImageToServer(file, originalContent, previewDataUrl) {
+    const formData = new FormData();
+    formData.append('profile_image', file);
+    formData.append('patient_id', '{{ $patient->patient_id }}');
+    formData.append('_token', '{{ csrf_token() }}');
+
+    // Show loading state
+    Swal.fire({
+        title: 'Uploading...',
+        text: 'Please wait while we upload your profile picture',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    fetch('{{ route("patient.profile.image.upload") }}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        
+        if (data.success) {
+            // Success - keep the preview and show success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Profile picture updated successfully',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            
+            // Optional: Update preview with the server URL for consistency
+            if (data.image_url) {
+                const preview = document.getElementById('imagePreview');
+                if (preview) {
+                    preview.src = data.image_url + '?t=' + new Date().getTime(); // Add timestamp to prevent caching
+                }
+            }
+        } else {
+            // Upload failed - revert to original content
+            console.error('Upload failed:', data.message);
+            document.querySelector('.avatar-preview').innerHTML = originalContent;
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Upload Failed',
+                text: data.message || 'Failed to upload image'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Upload error:', error);
+        
+        // Revert to original content on error
+        document.querySelector('.avatar-preview').innerHTML = originalContent;
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to upload profile picture. Please try again.'
+        });
+    })
+    .finally(() => {
+        // Reset the file input so the same file can be selected again if needed
+        document.getElementById('profileImageUpload').value = '';
+    });
+}
+
+
     // Add this code after your existing scripts
 document.addEventListener('DOMContentLoaded', function() {
     // Add click handler for download buttons
@@ -1340,6 +1538,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+
 
     // Get all tab links
     const tabLinks = document.querySelectorAll('.nav-link');
@@ -2297,11 +2497,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-<script src="{{ asset('vendor/libs/moment/moment.js') }}"></script>
- <script src="{{ asset('vendor/libs/flatpickr/flatpickr.js') }}"></script>
- <script src="{{ asset('vendor/libs/%40form-validation/popular.js') }}"></script>
-<script src="{{ asset('vendor/libs/%40form-validation/bootstrap5.js') }}"></script>
-<script src="{{ asset('vendor/libs/%40form-validation/auto-focus.js') }}"></script>
+<script src="/public/vendor/libs/moment/moment.js"></script>
+ <script src="/public/vendor/libs/flatpickr/flatpickr.js"></script>
+ <script src="/public/vendor/libs/%40form-validation/popular.js"></script>
+<script src="/public/vendor/libs/%40form-validation/bootstrap5.js"></script>
+<script src="/public/vendor/libs/%40form-validation/auto-focus.js"></script>
 
 
 

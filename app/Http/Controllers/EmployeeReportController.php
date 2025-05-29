@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use App\Models\Booking;
+use App\Models\booking;
 use App\Models\Service;
 use App\Models\Package;
 use App\Models\Staff;
@@ -19,7 +19,7 @@ class EmployeeReportController extends Controller
         $currentYear = Carbon::now()->year;
 
         // Fetch booking data with relationships
-        $bookings = Booking::with(['services', 'packages', 'staff', 'branch'])
+        $bookings = booking::with(['services', 'packages', 'staff', 'branch'])
             ->orderBy('start_date', 'desc')
             ->get();
 

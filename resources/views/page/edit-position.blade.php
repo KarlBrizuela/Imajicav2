@@ -24,16 +24,16 @@
     <link rel="icon" type="image/x-icon" href="{{ asset(path:'logo/logo.png') }}" />
 
     <!-- Include CSS files -->
-    <link rel="stylesheet" href="{{ asset('vendor/fonts/iconify-icons.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/css/core.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/demo.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendor/libs/select2/select2.css') }}" />
+    <link rel="stylesheet" href="/public/vendor/fonts/iconify-icons.css" />
+    <link rel="stylesheet" href="/public/vendor/css/core.css" />
+    <link rel="stylesheet" href="/public/css/demo.css" />
+    <link rel="stylesheet" href="/public/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="/public/vendor/libs/select2/select2.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <!-- Helpers -->
-    <script src="{{ asset('vendor/js/helpers.js') }}"></script>
-    <script src="{{ asset('assets/js/config.js') }}"></script>
+    <script src="/public/vendor/js/helpers.js"></script>
+    <script src="/public/assets/js/config.js"></script>
   </head>
 
   <body>
@@ -180,10 +180,10 @@
     </div>
 
     <!-- Core JS -->
-    <script src="{{ asset('vendor/libs/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('vendor/js/menu.js') }}"></script>
+    <script src="/public/vendor/libs/jquery/jquery.js"></script>
+    <script src="/public/vendor/libs/popper/popper.js"></script>
+    <script src="/public/vendor/js/bootstrap.js"></script>
+    <script src="/public/vendor/js/menu.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
+use App\Models\order;
 use App\Models\OrderItem;
-use App\Models\Booking;
+use App\Models\booking;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,12 +15,12 @@ class ServiceProductController extends Controller
     public function index()
     {
         // Get all orders with their items ordered by date
-        $orders = Order::with('orderItems')
+        $orders = order::with('orderItems')
                       ->orderBy('order_date', 'desc')
                       ->get();
 
         // Get all bookings with their services
-        $bookings = Booking::with(['services', 'branch'])
+        $bookings = booking::with(['services', 'branch'])
                       ->whereIn('status', ['Completed', 'Paid'])
                       ->orderBy('start_date', 'desc')
                       ->get();
